@@ -1,24 +1,26 @@
-# README
+# Repository API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This provides a deposit API for the SDR.
 
-Things you may want to cover:
+## Create a user
 
-* Ruby version
+```
+./bin/rails runner -e production 'User.create!(email: "jcoyne@justincoyne.com", password:  "sekret!")'
+```
 
-* System dependencies
+## Authorization
 
-* Configuration
+Log in to get a token by calling:
 
-* Database creation
+```
+curl -X POST -H 'Content-Type: application/json' \
+  -d '{"email":"jcoyne@justincoyne.com","password":"sekret!"}' \
+  https://{hostname}/v1/auth/login
+```
 
-* Database initialization
+In subsequent requests, submit the token in the `Authorization` header:
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" https://{hostname}/api/myresource
+```
