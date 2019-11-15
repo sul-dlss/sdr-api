@@ -33,5 +33,8 @@ module RepositoryApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Until https://github.com/rails/rails/pull/32238 is resolved
+    config.action_controller.allow_forgery_protection = false
   end
 end
