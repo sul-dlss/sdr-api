@@ -22,6 +22,7 @@ gem 'pg'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client'
 gem 'dor-workflow-client'
