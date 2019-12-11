@@ -6,5 +6,6 @@ Rails.application.routes.draw do
     post '/auth/login', to: 'authentication#login'
 
     resources :resources, only: [:create]
+    patch '/resources/:object_id/embargo', to: 'resources#show'
   end
 end

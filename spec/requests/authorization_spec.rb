@@ -10,7 +10,9 @@ RSpec.describe 'Authorization' do
 
     it 'Logs tokens to honeybadger' do
       post '/v1/auth/login',
-           params: { email: 'jcoyne85@stanford.edu', password: 'sekr3t!' }
+           params: { email: 'jcoyne85@stanford.edu', password: 'sekr3t!' }.to_json,
+           headers: { 'Content-Type' => 'application/json' }
+
       expect(JSON.parse(response.body)['token']).to be_present
       expect(response).to be_ok
     end

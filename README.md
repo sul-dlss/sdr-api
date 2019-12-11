@@ -1,6 +1,9 @@
 # Repository API
 
 This provides a deposit API for the SDR.
+There is a (OAS 3.0 spec)[http://spec.openapis.org/oas/v3.0.2] that documents the
+API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html].
+
 
 ## Create a user
 

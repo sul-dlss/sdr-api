@@ -42,7 +42,9 @@ RSpec.describe 'Create a resource' do
     end
 
     it 'Registers the resource and kicks off accessionWF' do
-      post '/v1/resources', params: request
+      post '/v1/resources',
+        params: request,
+        headers: { 'Content-Type' => 'application/json' }
       expect(JSON.parse(response.body)['druid']).to be_present
       expect(response).to be_created
     end
@@ -55,7 +57,9 @@ RSpec.describe 'Create a resource' do
     let(:error) { JSON.parse(response.body)['errors'][0] }
 
     it 'returns an error response' do
-      post '/v1/resources', params: request
+      post '/v1/resources',
+        params: request,
+        headers: { 'Content-Type' => 'application/json' }
       expect(response).to have_http_status(:gateway_timeout)
       expect(error['title']).to eq 'Unable to reach dor-services-app'
       expect(error['detail']).to eq 'broken'

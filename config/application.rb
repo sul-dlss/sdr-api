@@ -26,6 +26,9 @@ module RepositoryApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
+    config.middleware.use Committee::Middleware::RequestValidation, schema_path: 'openapi.yml', strict: true
+    config.middleware.use Committee::Middleware::ResponseValidation, schema_path: 'openapi.yml'
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

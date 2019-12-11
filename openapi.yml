@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  description: Deposit API for the Stanford digital repository
+  version: 1.0.0
+  title: DOR Services API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  - url: 'https://sdr-deposit-{env}.stanford.edu'
+    description: Production service
+    variables:
+      env:
+        default: prod
+  - url: 'https://sdr-deposit--{env}.stanford.edu'
+    description: Staging service
+    variables:
+      env:
+        default: stage
+tags:
+  - name: authentication
+    description: Authenticate the user
+  - name: objects
+    description: Digital Repository Objects
+paths:
+  /v1/resources:
+    post:
+      tags:
+        - objects
+      summary: Craetes a new object
+      description: 'Does registration and accessioning of the object'
+      operationId: 'objects#create'
+      responses:
+        '200':
+          description: OK
+      parameters: []
+  /v1/auth/login:
+    post:
+      tags:
+        - authentication
+      summary: Retrieve a JSON web token for subsequent requests
+      operationId: 'authentication#login'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The access token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+                  exp:
+                    type: string
+                    description: When the token will expire
+                    format: date-time
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  description: email address of the user
+                  type: string
+                  format: email
+                password:
+                  description: password of the user
+                  type: string
+                  example: sekr3t!
+components:
+  schemas:
+    Druid:
+      type: string
+      pattern: '^druid:[b-df-hjkmnp-tv-z]{2}[0-9]{3}[b-df-hjkmnp-tv-z]{2}[0-9]{4}$'
+      example: 'druid:bc123df4567'
+    Access:
+      type: object
+      properties:
+        embargoReleaseDate:
+          type: string
+          format: date-time
+          example: '2029-06-22T07:00:00.000+00:00'
+    Administrative:
+      type: object
+      properties: {}
+    DROAdministrative:
+      type: object
+      properties:
+        releaseTags:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReleaseTag'
+    AdminPolicy:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - 'http://cocina.sul.stanford.edu/models/admin_policy.jsonld'
+          example: item
+        externalIdentifier:
+          $ref: '#/components/schemas/Druid'
+        label:
+          type: string
+        version:
+          type: integer
+        access:
+          $ref: '#/components/schemas/Access'
+        administrative:
+          $ref: '#/components/schemas/Administrative'
+        identification:
+          $ref: '#/components/schemas/Identification'
+        structural:
+          $ref: '#/components/schemas/Structural'
+      required:
+        - externalIdentifier
+        - label
+        - type
+        - version
+        - access
+        - administrative
+        - identification
+        - structural
+    Collection:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - 'http://cocina.sul.stanford.edu/models/collection.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/curated-collection.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/user-collection.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/exhibit.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/series.jsonld'
+          example: item
+        externalIdentifier:
+          $ref: '#/components/schemas/Druid'
+        label:
+          type: string
+        version:
+          type: integer
+        access:
+          $ref: '#/components/schemas/Access'
+        administrative:
+          $ref: '#/components/schemas/Administrative'
+        identification:
+          $ref: '#/components/schemas/Identification'
+        structural:
+          $ref: '#/components/schemas/Structural'
+      required:
+        - externalIdentifier
+        - label
+        - type
+        - version
+        - access
+        - administrative
+        - identification
+        - structural
+    DRO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - 'http://cocina.sul.stanford.edu/models/object.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/3d.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/agreement.jsonl'
+            - 'http://cocina.sul.stanford.edu/models/book.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/document.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/geo.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/image.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/page.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/photograph.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/manuscript.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/map.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/media.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/track.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/webarchive-binary.jsonld'
+            - 'http://cocina.sul.stanford.edu/models/webarchive-seed.jsonld'
+          example: item
+        externalIdentifier:
+          $ref: '#/components/schemas/Druid'
+        label:
+          type: string
+        version:
+          type: integer
+        access:
+          $ref: '#/components/schemas/Access'
+        administrative:
+          $ref: '#/components/schemas/DROAdministrative'
+        identification:
+          $ref: '#/components/schemas/Identification'
+        structural:
+          $ref: '#/components/schemas/Structural'
+      required:
+        - externalIdentifier
+        - label
+        - type
+        - version
+        - access
+        - administrative
+        - identification
+        - structural
+    BackgroundJobResultResponse:
+      type: object
+      properties:
+        output:
+          type: object
+          description: output from the job
+          $ref: '#/components/schemas/ErrorResponse'
+        status:
+          type: string
+          description: the status of the background job
+          enum:
+            - pending
+            - processing
+            - complete
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        title:
+          type: string
+          description: 'a short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence of the problem.'
+          example: Invalid Attribute
+        detail:
+          type: string
+          description: a human-readable explanation specific to this occurrence of the problem.
+          example: Title must contain at least three characters.
+        source:
+          type: object
+          properties:
+            pointer:
+              type: string
+              example: /data/attributes/title
+    Identification:
+      type: object
+      properties: {}
+    ReleaseTag:
+      type: object
+      properties:
+        who:
+          type: string
+          example: petucket
+        what:
+          type: string
+          enum:
+            - self
+            - collection
+          example: self
+        date:
+          type: string
+          format: date-time
+        to:
+          type: string
+          example: Searchworks
+        release:
+          type: boolean
+    Structural:
+      type: object
+      properties: {}
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
