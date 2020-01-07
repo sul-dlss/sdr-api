@@ -1,0 +1,15 @@
+require: rubocop-rspec
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.6.4
+  Exclude:
+    - 'db/schema.rb'
+    - 'db/migrate/*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*.rb
+
+Metrics/LineLength:
+  Max: 120
