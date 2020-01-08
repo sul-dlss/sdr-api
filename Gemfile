@@ -24,6 +24,7 @@ gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client'
 gem 'dor-workflow-client'
+gem 'honeybadger'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
