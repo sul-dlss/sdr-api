@@ -57,6 +57,7 @@ RSpec.describe 'Create a resource' do
       allow(Dor::Services::Client.objects).to receive(:register)
         .and_raise(Dor::Services::Client::ConnectionFailed, 'broken')
     end
+
     let(:error) { JSON.parse(response.body)['errors'][0] }
 
     it 'returns an error response' do
