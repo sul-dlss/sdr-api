@@ -12,7 +12,7 @@ begin
   require 'rubocop/rake_task'
 
   desc 'Run linter and tests'
-  task ci: %i[spec rubocop]
+  task ci: %i[rubocop spec]
 rescue LoadError
   puts 'gems rspec and rubocop not available presumably b/c this is a production environment'
 end
