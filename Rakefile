@@ -6,3 +6,15 @@
 require_relative 'config/application'
 
 Rails.application.load_tasks
+
+begin
+  require 'rspec/core/rake_task'
+  require 'rubocop/rake_task'
+
+  desc 'Run linter and tests'
+  task ci: %i[spec rubocop]
+rescue LoadError
+  puts 'gems rspec and rubocop not available presumably b/c this is a production environment'
+end
+
+task default: :ci
