@@ -26,6 +26,7 @@ RSpec.describe 'Create a resource' do
 
   context 'when the registration request is successful' do
     before do
+      # rubocop:disable Layout/LineLength
       stub_request(:post, 'http://localhost:3003/v1/objects')
         .with(
           body: '{"object_type":"object","admin_policy":"TODO: what policy?","label":":auto","rights":null,"metadata_source":"label"}',
@@ -36,6 +37,7 @@ RSpec.describe 'Create a resource' do
           }
         )
         .to_return(status: 200, body: '{"pid":"druid:abc123"}', headers: {})
+      # rubocop:enable Layout/LineLength
 
       stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
         .to_return(status: 200, body: '', headers: {})
@@ -52,7 +54,8 @@ RSpec.describe 'Create a resource' do
 
   context 'when the registration request is unsuccessful' do
     before do
-      allow(Dor::Services::Client.objects).to receive(:register).and_raise(Dor::Services::Client::ConnectionFailed, 'broken')
+      allow(Dor::Services::Client.objects).to receive(:register)
+        .and_raise(Dor::Services::Client::ConnectionFailed, 'broken')
     end
     let(:error) { JSON.parse(response.body)['errors'][0] }
 
