@@ -7,8 +7,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem 'rails', '~> 6.0.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
-# Use Puma as the app server
-gem 'puma', '~> 4.1'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 
@@ -26,6 +24,7 @@ gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client'
 gem 'dor-workflow-client'
+gem 'honeybadger'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
@@ -42,6 +41,14 @@ end
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  # Use Puma as the app server
+  gem 'puma', '~> 4.1'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :deployment do
+  gem 'capistrano-passenger', require: false
+  gem 'capistrano-rails', require: false
+  gem 'dlss-capistrano', require: false
 end
