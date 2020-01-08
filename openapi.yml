@@ -1,18 +1,18 @@
 openapi: 3.0.0
 info:
-  description: Deposit API for the Stanford digital repository
+  description: Repository API for Stanford Digital Repository
   version: 1.0.0
-  title: DOR Services API
+  title: SDR Repository API
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
-  - url: 'https://sdr-deposit-{env}.stanford.edu'
+  - url: 'https://sdr-api-{env}.stanford.edu'
     description: Production service
     variables:
       env:
         default: prod
-  - url: 'https://sdr-deposit--{env}.stanford.edu'
+  - url: 'https://sdr-api-{env}.stanford.edu'
     description: Staging service
     variables:
       env:
@@ -24,7 +24,40 @@ tags:
     description: Digital Repository Objects
   - name: files
     description: upload binary files
+  - name: monitoring
+    description: Monitoring and health checks
 paths:
+  /status:
+    get:
+      tags:
+        - monitoring
+      summary: View default healthcheck information
+      responses:
+        '200':
+          description: OK
+  /status/all:
+    get:
+      tags:
+        - monitoring
+      summary: View all healthcheck information
+      responses:
+        '200':
+          description: OK
+  /status/{check}:
+    get:
+      tags:
+        - monitoring
+      summary: View specified healthcheck information
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - name: check
+          in: path
+          required: true
+          example: ruby_version
+          schema:
+            - type: string
   /rails/active_storage/direct_uploads:
     post:
       tags:
