@@ -2,7 +2,7 @@ version: 2.1
 
 references:
   default_docker_ruby_executor: &default_docker_ruby_executor
-    image: circleci/ruby:2.6.4-stretch
+    image: circleci/ruby:2.6.4-stretch-node
     environment:
       BUNDLER_VERSION: 2.1.4
       BUNDLE_JOBS: 3
@@ -69,11 +69,22 @@ jobs:
       - run:
           name: Bundle Install
           command: bundle check || bundle install
-
       - run:
           name: Lint using rubocop
           command: bundle exec rubocop
-
+      - run:
+          name: Validate API specification
+          command: |
+            sudo npm install -g openapi-enforcer-cli
+            result=$(openapi-enforcer validate openapi.yml)
+            [[ $result =~ "Document is valid" ]] && {
+            echo "API specification is valid OAS (but may have warnings, see below)"
+            echo $result
+            exit 0
+            } || {
+            echo $result
+            exit 1
+            }
       - run:
           name: Wait for database
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
