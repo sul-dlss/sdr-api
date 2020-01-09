@@ -5,7 +5,7 @@ executors:
       IMAGE_NAME: suldlss/sdr-api
     docker:
       - image: circleci/buildpack-deps:stretch
-    
+
 references:
   default_docker_ruby_executor: &default_docker_ruby_executor
     image: circleci/ruby:2.6.4-stretch-node
@@ -43,13 +43,13 @@ jobs:
           command: bundle -v
       - restore_cache:
           keys:
-          - repository-api-bundle-v2-{{ checksum "Gemfile.lock" }}
-          - repository-api-bundle-v2-
+          - sdr-api-bundle-v2-{{ checksum "Gemfile.lock" }}
+          - sdr-api-bundle-v2-
       - run:
           name: Bundle Install
           command: bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
-          key: repository-apis-bundle-v2-{{ checksum "Gemfile.lock" }}
+          key: sdr-apis-bundle-v2-{{ checksum "Gemfile.lock" }}
           paths:
           - vendor/bundle
       - persist_to_workspace:
@@ -64,8 +64,8 @@ jobs:
           at: '~/project'
       - restore_cache:
           keys:
-          - repository-api-bundle-v2-{{ checksum "Gemfile.lock" }}
-          - repository-api-bundle-v2-
+          - sdr-api-bundle-v2-{{ checksum "Gemfile.lock" }}
+          - sdr-api-bundle-v2-
       - run:
           name: Install Bundler
           command: gem install bundler
