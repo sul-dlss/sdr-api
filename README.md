@@ -1,6 +1,7 @@
 [![CircleCI](https://circleci.com/gh/sul-dlss/repository-api.svg?style=svg)](https://circleci.com/gh/sul-dlss/repository-api)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/maintainability)](https://codeclimate.com/github/sul-dlss/repository-api/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/test_coverage)](https://codeclimate.com/github/sul-dlss/repository-api/test_coverage)
+[![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)
 
 # Repository API
 
