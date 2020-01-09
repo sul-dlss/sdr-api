@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 set :application, 'sdr-api'
-set :repo_url, 'https://github.com/sul-dlss/repository-api.git'
+set :repo_url, 'https://github.com/sul-dlss/sdr-api.git'
 
 # Default branch is :master
 ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call

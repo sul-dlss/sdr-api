@@ -1,10 +1,10 @@
-[![CircleCI](https://circleci.com/gh/sul-dlss/repository-api.svg?style=svg)](https://circleci.com/gh/sul-dlss/repository-api)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/maintainability)](https://codeclimate.com/github/sul-dlss/repository-api/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/test_coverage)](https://codeclimate.com/github/sul-dlss/repository-api/test_coverage)
-[![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)
+[![CircleCI](https://circleci.com/gh/sul-dlss/sdr-api.svg?style=svg)](https://circleci.com/gh/sul-dlss/sdr-api)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5e17a5a444f2f1014c0000b9/maintainability)](https://codeclimate.com/github/sul-dlss/sdr-api/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/5e17a5a444f2f1014c0000b9/test_coverage)](https://codeclimate.com/github/sul-dlss/sdr-api/test_coverage)
+[![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/master/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/master/openapi.yml)
 [![Docker image](https://images.microbadger.com/badges/image/suldlss/sdr-api.svg)](https://microbadger.com/images/suldlss/sdr-api "Get your own image badge on microbadger.com")
 
-# Repository API
+# Stanford Digital Repository API (SDR-API)
 
 An HTTP API for the SDR.
 
