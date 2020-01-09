@@ -35,6 +35,7 @@ class ResourcesController < ApplicationController
     col_catkey = params[:identification][:catkey]
     reg_params[:metadata_source] = col_catkey ? 'label' : 'symphony'
     reg_params[:other_id] = "symphony:#{col_catkey}" if col_catkey
+    reg_params[:collection] = params[:structural][:isMemberOf]
     reg_params
   end
 

@@ -200,7 +200,7 @@ components:
         identification:
           $ref: '#/components/schemas/Identification'
         structural:
-          $ref: '#/components/schemas/Structural'
+          $ref: '#/components/schemas/DROStructural'
       required:
         - type
         - access
@@ -277,9 +277,19 @@ components:
           example: Searchworks
         release:
           type: boolean
-    Structural:
+    DROStructural:
       type: object
-      properties: {}
+      properties:
+        isMemberOf:
+          description: 'what collection is this object a member of'
+          $ref: '#/components/schemas/Druid'
+        hasMember:
+          description: 'file sets for this object'
+          type: array
+          items:
+            type: object
+      required:
+        - isMemberOf
   securitySchemes:
     bearerAuth:
       type: http
