@@ -17,6 +17,7 @@ RSpec.describe 'Create a resource' do
           "sourceId":"googlebooks:stanford_82323429"
         },
         "structural":{
+          "isMemberOf":"druid:fg123hj4567",
           "hasMember":[
             {
               "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
@@ -37,7 +38,7 @@ RSpec.describe 'Create a resource' do
       stub_request(:post, 'http://localhost:3003/v1/objects')
         .with(
           body: '{"object_type":"object","admin_policy":"druid:bc123df4567","label":"hello",' \
-                '"metadata_source":"label","other_id":"symphony:123456"}',
+                '"metadata_source":"label","other_id":"symphony:123456","collection":"druid:fg123hj4567"}',
           headers: {
             'Accept' => 'application/json',
             'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
