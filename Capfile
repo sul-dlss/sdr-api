@@ -32,7 +32,7 @@ install_plugin Capistrano::SCM::Git
 # require 'capistrano/rbenv'
 # require 'capistrano/chruby'
 require 'capistrano/bundler'
-# require 'capistrano/passenger' # Uncomment when passenger is installed
+require 'capistrano/passenger'
 require 'capistrano/honeybadger'
 # require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
