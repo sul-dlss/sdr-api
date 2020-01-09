@@ -57,7 +57,7 @@ paths:
           required: true
           example: ruby_version
           schema:
-            - type: string
+            type: string
   /rails/active_storage/direct_uploads:
     post:
       tags:
@@ -77,6 +77,13 @@ paths:
       responses:
         '200':
           description: OK
+      parameters:
+        - name: id
+          in: path
+          required: true
+          example: 123
+          schema:
+            type: integer
   /v1/resources:
     post:
       tags:

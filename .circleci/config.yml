@@ -1,0 +1,104 @@
+version: 2.1
+
+references:
+  default_docker_ruby_executor: &default_docker_ruby_executor
+    image: circleci/ruby:2.6.4-stretch
+    environment:
+      BUNDLER_VERSION: 2.1.4
+      BUNDLE_JOBS: 3
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: vendor/bundle
+      PGHOST: 127.0.0.1
+      PGUSER: circleci-demo-ruby
+      PGPASSWORD: ""
+      RAILS_ENV: test
+      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+  postgres: &postgres
+    image: circleci/postgres:11
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: sdr
+      POSTGRES_PASSWORD: ""
+
+jobs:
+  build:
+    docker:
+      - *default_docker_ruby_executor
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install Bundler
+          command: gem install bundler
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - restore_cache:
+          keys:
+          - repository-api-bundle-v2-{{ checksum "Gemfile.lock" }}
+          - repository-api-bundle-v2-
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          key: repository-apis-bundle-v2-{{ checksum "Gemfile.lock" }}
+          paths:
+          - vendor/bundle
+      - persist_to_workspace:
+          root: .
+          paths: '*'
+  test:
+    docker:
+      - *default_docker_ruby_executor
+      - *postgres
+    steps:
+      - attach_workspace:
+          at: '~/project'
+      - restore_cache:
+          keys:
+          - repository-api-bundle-v2-{{ checksum "Gemfile.lock" }}
+          - repository-api-bundle-v2-
+      - run:
+          name: Install Bundler
+          command: gem install bundler
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+
+      - run:
+          name: Lint using rubocop
+          command: bundle exec rubocop
+
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Database setup
+          command: bin/rails db:test:prepare
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+      - run:
+          name: rspec
+          command: bundle exec rspec
+      - run:
+          name: upload test coverage report to Code Climate
+          command: ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
+      # - store_test_results:
+      #     path: test_results
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
