@@ -2,6 +2,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/maintainability)](https://codeclimate.com/github/sul-dlss/repository-api/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9b021ce4e6eb88230b53/test_coverage)](https://codeclimate.com/github/sul-dlss/repository-api/test_coverage)
 [![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/repository-api/master/openapi.yml)
+[![Docker image](https://images.microbadger.com/badges/image/suldlss/sdr-api.svg)](https://microbadger.com/images/suldlss/sdr-api "Get your own image badge on microbadger.com")
 
 # Repository API
 
