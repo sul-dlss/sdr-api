@@ -81,9 +81,9 @@ paths:
         - name: id
           in: path
           required: true
-          example: 123
+          example: eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhhbkk1YlRNeFpuQnJkbmwxZG1zM01qYzFOM042ZURRMWRXYzBOQVk2QmtWVU9oRmpiMjUwWlc1MFgzUjVjR1ZKSWc1MFpYaDBMMmgwYld3R093WlVPaE5qYjI1MFpXNTBYMnhsYm1kMGFHa0Jrem9OWTJobFkydHpkVzFKSWgxemFURXZURE5xVEV0M05GRjVVRGw0UjNaMEsyRlJQVDBHT3daVSIsImV4cCI6IjIwMjAtMDEtMDlUMjE6MzI6NDguNDc1WiIsInB1ciI6ImJsb2JfdG9rZW4ifX0=--da785217f57ab55fe37e8de0a9c26b4d7612c187
           schema:
-            type: integer
+            type: string
   /v1/resources:
     post:
       tags:
