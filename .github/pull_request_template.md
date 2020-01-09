@@ -2,4 +2,5 @@
 
 
 
-## Was the API documentation (openapi.yml) updated?
+## Was the documentation (README.md, openapi.yml) updated?
+
