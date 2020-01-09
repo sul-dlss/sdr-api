@@ -6,13 +6,20 @@ RSpec.describe 'Create a resource' do
   let(:request) do
     <<~JSON
       {
-        "@context":"http://cocina.sul.stanford.edu/contexts/cocina-base.jsonld",
-        "@type":"book","label":"hello",
+        "type":"http://cocina.sul.stanford.edu/models/book.jsonld",
+        "label":"hello",
+        "access": {},
+        "administrative": {
+          "hasAdminPolicy":"druid:bc123df4567"
+        },
+        "identification": {
+          "catkey":"123456",
+          "sourceId":"googlebooks:stanford_82323429"
+        },
         "structural":{
           "hasMember":[
             {
-              "@context":"http://cocina.sul.stanford.edu/contexts/cocina-base.jsonld",
-              "@type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
+              "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
               "label":"file2.txt",
               "structural":{
                 "hasMember":["eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03"]
@@ -29,7 +36,8 @@ RSpec.describe 'Create a resource' do
       # rubocop:disable Layout/LineLength
       stub_request(:post, 'http://localhost:3003/v1/objects')
         .with(
-          body: '{"object_type":"object","admin_policy":"TODO: what policy?","label":":auto","rights":null,"metadata_source":"label"}',
+          body: '{"object_type":"object","admin_policy":"druid:bc123df4567","label":"hello",' \
+                '"metadata_source":"label","other_id":"symphony:123456"}',
           headers: {
             'Accept' => 'application/json',
             'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',

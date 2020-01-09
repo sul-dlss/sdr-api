@@ -94,7 +94,13 @@ paths:
       responses:
         '200':
           description: OK
-      parameters: []
+      requestBody:
+        description: The metadata for the object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Deposit'
   /v1/auth/login:
     post:
       tags:
@@ -148,83 +154,18 @@ components:
           type: string
           format: date-time
           example: '2029-06-22T07:00:00.000+00:00'
-    Administrative:
-      type: object
-      properties: {}
     DROAdministrative:
       type: object
       properties:
+        hasAdminPolicy:
+          $ref: '#/components/schemas/Druid'
         releaseTags:
           type: array
           items:
             $ref: '#/components/schemas/ReleaseTag'
-    AdminPolicy:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - 'http://cocina.sul.stanford.edu/models/admin_policy.jsonld'
-          example: item
-        externalIdentifier:
-          $ref: '#/components/schemas/Druid'
-        label:
-          type: string
-        version:
-          type: integer
-        access:
-          $ref: '#/components/schemas/Access'
-        administrative:
-          $ref: '#/components/schemas/Administrative'
-        identification:
-          $ref: '#/components/schemas/Identification'
-        structural:
-          $ref: '#/components/schemas/Structural'
       required:
-        - externalIdentifier
-        - label
-        - type
-        - version
-        - access
-        - administrative
-        - identification
-        - structural
-    Collection:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - 'http://cocina.sul.stanford.edu/models/collection.jsonld'
-            - 'http://cocina.sul.stanford.edu/models/curated-collection.jsonld'
-            - 'http://cocina.sul.stanford.edu/models/user-collection.jsonld'
-            - 'http://cocina.sul.stanford.edu/models/exhibit.jsonld'
-            - 'http://cocina.sul.stanford.edu/models/series.jsonld'
-          example: item
-        externalIdentifier:
-          $ref: '#/components/schemas/Druid'
-        label:
-          type: string
-        version:
-          type: integer
-        access:
-          $ref: '#/components/schemas/Access'
-        administrative:
-          $ref: '#/components/schemas/Administrative'
-        identification:
-          $ref: '#/components/schemas/Identification'
-        structural:
-          $ref: '#/components/schemas/Structural'
-      required:
-        - externalIdentifier
-        - label
-        - type
-        - version
-        - access
-        - administrative
-        - identification
-        - structural
-    DRO:
+        - hasAdminPolicy
+    Deposit:
       type: object
       properties:
         type:
@@ -261,10 +202,7 @@ components:
         structural:
           $ref: '#/components/schemas/Structural'
       required:
-        - externalIdentifier
-        - label
         - type
-        - version
         - access
         - administrative
         - identification
@@ -309,7 +247,16 @@ components:
               example: /data/attributes/title
     Identification:
       type: object
-      properties: {}
+      properties:
+        catkey:
+          description: If catkey is not provded, then label is required.  If catkey is provided, the label will be looked up from Sirsi.
+          type: string
+          example: "4084372"
+        sourceId:
+          type: string
+          example: "bib4084372"
+      required:
+        - sourceId
     ReleaseTag:
       type: object
       properties:
