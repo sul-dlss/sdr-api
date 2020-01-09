@@ -8,6 +8,35 @@ An HTTP API for the SDR.
 
 There is a [OAS 3.0 spec](http://spec.openapis.org/oas/v3.0.2) that documents the API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html].
 
+## Local Development
+
+### Start dependencies
+
+#### Database
+
+```
+docker-compose up -d db
+```
+
+### Build the api container
+
+```
+docker-compose build app
+```
+
+### Setup the local database
+
+```
+docker-compose run --rm app bundle exec rake db:create
+docker-compose run --rm app bundle exec rake db:migrate
+```
+
+### Start the app
+
+```
+docker-compose up -d app
+```
+
 ## Create a user
 
 ```
