@@ -25,22 +25,16 @@ class ResourcesController < ApplicationController
   # @return [Hash] the parameters used to register an object.
   def register_params
     reg_params = {
-      object_type: 'object',
-      admin_policy: 'TODO: what policy?' # https://github.com/sul-dlss/repository-api/issues/29
+      object_type: 'object', # TODO: This can come from a lookup using params[:type]
+      admin_policy: params[:administrative][:hasAdminPolicy]
     }
 
     # ':auto' is a special value for the registration service.
     # see https://github.com/sul-dlss/dor-services-app/blob/master/app/services/registration_service.rb#L37
-    reg_params[:label] = params[:collection_title].presence || ':auto'
-    reg_params[:rights] = if reg_params[:label] == ':auto'
-                            params[:collection_rights_catkey]
-                          else
-                            params[:collection_rights]
-                          end
-    reg_params[:rights] &&= reg_params[:rights].downcase
-    col_catkey = params[:collection_catkey] || ''
-    reg_params[:metadata_source] = col_catkey.blank? ? 'label' : 'symphony'
-    reg_params[:other_id] = "symphony:#{col_catkey}" if col_catkey.present?
+    reg_params[:label] = params[:label].presence || ':auto'
+    col_catkey = params[:identification][:catkey]
+    reg_params[:metadata_source] = col_catkey ? 'label' : 'symphony'
+    reg_params[:other_id] = "symphony:#{col_catkey}" if col_catkey
     reg_params
   end
 
