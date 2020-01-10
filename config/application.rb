@@ -44,5 +44,12 @@ module SdrApi
 
     # This makes sure our Postgres enums function are persisted to the schema
     config.active_record.schema_format = :sql
+
+    initializer(:remove_activestorage_routes, after: :add_routing_paths) do |app|
+      # Until Rails 6.1 comes out use this method
+      app.routes_reloader.paths.delete_if { |path| path =~ /activestorage/ }
+    end
+    # This will work in rails 6.1 maybe? https://github.com/rails/rails/pull/36666
+    config.active_storage.draw_routes = false
   end
 end
