@@ -6,6 +6,6 @@ Rails.application.routes.draw do
     post '/auth/login', to: 'authentication#login'
 
     resources :resources, only: [:create]
-    patch '/resources/:object_id/embargo', to: 'resources#show'
+    resources :background_job_results, only: [:show], defaults: { format: :json }
   end
 end

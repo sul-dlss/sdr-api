@@ -41,5 +41,8 @@ module SdrApi
 
     # Until https://github.com/rails/rails/pull/32238 is resolved
     config.action_controller.allow_forgery_protection = false
+
+    # This makes sure our Postgres enums function are persisted to the schema
+    config.active_record.schema_format = :sql
   end
 end
