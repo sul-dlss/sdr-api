@@ -24,6 +24,8 @@ gem 'dor-services-client'
 gem 'dor-workflow-client'
 gem 'honeybadger'
 gem 'okcomputer'
+gem 'sidekiq', '~> 5.2'
+gem 'sidekiq-statistic'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'

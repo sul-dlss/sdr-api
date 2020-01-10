@@ -25,6 +25,10 @@ append :linked_files, 'config/database.yml', 'config/honeybadger.yml', 'config/s
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'config/settings', 'vendor/bundle'
 
+# Sidekiq configuration (run three processes)
+# see sidekiq.yml for concurrency and queue settings
+set :sidekiq_processes, 3
+
 # Default value for default_env is {}
 # set :default_env, { path: '/opt/ruby/bin:$PATH' }
 
