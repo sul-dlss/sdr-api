@@ -58,7 +58,7 @@ paths:
           example: ruby_version
           schema:
             type: string
-  /rails/active_storage/direct_uploads:
+  /v1/direct_uploads:
     post:
       tags:
         - files
@@ -69,7 +69,7 @@ paths:
           content:
             application/json:
               example: {"id":56,"key":"3eh3k0x16eysn9ivndmqjo5jdf4d","filename":"Gemfile.lock","content_type":"text/html","metadata":{},"byte_size":1082,"checksum":"A72Iwi4DGf80H7WM4VHuUw==","created_at":"2020-01-07T23:18:08.818Z","signed_id":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBQUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--8802f5d43bd2c192ef783e02c55481d129a51a72","direct_upload":{"url":"http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhNMlZvTTJzd2VERTJaWGx6YmpscGRtNWtiWEZxYnpWcVpHWTBaQVk2QmtWVU9oRmpiMjUwWlc1MFgzUjVjR1ZKSWc1MFpYaDBMMmgwYld3R093WlVPaE5qYjI1MFpXNTBYMnhsYm1kMGFHa0NPZ1E2RFdOb1pXTnJjM1Z0U1NJZFFUY3lTWGRwTkVSSFpqZ3dTRGRYVFRSV1NIVlZkejA5QmpzR1ZBPT0iLCJleHAiOiIyMDIwLTAxLTA3VDIzOjIzOjA4LjgyNFoiLCJwdXIiOiJibG9iX3Rva2VuIn19--ae7c0227ed5840f30b3293d2f2b6c8109397527a","headers":{"Content-Type":"text/html"}}}
-  /rails/active_storage/disk/{id}:
+  /v1/disk/{id}:
     put:
       tags:
         - files
