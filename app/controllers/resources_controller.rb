@@ -6,15 +6,20 @@ class ResourcesController < ApplicationController
   # POST /objects
   def create
     register_params
-    response = Dor::Services::Client.objects.register(params: register_params)
+    begin
+      response = Dor::Services::Client.objects.register(params: register_params)
+    rescue Dor::Services::Client::UnexpectedResponse => e
+      return render build_error('Bad Request', e, '400', :bad_request)
+    rescue Dor::Services::Client::ConnectionFailed => e
+      return render build_error('Unable to reach dor-services-app', e, '504', :gateway_timeout)
+    end
+
     result = BackgroundJobResult.create
     IngestJob.perform_later(druid: response[:pid], background_job_result: result)
 
     render json: { druid: response[:pid] },
            location: result,
            status: :created
-  rescue Dor::Services::Client::ConnectionFailed => e
-    render build_error('Unable to reach dor-services-app', e)
   end
 
   private
@@ -37,19 +42,19 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/
-  def build_error(msg, err)
+  def build_error(msg, err, code, status)
     {
       json: {
         errors: [
           {
-            "status": '504',
+            "status": code,
             "title": msg,
             "detail": err.message
           }
         ]
       },
       content_type: 'application/vnd.api+json',
-      status: :gateway_timeout
+      status: status
     }
   end
 end

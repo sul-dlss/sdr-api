@@ -64,6 +64,26 @@ RSpec.describe 'Create a resource' do
 
   context 'when the registration request is unsuccessful' do
     before do
+      stub_request(:post, 'http://localhost:3003/v1/objects')
+        .to_return(status: [400, 'Bad Request'],
+                   body: "Unable to find 'druid:bk123gh4567' in fedora. See logger for details")
+    end
+
+    let(:error) { JSON.parse(response.body)['errors'][0] }
+
+    it 'returns an error response' do
+      post '/v1/resources',
+           params: request,
+           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to have_http_status(:bad_request)
+      expect(error['title']).to eq 'Bad Request'
+      expect(error['detail']).to eq "Bad Request: 400 (Unable to find 'druid:bk123gh4567' " \
+        'in fedora. See logger for details)'
+    end
+  end
+
+  context 'when the registration request fails' do
+    before do
       allow(Dor::Services::Client.objects).to receive(:register)
         .and_raise(Dor::Services::Client::ConnectionFailed, 'broken')
     end
