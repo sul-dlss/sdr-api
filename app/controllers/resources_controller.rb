@@ -27,7 +27,7 @@ class ResourcesController < ApplicationController
   # @return [Hash] the parameters used to register an object.
   def register_params
     reg_params = {
-      object_type: 'object', # TODO: This can come from a lookup using params[:type]
+      object_type: 'item',
       admin_policy: params[:administrative][:hasAdminPolicy]
     }
 
@@ -38,6 +38,8 @@ class ResourcesController < ApplicationController
     reg_params[:metadata_source] = col_catkey ? 'label' : 'symphony'
     reg_params[:other_id] = "symphony:#{col_catkey}" if col_catkey
     reg_params[:collection] = params[:structural][:isMemberOf]
+    # TODO: content_type (tag Process:Content Type:Book (ltr) ) can come from a lookup using params[:type]
+    # reg_param[:tags] = ['Process:Content Type:Book (ltr)']
     reg_params
   end
 

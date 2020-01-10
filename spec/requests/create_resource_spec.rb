@@ -37,7 +37,7 @@ RSpec.describe 'Create a resource' do
       # rubocop:disable Layout/LineLength
       stub_request(:post, 'http://localhost:3003/v1/objects')
         .with(
-          body: '{"object_type":"object","admin_policy":"druid:bc123df4567","label":"hello",' \
+          body: '{"object_type":"item","admin_policy":"druid:bc123df4567","label":"hello",' \
                 '"metadata_source":"label","other_id":"symphony:123456","collection":"druid:fg123hj4567"}',
           headers: {
             'Accept' => 'application/json',
