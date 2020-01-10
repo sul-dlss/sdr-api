@@ -44,5 +44,7 @@ module SdrApi
 
     # This makes sure our Postgres enums function are persisted to the schema
     config.active_record.schema_format = :sql
+
+    config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT)) if ENV['RAILS_LOG_TO_STDOUT'].present?
   end
 end
