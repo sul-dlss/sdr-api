@@ -174,6 +174,11 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (~> 1.0, >= 1.4.3)
     erubi (1.9.0)
+    factory_bot (5.1.1)
+      activesupport (>= 4.2.0)
+    factory_bot_rails (5.1.1)
+      factory_bot (~> 5.1.0)
+      railties (>= 4.2.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.13.1)
@@ -188,6 +193,8 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     jaro_winkler (1.5.4)
+    jbuilder (2.9.1)
+      activesupport (>= 4.2.0)
     json (2.3.0)
     json_schema (0.20.8)
     jwt (2.2.1)
@@ -342,7 +349,9 @@ DEPENDENCIES
   dlss-capistrano
   dor-services-client
   dor-workflow-client
+  factory_bot_rails
   honeybadger
+  jbuilder (~> 2.7)
   jwt
   listen (>= 3.0.5, < 3.2)
   okcomputer

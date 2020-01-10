@@ -7,20 +7,17 @@ class ResourcesController < ApplicationController
   def create
     register_params
     response = Dor::Services::Client.objects.register(params: register_params)
-    workflow_client.create_workflow_by_name(response[:pid], 'accessionWF')
+    result = BackgroundJobResult.create
+    IngestJob.perform_later(druid: response[:pid], background_job_result: result)
 
-    render json: { druid: response[:pid] }, status: :created
+    render json: { druid: response[:pid] },
+           location: result,
+           status: :created
   rescue Dor::Services::Client::ConnectionFailed => e
     render build_error('Unable to reach dor-services-app', e)
   end
 
   private
-
-  def workflow_client
-    Dor::Workflow::Client.new(url: Settings.workflow.url,
-                              logger: Rails.logger,
-                              timeout: 60)
-  end
 
   # @return [Hash] the parameters used to register an object.
   def register_params

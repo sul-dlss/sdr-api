@@ -84,6 +84,39 @@ paths:
           example: eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaDdDVG9JYTJWNVNTSWhhbkk1YlRNeFpuQnJkbmwxZG1zM01qYzFOM042ZURRMWRXYzBOQVk2QmtWVU9oRmpiMjUwWlc1MFgzUjVjR1ZKSWc1MFpYaDBMMmgwYld3R093WlVPaE5qYjI1MFpXNTBYMnhsYm1kMGFHa0Jrem9OWTJobFkydHpkVzFKSWgxemFURXZURE5xVEV0M05GRjVVRGw0UjNaMEsyRlJQVDBHT3daVSIsImV4cCI6IjIwMjAtMDEtMDlUMjE6MzI6NDguNDc1WiIsInB1ciI6ImJsb2JfdG9rZW4ifX0=--da785217f57ab55fe37e8de0a9c26b4d7612c187
           schema:
             type: string
+  /v1/background_job_results/{id}:
+    get:
+      tags:
+        - jobs
+      summary: View results of a background job
+      description: Used to allow the application run long-running processes out of the request/response cycle
+      operationId: 'background_job_results#show'
+      responses:
+        '200':
+          description: The background job has completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJobResultResponse'
+        '202':
+          description: The background job is pending or processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundJobResultResponse'
+        '404':
+          description: The background job with the given id was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: id
+          in: path
+          description: ID of background job result
+          required: true
+          schema:
+            type: integer
   /v1/resources:
     post:
       tags:
