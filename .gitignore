@@ -17,6 +17,10 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+!/tmp/assembly
+/tmp/assembly/*
+# Used for testing as the staging area:
+!/tmp/assembly/.keep
 
 # Ignore uploaded files in development.
 /storage/*
