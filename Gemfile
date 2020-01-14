@@ -18,17 +18,16 @@ gem 'pg'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'assembly-objectfile'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client'
 gem 'dor-workflow-client'
+gem 'druid-tools'
 gem 'honeybadger'
 gem 'okcomputer'
 gem 'sidekiq', '~> 5.2'
 gem 'sidekiq-statistic'
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

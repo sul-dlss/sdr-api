@@ -15,7 +15,10 @@ class ResourcesController < ApplicationController
     end
 
     result = BackgroundJobResult.create
-    IngestJob.perform_later(druid: response[:pid], background_job_result: result)
+
+    IngestJob.perform_later(druid: response[:pid],
+                            filesets: params[:structural].to_unsafe_h.fetch(:hasMember),
+                            background_job_result: result)
 
     render json: { druid: response[:pid] },
            location: result,

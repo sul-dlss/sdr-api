@@ -50,6 +50,8 @@ RSpec.describe 'Create a resource' do
 
       stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
         .to_return(status: 200, body: '', headers: {})
+
+      allow(IngestJob).to receive(:perform_later)
     end
 
     it 'Registers the resource and kicks off accessionWF' do
@@ -59,6 +61,7 @@ RSpec.describe 'Create a resource' do
 
       expect(JSON.parse(response.body)['druid']).to be_present
       expect(response).to be_created
+      expect(IngestJob).to have_received(:perform_later)
     end
   end
 

@@ -5,3 +5,6 @@ dor_services:
 
 workflow:
   url: 'http://localhost:3001'
+
+
+staging_location: '/dor/assembly'
