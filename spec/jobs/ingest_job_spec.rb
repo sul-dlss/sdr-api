@@ -42,7 +42,7 @@ RSpec.describe IngestJob, type: :job do
     run
     expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
     expect(File).to exist("#{assembly_dir}/metadata/contentMetadata.xml")
-    expect(client).to have_received(:create_workflow_by_name).with(druid, 'accessionWF')
+    expect(client).to have_received(:create_workflow_by_name).with(druid, 'assemblyWF')
     expect(result).to be_complete
   end
 end
