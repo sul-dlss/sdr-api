@@ -18,7 +18,7 @@ class IngestJob < ApplicationJob
     xml = ContentMetadataGenerator.generate(file_names: file_names, druid: druid)
     dir.write_file('contentMetadata.xml', xml)
 
-    workflow_client.create_workflow_by_name(druid, 'accessionWF')
+    workflow_client.create_workflow_by_name(druid, 'assemblyWF')
   ensure
     background_job_result.complete!
   end
