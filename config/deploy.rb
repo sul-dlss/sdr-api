@@ -28,6 +28,7 @@ append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'config/sett
 # Sidekiq configuration (run three processes)
 # see sidekiq.yml for concurrency and queue settings
 set :sidekiq_processes, 3
+set :sidekiq_env, 'production'
 
 # Default value for default_env is {}
 # set :default_env, { path: '/opt/ruby/bin:$PATH' }
