@@ -23,11 +23,12 @@ set :deploy_to, '/opt/app/sdr/sdr-api'
 append :linked_files, 'config/database.yml', 'config/honeybadger.yml', 'config/secrets.yml'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'config/settings', 'vendor/bundle', 'storage'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'config/settings', 'vendor/bundle', 'storage'
 
 # Sidekiq configuration (run three processes)
 # see sidekiq.yml for concurrency and queue settings
 set :sidekiq_processes, 3
+set :sidekiq_env, 'production'
 
 # Default value for default_env is {}
 # set :default_env, { path: '/opt/ruby/bin:$PATH' }
