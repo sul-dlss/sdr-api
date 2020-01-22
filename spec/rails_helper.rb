@@ -14,6 +14,7 @@ SimpleCov.start 'rails'
 
 require 'rspec/rails'
 require 'webmock/rspec'
+require 'equivalent-xml'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
