@@ -18,15 +18,33 @@ RSpec.describe IngestJob, type: :job do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
   end
 
+  let(:file) do
+    {
+      'type' => 'http://cocina.sul.stanford.edu/models/file.jsonld',
+      'filename' => 'file2.txt',
+      'label' => 'file2.txt',
+      'hasMimeType' => 'text/plain',
+      'externalIdentifier' => file_id,
+      'administrative' => {
+        'sdrPreserve' => true,
+        'shelve' => true
+      },
+      'access' => {
+        'access' => 'citation-only'
+      }
+    }
+  end
+
   let(:filesets) do
     [
       {
         'type' => 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
-        'label' => 'file2.txt',
-        'structural' => { 'hasMember' => [file_id] }
+        'label' => 'Page 1',
+        'structural' => { 'hasMember' => [file] }
       }
     ]
   end
+
   let(:assembly_dir) { 'tmp/assembly/bc/123/de/5678/bc123de5678' }
 
   before do

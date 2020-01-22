@@ -21,9 +21,23 @@ RSpec.describe 'Create a resource' do
           "hasMember":[
             {
               "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
-              "label":"file2.txt",
+              "label":"Page 1",
               "structural":{
-                "hasMember":["eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03"]
+                "hasMember":[
+                  {
+                    "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
+                    "filename":"file2.txt",
+                    "label":"file2.txt",
+                    "externalIdentifier":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03",
+                    "administrative":{
+                      "sdrPreserve":true,
+                      "shelve":true
+                    },
+                    "access": {
+                      "access":"citation-only"
+                    }
+                  }
+                ]
               }
             }
           ]
@@ -59,8 +73,8 @@ RSpec.describe 'Create a resource' do
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
 
-      expect(JSON.parse(response.body)['druid']).to be_present
       expect(response).to be_created
+      expect(JSON.parse(response.body)['druid']).to be_present
       expect(IngestJob).to have_received(:perform_later)
     end
   end

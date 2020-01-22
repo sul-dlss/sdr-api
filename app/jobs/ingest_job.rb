@@ -11,11 +11,12 @@ class IngestJob < ApplicationJob
     background_job_result.processing!
 
     dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
-
-    file_names = copy_files_to_staging(dir, filesets)
+    file_nodes = filesets.flat_map { |fs| fs.fetch('structural').fetch('hasMember') }
+    file_names = copy_files_to_staging(dir, file_nodes)
 
     # generate contentMetadata.xml
-    xml = ContentMetadataGenerator.generate(file_names: file_names, druid: druid)
+    xml = ContentMetadataGenerator.generate(filesets: filesets, file_names: file_names, druid: druid)
+
     dir.write_file('contentMetadata.xml', xml)
 
     # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
@@ -34,17 +35,22 @@ class IngestJob < ApplicationJob
   end
 
   # Copy files to the staging directory from ActiveStorage for the assembly workflow
-  # @return [Array<String>] a list of full paths to the files that were copied
-  def copy_files_to_staging(dir, filesets)
-    files(filesets).each do |blob|
+  # @param [Array<Hash>] a list of hashes representing Cocina File objects
+  # @return [Hash<String,String>] a map of filenames (from the metadata) to the full paths to the files that were copied
+  def copy_files_to_staging(dir, file_nodes)
+    files(file_nodes).each do |blob|
       dir.copy_file(ActiveStorage::Blob.service.path_for(blob.key), blob.filename.to_s)
     end
-    filesets.map { |fs| File.join(dir.content_dir, fs['label']) }
+    file_nodes.each_with_object({}) do |file_node, out|
+      filename = file_node.fetch('filename')
+      out[filename] = File.join(dir.content_dir, filename)
+    end
   end
 
-  # @return [Array<ActiveStorage::Blob>] Given a list of filesets, return the corresponding blob objects
-  def files(filesets)
-    signed_ids = filesets.map { |fs| fs.fetch('structural').fetch('hasMember').first }
+  # @param [Array<Hash>] a list of hashes representing Cocina File objects
+  # @return [Array<ActiveStorage::Blob>] Given a list of file_json, return the corresponding blob objects
+  def files(file_nodes)
+    signed_ids = file_nodes.map { |fs| fs.fetch('externalIdentifier') }
 
     file_ids = signed_ids.map { |signed_id| ActiveStorage.verifier.verified(signed_id, purpose: :blob_id) }
 
