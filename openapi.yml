@@ -127,6 +127,16 @@ paths:
       responses:
         '200':
           description: OK
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: URL to retrieve background job results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateObjectResponse'
       requestBody:
         description: The metadata for the object
         required: true
@@ -254,6 +264,11 @@ components:
             - pending
             - processing
             - complete
+    CreateObjectResponse:
+      type: object
+      properties:
+        druid:
+          $ref: '#/components/schemas/Druid'
     ErrorResponse:
       type: object
       properties:
