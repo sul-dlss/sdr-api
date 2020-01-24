@@ -28,7 +28,18 @@ RSpec.describe ContentMetadataGenerator do
       },
       'access' => {
         'access' => 'dark'
-      }
+      },
+      'hasMessageDigests' => [
+        {
+          'type' => 'sha1',
+          'digest' => 'cb19c405f8242d1f9a0a6180122dfb69e1d6e4c7'
+        },
+        {
+          'type' => 'md5',
+          'digest' => 'e6d52da47a5ade91ae31227b978fb023'
+        }
+
+      ]
     }
   end
 
@@ -100,7 +111,10 @@ RSpec.describe ContentMetadataGenerator do
        <contentMetadata objectId="druid:bc123de5678" type="book">
          <resource id="bc123de5678_1" sequence="1" type="object">
            <label>Object 1</label>
-           <file id="00001.html" preserve="yes" publish="no" shelve="no"/>
+           <file id="00001.html" preserve="yes" publish="no" shelve="no">
+             <checksum type="sha1">cb19c405f8242d1f9a0a6180122dfb69e1d6e4c7</checksum>
+             <checksum type="md5">e6d52da47a5ade91ae31227b978fb023</checksum>
+           </file>
            <file id="00001.jp2" preserve="yes" publish="yes" shelve="yes"/>
          </resource>
          <resource id="bc123de5678_2" sequence="2" type="object">

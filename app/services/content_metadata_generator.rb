@@ -59,6 +59,9 @@ class ContentMetadataGenerator
       file_node['publish'] = publish_attr(cocina_file)
       file_node['shelve'] = shelve_attr(cocina_file)
       file_node['preserve'] = preserve_attr(cocina_file)
+      cocina_file.fetch('hasMessageDigests', []).each do |message_digest|
+        file_node.add_child(create_checksum_node(message_digest['type'], message_digest['digest']))
+      end
     end
   end
 
@@ -72,6 +75,13 @@ class ContentMetadataGenerator
 
   def preserve_attr(cocina_file)
     cocina_file.fetch('administrative').fetch('sdrPreserve') ? 'yes' : 'no'
+  end
+
+  def create_checksum_node(algorithm, digest)
+    Nokogiri::XML::Node.new('checksum', @xml_doc).tap do |checksum_node|
+      checksum_node['type'] = algorithm
+      checksum_node.content = digest
+    end
   end
 
   # @param [Hash] cocina_fileset the cocina fileset
