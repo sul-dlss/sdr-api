@@ -21,7 +21,9 @@ docker-compose up -d db
 ```
 
 ### Build the api container
-
+If `tmp/pids/server.pid` is missing from the root directory of the project, just
+touch that file before building or
+[puma](https://puma.io/) will fail when starting the app.
 ```
 docker-compose build app
 ```
