@@ -15,10 +15,14 @@
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
+/tmp/pids/*
 !/log/.keep
 !/tmp/.keep
 !/tmp/assembly
 /tmp/assembly/*
+!/tmp/pids
+# Required for puma to have a place to put the pid file
+!/tmp/pids/.keep
 # Used for testing as the staging area:
 !/tmp/assembly/.keep
 
