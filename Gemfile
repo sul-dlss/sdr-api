@@ -19,9 +19,10 @@ gem 'pg'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'assembly-objectfile'
+gem 'cocina-models', '~> 0.8.0'
 gem 'committee'
 gem 'config', '~> 2.0'
-gem 'dor-services-client'
+gem 'dor-services-client', '~> 4.2'
 gem 'dor-workflow-client'
 gem 'druid-tools'
 gem 'honeybadger'
