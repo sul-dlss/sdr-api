@@ -1,3 +1,7 @@
+sdr_api:
+  days_after_which_to_remove_uploads: 7
+  blob_batch_size: 20
+
 dor_services:
   url: 'http://localhost:3003'
   # To generate the token: docker-compose run dor-services-app rake generate_token
@@ -5,6 +9,5 @@ dor_services:
 
 workflow:
   url: 'http://localhost:3001'
-
 
 staging_location: '/dor/assembly'
