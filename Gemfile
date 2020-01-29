@@ -19,7 +19,7 @@ gem 'pg'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'assembly-objectfile'
-gem 'cocina-models', '~> 0.8.0'
+gem 'cocina-models'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 4.2'
@@ -29,6 +29,7 @@ gem 'honeybadger'
 gem 'okcomputer'
 gem 'sidekiq', '~> 5.2'
 gem 'sidekiq-statistic'
+gem 'whenever', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
