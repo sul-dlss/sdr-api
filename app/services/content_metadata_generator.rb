@@ -40,7 +40,7 @@ class ContentMetadataGenerator
   # @return [Array] A array of tuples of cocina fileset and assembly fileset
   def assembly_filesets
     filesets.map do |fs|
-      resource_files = fs.fetch('structural').fetch('hasMember')
+      resource_files = fs.fetch('structural').fetch('contains')
                          .map { |file| object_files.fetch(file.fetch('filename')) }
       [fs, Assembly::ContentMetadata::FileSet.new(resource_files: resource_files, style: :simple_book)]
     end
@@ -104,7 +104,7 @@ class ContentMetadataGenerator
   def create_file_nodes(resource, cocina_fileset, assembly_fileset)
     assembly_fileset.files.each do |assembly_file|
       id = assembly_file.file_id(common_path: common_path, flatten_folder_structure: false)
-      cocina_file = cocina_fileset.fetch('structural').fetch('hasMember')
+      cocina_file = cocina_fileset.fetch('structural').fetch('contains')
                                   .find { |file| file.fetch('filename') == id }
       resource.add_child(create_file_node(id, cocina_file))
     end

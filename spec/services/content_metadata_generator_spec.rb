@@ -96,12 +96,12 @@ RSpec.describe ContentMetadataGenerator do
       {
         'type' => 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
         'label' => 'Page 1',
-        'structural' => { 'hasMember' => [file1, file2] }
+        'structural' => { 'contains' => [file1, file2] }
       },
       {
         'type' => 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
         'label' => 'Page 2',
-        'structural' => { 'hasMember' => [file3, file4] }
+        'structural' => { 'contains' => [file3, file4] }
       }
     ]
   end

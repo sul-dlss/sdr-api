@@ -11,7 +11,7 @@ class IngestJob < ApplicationJob
     background_job_result.processing!
 
     dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
-    file_nodes = filesets.flat_map { |fs| fs.fetch('structural').fetch('hasMember') }
+    file_nodes = filesets.flat_map { |fs| fs.fetch('structural').fetch('contains') }
     file_names = copy_files_to_staging(dir, file_nodes)
 
     # generate contentMetadata.xml
