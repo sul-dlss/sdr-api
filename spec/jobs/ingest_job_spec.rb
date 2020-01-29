@@ -40,7 +40,7 @@ RSpec.describe IngestJob, type: :job do
       {
         'type' => 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
         'label' => 'Page 1',
-        'structural' => { 'hasMember' => [file] }
+        'structural' => { 'contains' => [file] }
       }
     ]
   end

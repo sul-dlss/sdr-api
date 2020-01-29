@@ -18,12 +18,12 @@ RSpec.describe 'Create a resource' do
         },
         "structural":{
           "isMemberOf":"druid:fg123hj4567",
-          "hasMember":[
+          "contains":[
             {
               "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
               "label":"Page 1",
               "structural":{
-                "hasMember":[
+                "contains":[
                   {
                     "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
                     "filename":"file2.txt",

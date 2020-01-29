@@ -413,7 +413,7 @@ components:
         isMemberOf:
           description: 'what collection is this object a member of'
           $ref: '#/components/schemas/Druid'
-        hasMember:
+        contains:
           description: 'file sets for this object'
           type: array
           items:
@@ -423,13 +423,13 @@ components:
     FileSetStructural:
       type: object
       properties:
-        hasMember:
+        contains:
           description: 'files for this fileset'
           type: array
           items:
             $ref: '#/components/schemas/File'
       required:
-        - hasMember
+        - contains
   securitySchemes:
     bearerAuth:
       type: http
