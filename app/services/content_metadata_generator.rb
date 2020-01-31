@@ -56,6 +56,7 @@ class ContentMetadataGenerator
   def create_file_node(id, cocina_file)
     Nokogiri::XML::Node.new('file', @xml_doc).tap do |file_node|
       file_node['id'] = id
+      file_node['mimetype'] = cocina_file.fetch('hasMimeType')
       file_node['publish'] = publish_attr(cocina_file)
       file_node['shelve'] = shelve_attr(cocina_file)
       file_node['preserve'] = preserve_attr(cocina_file)
