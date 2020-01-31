@@ -54,9 +54,9 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"object_type":"item","admin_policy":"druid:bc123df4567","label":"hello",' \
-                  '"metadata_source":"label","other_id":"symphony:123456","collection":"druid:fg123hj4567",' \
-                  '"tag":[]}',
+            body: '{"object_type":"item","admin_policy":"druid:bc123df4567","tag":[],' \
+                  '"label":"hello","collection":"druid:fg123hj4567","rights":"default",' \
+                  '"metadata_source":"symphony","other_id":"symphony:123456"}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -92,9 +92,10 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"object_type":"item","admin_policy":"druid:bc123df4567","label":"hello",' \
-                  '"metadata_source":"label","other_id":"symphony:123456","collection":"druid:fg123hj4567",' \
-                  '"tag":["Process : Content Type : Book (ltr)"]}',
+            body: '{"object_type":"item","admin_policy":"druid:bc123df4567",' \
+                  '"tag":["Process : Content Type : Book (ltr)"],"label":"hello",' \
+                  '"collection":"druid:fg123hj4567","rights":"default",' \
+                  '"metadata_source":"symphony","other_id":"symphony:123456"}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
