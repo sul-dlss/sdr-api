@@ -93,7 +93,8 @@ RSpec.describe 'Create a resource' do
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
             body: '{"object_type":"item","admin_policy":"druid:bc123df4567",' \
-                  '"tag":["Process : Content Type : Book (ltr)"],"label":"hello",' \
+                  '"tag":["Process : Content Type : Book (ltr)","Registered By : jcoyne85@stanford.edu"],' \
+                  '"label":"hello",' \
                   '"collection":"druid:fg123hj4567","rights":"default",' \
                   '"metadata_source":"symphony","other_id":"symphony:123456"}',
             headers: {
