@@ -32,7 +32,7 @@ class ResourcesController < ApplicationController
     {
       object_type: 'item',
       admin_policy: params[:administrative][:hasAdminPolicy],
-      tag: AdministrativeTags.for(type: params[:type]),
+      tag: AdministrativeTags.for(type: params[:type], user: current_user.email),
       # ':auto' is a special value for the registration service.
       # see https://github.com/sul-dlss/dor-services-app/blob/master/app/services/registration_service.rb#L37
       label: params[:label].presence || ':auto',
