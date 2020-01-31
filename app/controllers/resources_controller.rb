@@ -29,20 +29,26 @@ class ResourcesController < ApplicationController
 
   # @return [Hash] the parameters used to register an object.
   def register_params
-    reg_params = {
+    {
       object_type: 'item',
-      admin_policy: params[:administrative][:hasAdminPolicy]
-    }
+      admin_policy: params[:administrative][:hasAdminPolicy],
+      tag: AdministrativeTags.for(type: params[:type]),
+      # ':auto' is a special value for the registration service.
+      # see https://github.com/sul-dlss/dor-services-app/blob/master/app/services/registration_service.rb#L37
+      label: params[:label].presence || ':auto',
+      collection: params[:structural][:isMemberOf],
+      rights: 'default' # this ensures it picks up the rights from the APO
+    }.merge(source_params)
+  end
 
-    # ':auto' is a special value for the registration service.
-    # see https://github.com/sul-dlss/dor-services-app/blob/master/app/services/registration_service.rb#L37
-    reg_params[:label] = params[:label].presence || ':auto'
+  def source_params
     col_catkey = params[:identification][:catkey]
-    reg_params[:metadata_source] = col_catkey ? 'label' : 'symphony'
-    reg_params[:other_id] = "symphony:#{col_catkey}" if col_catkey
-    reg_params[:collection] = params[:structural][:isMemberOf]
-    reg_params[:tag] = AdministrativeTags.for(type: params[:type])
-    reg_params
+    return { metadata_source: 'label' } unless col_catkey
+
+    {
+      metadata_source: 'symphony',
+      other_id: "symphony:#{col_catkey}"
+    }
   end
 
   # JSON-API error response. See https://jsonapi.org/
