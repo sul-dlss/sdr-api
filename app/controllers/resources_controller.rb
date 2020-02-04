@@ -50,6 +50,7 @@ class ResourcesController < ApplicationController
 
     {
       metadata_source: 'symphony',
+      seed_datastream: ['descMetadata'],
       other_id: "symphony:#{col_catkey}"
     }
   end

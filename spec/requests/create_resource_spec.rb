@@ -56,7 +56,7 @@ RSpec.describe 'Create a resource' do
           .with(
             body: '{"object_type":"item","source_id":"googlebooks:stanford_82323429","admin_policy":"druid:bc123df4567","tag":[],' \
                   '"label":"hello","collection":"druid:fg123hj4567","rights":"default",' \
-                  '"metadata_source":"symphony","other_id":"symphony:123456"}',
+                  '"metadata_source":"symphony","seed_datastream":["descMetadata"],"other_id":"symphony:123456"}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -96,7 +96,7 @@ RSpec.describe 'Create a resource' do
                   '"tag":["Process : Content Type : Book (ltr)","Registered By : jcoyne85@stanford.edu"],' \
                   '"label":"hello",' \
                   '"collection":"druid:fg123hj4567","rights":"default",' \
-                  '"metadata_source":"symphony","other_id":"symphony:123456"}',
+                  '"metadata_source":"symphony","seed_datastream":["descMetadata"],"other_id":"symphony:123456"}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
