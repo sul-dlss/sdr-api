@@ -18,7 +18,7 @@ gem 'pg'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'assembly-objectfile'
+gem 'assembly-objectfile', '~> 1.9'
 gem 'cocina-models'
 gem 'committee'
 gem 'config', '~> 2.0'
