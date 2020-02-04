@@ -302,6 +302,8 @@ components:
           type: string
         hasMimeType:
           type: string
+        use:
+          type: string
         hasMessageDigests:
           type: array
           items:

@@ -60,7 +60,7 @@ class ContentMetadataGenerator
       file_node['publish'] = publish_attr(cocina_file)
       file_node['shelve'] = shelve_attr(cocina_file)
       file_node['preserve'] = preserve_attr(cocina_file)
-      ocr?(cocina_file) ? file_node['use'] = 'transcription' : ''
+      file_node['role'] = cocina_file.fetch('use') if cocina_file.key?('use')
       cocina_file.fetch('hasMessageDigests', []).each do |message_digest|
         file_node.add_child(create_checksum_node(message_digest['type'], message_digest['digest']))
       end
@@ -77,17 +77,6 @@ class ContentMetadataGenerator
 
   def preserve_attr(cocina_file)
     cocina_file.fetch('administrative').fetch('sdrPreserve') ? 'yes' : 'no'
-  end
-
-  def ocr?(cocina_file)
-    if cocina_file.fetch('hasMimeType') == 'text/html'
-      # finds file in @file_names, parses HTML with Nokogiri for hOCR tags to return
-      # true if found
-      file_path = file_names.fetch(cocina_file.fetch('filename'))
-      doc = Nokogiri::HTML(File.open(file_path))
-      return true unless doc.css("meta[@name='ocr-capabilities']").empty?
-    end
-    false
   end
 
   def create_checksum_node(algorithm, digest)
