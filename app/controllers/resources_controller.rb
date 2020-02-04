@@ -28,9 +28,11 @@ class ResourcesController < ApplicationController
   private
 
   # @return [Hash] the parameters used to register an object.
+  # rubocop:disable Metrics/AbcSize
   def register_params
     {
       object_type: 'item',
+      source_id: params[:identification][:sourceId],
       admin_policy: params[:administrative][:hasAdminPolicy],
       tag: AdministrativeTags.for(type: params[:type], user: current_user.email),
       # ':auto' is a special value for the registration service.
@@ -40,6 +42,7 @@ class ResourcesController < ApplicationController
       rights: 'default' # this ensures it picks up the rights from the APO
     }.merge(source_params)
   end
+  # rubocop:enable Metrics/AbcSize
 
   def source_params
     col_catkey = params[:identification][:catkey]
