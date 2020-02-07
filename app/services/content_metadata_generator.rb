@@ -60,6 +60,7 @@ class ContentMetadataGenerator
       file_node['publish'] = publish_attr(cocina_file)
       file_node['shelve'] = shelve_attr(cocina_file)
       file_node['preserve'] = preserve_attr(cocina_file)
+      file_node['role'] = cocina_file.fetch('use') if cocina_file.key?('use')
       cocina_file.fetch('hasMessageDigests', []).each do |message_digest|
         file_node.add_child(create_checksum_node(message_digest['type'], message_digest['digest']))
       end

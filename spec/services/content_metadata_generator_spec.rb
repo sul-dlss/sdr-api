@@ -22,6 +22,7 @@ RSpec.describe ContentMetadataGenerator do
       'filename' => '00001.html',
       'label' => '00001.html',
       'hasMimeType' => 'text/html',
+      'use' => 'transcription',
       'administrative' => {
         'sdrPreserve' => true,
         'shelve' => false
@@ -111,7 +112,7 @@ RSpec.describe ContentMetadataGenerator do
        <contentMetadata objectId="druid:bc123de5678" type="book">
          <resource id="bc123de5678_1" sequence="1" type="object">
            <label>Object 1</label>
-           <file id="00001.html" mimetype="text/html" preserve="yes" publish="no" shelve="no">
+           <file id="00001.html" mimetype="text/html" preserve="yes" publish="no" shelve="no" role="transcription">
              <checksum type="sha1">cb19c405f8242d1f9a0a6180122dfb69e1d6e4c7</checksum>
              <checksum type="md5">e6d52da47a5ade91ae31227b978fb023</checksum>
            </file>
