@@ -5,9 +5,8 @@ class ResourcesController < ApplicationController
 
   # POST /objects
   def create
-    register_params
     begin
-      response = Dor::Services::Client.objects.register(params: register_params)
+      response_cocina_obj = Dor::Services::Client.objects.register(params: cocina_model)
     rescue Dor::Services::Client::UnexpectedResponse => e
       return render build_error('Bad Request', e, '400', :bad_request)
     rescue Dor::Services::Client::ConnectionFailed => e
@@ -16,43 +15,45 @@ class ResourcesController < ApplicationController
 
     result = BackgroundJobResult.create
 
-    IngestJob.perform_later(druid: response[:pid],
+    IngestJob.perform_later(druid: response_cocina_obj.externalIdentifier,
                             filesets: params[:structural].to_unsafe_h.fetch(:contains),
                             background_job_result: result)
 
-    render json: { druid: response[:pid] },
+    render json: { druid: response_cocina_obj.externalIdentifier },
            location: result,
            status: :created
   end
 
   private
 
-  # @return [Hash] the parameters used to register an object.
-  # rubocop:disable Metrics/AbcSize
-  def register_params
-    {
-      object_type: 'item',
-      source_id: params[:identification][:sourceId],
-      admin_policy: params[:administrative][:hasAdminPolicy],
-      tag: AdministrativeTags.for(type: params[:type], user: current_user.email),
-      # ':auto' is a special value for the registration service.
-      # see https://github.com/sul-dlss/dor-services-app/blob/master/app/services/registration_service.rb#L37
-      label: params[:label].presence || ':auto',
-      collection: params[:structural][:isMemberOf],
-      rights: 'default' # this ensures it picks up the rights from the APO
-    }.merge(source_params)
+  def cocina_model
+    model_params = params.to_unsafe_h
+    model_params[:label] = ':auto' if model_params[:label].nil?
+    model_params[:version] = 1 if model_params[:version].nil?
+    model_params[:structural].delete(:contains)
+    clean_embargo_release_date(model_params)
+    clean_catkey(model_params)
+    Cocina::Models::RequestDRO.new(model_params)
   end
-  # rubocop:enable Metrics/AbcSize
 
-  def source_params
-    col_catkey = params[:identification][:catkey]
-    return { metadata_source: 'label' } unless col_catkey
+  def clean_embargo_release_date(model_params)
+    embargo_release_date = model_params[:access].delete(:embargoReleaseDate)
+    return if embargo_release_date.nil?
 
-    {
-      metadata_source: 'symphony',
-      seed_datastream: ['descMetadata'],
-      other_id: "symphony:#{col_catkey}"
+    model_params[:access][:embargo] = {
+      releaseDate: embargo_release_date,
+      access: 'world'
     }
+  end
+
+  def clean_catkey(model_params)
+    catkey = model_params[:identification].delete(:catkey)
+    return if catkey.nil?
+
+    model_params[:identification][:catalogLinks] = [{
+      catalog: 'symphony',
+      catalogRecordId: catkey
+    }]
   end
 
   # JSON-API error response. See https://jsonapi.org/
