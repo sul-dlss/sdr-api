@@ -46,6 +46,59 @@ RSpec.describe 'Create a resource' do
     JSON
   end
 
+  let(:response_body) do
+    <<~JSON
+      {
+        "externalIdentifier":"druid:abc123",
+        "version":1,
+        "type":"#{type_uri}",
+        "label":"hello",
+        "access": {},
+        "administrative": {
+          "hasAdminPolicy":"druid:bc123df4567"
+        },
+        "identification": {
+          "sourceId":"googlebooks:stanford_82323429",
+          "catalogLinks": [
+            {
+              "catalog":"symphony",
+              "catalogRecordId":"123456"
+            }
+          ]
+        },
+        "structural":{
+          "isMemberOf":"druid:fg123hj4567",
+          "contains":[
+            {
+              "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
+              "label":"Page 1",
+              "version":1,
+              "externalIdentifier":"abc123-1",
+              "structural":{
+                "contains":[
+                  {
+                    "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
+                    "filename":"file2.txt",
+                    "label":"file2.txt",
+                    "externalIdentifier":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03",
+                    "administrative":{
+                      "sdrPreserve":true,
+                      "shelve":true
+                    },
+                    "access": {
+                      "access":"citation-only"
+                    },
+                    "version":1
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    JSON
+  end
+
   context 'with an image resource' do
     let(:type_uri) { Cocina::Models::Vocab.image }
 
@@ -54,20 +107,18 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"object_type":"item","source_id":"googlebooks:stanford_82323429","admin_policy":"druid:bc123df4567","tag":[],' \
-                  '"label":"hello","collection":"druid:fg123hj4567","rights":"default",' \
-                  '"metadata_source":"symphony","seed_datastream":["descMetadata"],"other_id":"symphony:123456"}',
+            body: '{"type":"http://cocina.sul.stanford.edu/models/image.jsonld","label":"hello","version":1,"access":{"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
               'Content-Type' => 'application/json'
             }
           )
-          .to_return(status: 200, body: '{"pid":"druid:abc123"}', headers: {})
+          .to_return(status: 200, body: response_body, headers: {})
         # rubocop:enable Layout/LineLength
 
         stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
-          .to_return(status: 200, body: '', headers: {})
+          .to_return(status: 200, body: body, headers: {})
 
         allow(IngestJob).to receive(:perform_later)
       end
@@ -92,18 +143,14 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"object_type":"item","source_id":"googlebooks:stanford_82323429","admin_policy":"druid:bc123df4567",' \
-                  '"tag":["Process : Content Type : Book (ltr)","Registered By : jcoyne85@stanford.edu"],' \
-                  '"label":"hello",' \
-                  '"collection":"druid:fg123hj4567","rights":"default",' \
-                  '"metadata_source":"symphony","seed_datastream":["descMetadata"],"other_id":"symphony:123456"}',
+            body: '{"type":"http://cocina.sul.stanford.edu/models/book.jsonld","label":"hello","version":1,"access":{"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
               'Content-Type' => 'application/json'
             }
           )
-          .to_return(status: 200, body: '{"pid":"druid:abc123"}', headers: {})
+          .to_return(status: 200, body: response_body, headers: {})
         # rubocop:enable Layout/LineLength
 
         stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
