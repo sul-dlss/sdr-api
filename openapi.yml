@@ -193,10 +193,26 @@ components:
     Access:
       type: object
       properties:
-        embargoReleaseDate:
+        embargo:
+          $ref: '#/components/schemas/Embargo'
+    Embargo:
+      type: object
+      properties:
+        releaseDate:
           type: string
           format: date-time
           example: '2029-06-22T07:00:00.000+00:00'
+        access:
+          type: string
+          enum:
+            - world
+            - stanford
+            - location-based
+            - citation-only
+            - dark
+      required:
+        - releaseDate
+        - access
     FileAccess:
       type: object
       properties:

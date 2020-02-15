@@ -16,7 +16,7 @@ references:
       BUNDLE_PATH: vendor/bundle
       PGHOST: 127.0.0.1
       PGUSER: circleci-demo-ruby
-      PGPASSWORD: ""
+      PGPASSWORD: sekret
       RAILS_ENV: test
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
   postgres: &postgres
@@ -24,7 +24,7 @@ references:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: sdr
-      POSTGRES_PASSWORD: ""
+      POSTGRES_PASSWORD: sekret
 
 jobs:
   build:

@@ -8,7 +8,12 @@ RSpec.describe 'Create a resource' do
       {
         "type":"#{type_uri}",
         "label":"hello",
-        "access": {},
+        "access": {
+          "embargo": {
+            "releaseDate": "2029-06-22T07:00:00.000+00:00",
+            "access": "world"
+          }
+        },
         "administrative": {
           "hasAdminPolicy":"druid:bc123df4567"
         },
@@ -53,7 +58,12 @@ RSpec.describe 'Create a resource' do
         "version":1,
         "type":"#{type_uri}",
         "label":"hello",
-        "access": {},
+        "access": {
+          "embargo": {
+            "releaseDate": "2029-06-22T07:00:00.000+00:00",
+            "access": "world"
+          }
+        },
         "administrative": {
           "hasAdminPolicy":"druid:bc123df4567"
         },
@@ -107,7 +117,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"type":"http://cocina.sul.stanford.edu/models/image.jsonld","label":"hello","version":1,"access":{"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"type":"http://cocina.sul.stanford.edu/models/image.jsonld","label":"hello","version":1,"access":{"embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world"},"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -143,7 +153,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"type":"http://cocina.sul.stanford.edu/models/book.jsonld","label":"hello","version":1,"access":{"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"type":"http://cocina.sul.stanford.edu/models/book.jsonld","label":"hello","version":1,"access":{"embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world"},"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',

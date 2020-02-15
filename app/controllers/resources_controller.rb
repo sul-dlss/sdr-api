@@ -31,19 +31,8 @@ class ResourcesController < ApplicationController
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
     model_params[:structural].delete(:contains)
-    clean_embargo_release_date(model_params)
     clean_catkey(model_params)
     Cocina::Models::RequestDRO.new(model_params)
-  end
-
-  def clean_embargo_release_date(model_params)
-    embargo_release_date = model_params[:access].delete(:embargoReleaseDate)
-    return if embargo_release_date.nil?
-
-    model_params[:access][:embargo] = {
-      releaseDate: embargo_release_date,
-      access: 'world'
-    }
   end
 
   def clean_catkey(model_params)
