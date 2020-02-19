@@ -77,6 +77,8 @@ Given that we have a DRO with two Filesets each with a File (image1.png) and (im
 
 ## Docker
 
+Note that this project's continuous integration build will automatically create and publish an updated image whenever there is a passing build from the `master` branch. If you do need to manually create and publish an image, do the following:
+
 Build image:
 ```
 docker image build -t suldlss/sdr-api:latest .
