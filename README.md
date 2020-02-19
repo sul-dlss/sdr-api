@@ -10,7 +10,7 @@ An HTTP API for the SDR.
 
 There is a [OAS 3.0 spec](http://spec.openapis.org/oas/v3.0.2) that documents the API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html].
 
-## Local Development
+## Local Development / Usage
 
 ### Start dependencies
 
@@ -39,13 +39,13 @@ docker-compose run --rm app bundle exec rake db:migrate
 docker-compose up -d app
 ```
 
-## Create a user
+### Create a user
 
 ```
 ./bin/rails runner -e production 'User.create!(email: "jcoyne@justincoyne.com", password:  "sekret!")'
 ```
 
-## Authorization
+### Authorization
 
 Log in to get a token by calling:
 
@@ -63,7 +63,7 @@ curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" https://{
 ```
 
 
-## Sequence of operations
+### Sequence of operations
 
 Given that we have a DRO with two Filesets each with a File (image1.png) and (image2.png)
 
@@ -74,3 +74,16 @@ Given that we have a DRO with two Filesets each with a File (image1.png) and (im
 1. Repeat step 1-2 for the second file.
 1. POST /filesets with the `signed_id` from step one.  Repeat for the second file. The API will use `ActiveStorage::Blob.find_signed(params[:signed_id])` to find the files.
 1. POST /dro with the fileset ids from the previous step.
+
+## Docker
+
+Note that this project's continuous integration build will automatically create and publish an updated image whenever there is a passing build from the `master` branch. If you do need to manually create and publish an image, do the following:
+
+Build image:
+```
+docker image build -t suldlss/sdr-api:latest .
+```
+
+Publish:
+```
+docker push suldlss/sdr-api:latest
