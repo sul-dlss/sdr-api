@@ -18,7 +18,12 @@ RSpec.describe 'Create a resource' do
           "hasAdminPolicy":"druid:bc123df4567"
         },
         "identification": {
-          "catkey":"123456",
+          "catalogLinks": [
+              {
+                "catalog":"symphony",
+                "catalogRecordId":"123456"
+              }
+          ],
           "sourceId":"googlebooks:stanford_82323429"
         },
         "structural":{
