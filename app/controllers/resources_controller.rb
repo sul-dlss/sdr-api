@@ -30,19 +30,10 @@ class ResourcesController < ApplicationController
     model_params = params.to_unsafe_h
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
+    # Presently, the create model endpoint in dor-services-app, can't handle filesets,
+    # so, we remove them here and make contentMetadata.xml instead.
     model_params[:structural].delete(:contains)
-    clean_catkey(model_params)
     Cocina::Models::RequestDRO.new(model_params)
-  end
-
-  def clean_catkey(model_params)
-    catkey = model_params[:identification].delete(:catkey)
-    return if catkey.nil?
-
-    model_params[:identification][:catalogLinks] = [{
-      catalog: 'symphony',
-      catalogRecordId: catkey
-    }]
   end
 
   # JSON-API error response. See https://jsonapi.org/

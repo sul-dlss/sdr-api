@@ -347,6 +347,18 @@ components:
             - pending
             - processing
             - complete
+    CatalogLink:
+      type: object
+      required:
+        - catalog
+        - catalogRecordId
+      properties:
+        catalog:
+          type: string
+          example: symphony
+        catalogRecordId:
+          type: string
+          example: 11403803
     CreateObjectResponse:
       type: object
       properties:
@@ -379,10 +391,11 @@ components:
     Identification:
       type: object
       properties:
-        catkey:
-          description: If catkey is not provded, then label is required.  If catkey is provided, the label will be looked up from Sirsi.
-          type: string
-          example: "4084372"
+        catalogLinks:
+          description: If catalogLink is not provded, then label is required.  If catalogLink is provided, the label will be looked up from Sirsi.
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogLink'
         sourceId:
           type: string
           example: "bib4084372"
