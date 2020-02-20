@@ -55,7 +55,7 @@ class ResourcesController < ApplicationController
       json: {
         errors: [
           {
-            "status": code,
+            "status": code !== err.status ? err.status : code,
             "title": msg,
             "detail": err.message
           }
