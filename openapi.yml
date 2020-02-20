@@ -24,40 +24,7 @@ tags:
     description: Digital Repository Objects
   - name: files
     description: upload binary files
-  - name: monitoring
-    description: Monitoring and health checks
 paths:
-  /status:
-    get:
-      tags:
-        - monitoring
-      summary: View default healthcheck information
-      responses:
-        '200':
-          description: OK
-  /status/all:
-    get:
-      tags:
-        - monitoring
-      summary: View all healthcheck information
-      responses:
-        '200':
-          description: OK
-  /status/{check}:
-    get:
-      tags:
-        - monitoring
-      summary: View specified healthcheck information
-      responses:
-        '200':
-          description: OK
-      parameters:
-        - name: check
-          in: path
-          required: true
-          example: ruby_version
-          schema:
-            type: string
   /v1/direct_uploads:
     post:
       tags:
