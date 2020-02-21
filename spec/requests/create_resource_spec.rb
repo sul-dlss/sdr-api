@@ -207,6 +207,24 @@ RSpec.describe 'Create a resource' do
       end
     end
 
+    context 'when the registration request unexpectedly fails' do
+      before do
+        allow(Dor::Services::Client.objects).to receive(:register)
+          .and_raise(Dor::Services::Client::UnexpectedResponse,
+                     "Conflict: 409 (An object with the source ID 'abcd:1234' already registered)")
+      end
+
+      let(:error) { JSON.parse(response.body)['errors'][0] }
+
+      it 'returns an error response' do
+        post '/v1/resources',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(response).to have_http_status(:bad_request)
+        expect(error['status']).to eq '409'
+      end
+    end
+
     context 'when the create registrationWF request fails' do
       before do
         # rubocop:disable Layout/LineLength

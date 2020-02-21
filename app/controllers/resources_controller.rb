@@ -49,13 +49,15 @@ class ResourcesController < ApplicationController
     Cocina::Models::RequestDRO.new(model_params)
   end
 
-  # JSON-API error response. See https://jsonapi.org/
+  # JSON-API error response. See https://jsonapi.org/.
   def build_error(msg, err, code, status)
+    m = err.message.match(/:\s(\d{3})/)
+    !m.nil? && m[1] != code ? code = m[1] : ''
     {
       json: {
         errors: [
           {
-            "status": code !== err.status ? err.status : code,
+            "status": code,
             "title": msg,
             "detail": err.message
           }
