@@ -114,6 +114,12 @@ RSpec.describe 'Create a resource' do
     JSON
   end
 
+  let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: nil) }
+
+  before do
+    allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
+  end
+
   context 'with an image resource' do
     let(:type_uri) { Cocina::Models::Vocab.image }
 
@@ -132,13 +138,10 @@ RSpec.describe 'Create a resource' do
           .to_return(status: 200, body: response_body, headers: {})
         # rubocop:enable Layout/LineLength
 
-        stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
-          .to_return(status: 200, body: body, headers: {})
-
         allow(IngestJob).to receive(:perform_later)
       end
 
-      it 'Registers the resource and kicks off accessionWF' do
+      it 'registers the resource and kicks off IngestJob' do
         post '/v1/resources',
              params: request,
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
@@ -146,6 +149,8 @@ RSpec.describe 'Create a resource' do
         expect(response).to be_created
         expect(JSON.parse(response.body)['druid']).to be_present
         expect(IngestJob).to have_received(:perform_later)
+        expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:abc123',
+                                                                                'registrationWF', version: 1)
       end
     end
   end
@@ -168,13 +173,10 @@ RSpec.describe 'Create a resource' do
           .to_return(status: 200, body: response_body, headers: {})
         # rubocop:enable Layout/LineLength
 
-        stub_request(:post, 'http://localhost:3001/objects/druid:abc123/workflows/accessionWF?lane-id=default')
-          .to_return(status: 200, body: '', headers: {})
-
         allow(IngestJob).to receive(:perform_later)
       end
 
-      it 'Registers the resource and kicks off accessionWF' do
+      it 'registers the resource and kicks off IngestJob' do
         post '/v1/resources',
              params: request,
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
@@ -182,26 +184,8 @@ RSpec.describe 'Create a resource' do
         expect(response).to be_created
         expect(JSON.parse(response.body)['druid']).to be_present
         expect(IngestJob).to have_received(:perform_later)
-      end
-    end
-
-    context 'when the registration request is unsuccessful' do
-      before do
-        stub_request(:post, 'http://localhost:3003/v1/objects')
-          .to_return(status: [400, 'Bad Request'],
-                     body: "Unable to find 'druid:bk123gh4567' in fedora. See logger for details")
-      end
-
-      let(:error) { JSON.parse(response.body)['errors'][0] }
-
-      it 'returns an error response' do
-        post '/v1/resources',
-             params: request,
-             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-        expect(response).to have_http_status(:bad_request)
-        expect(error['title']).to eq 'Bad Request'
-        expect(error['detail']).to eq "Bad Request: 400 (Unable to find 'druid:bk123gh4567' " \
-                                      'in fedora. See logger for details)'
+        expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:abc123',
+                                                                                'registrationWF', version: 1)
       end
     end
 
@@ -219,6 +203,36 @@ RSpec.describe 'Create a resource' do
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         expect(response).to have_http_status(:gateway_timeout)
         expect(error['title']).to eq 'Unable to reach dor-services-app'
+        expect(error['detail']).to eq 'broken'
+      end
+    end
+
+    context 'when the create registrationWF request fails' do
+      before do
+        # rubocop:disable Layout/LineLength
+        stub_request(:post, 'http://localhost:3003/v1/objects')
+          .with(
+            body: '{"type":"http://cocina.sul.stanford.edu/models/book.jsonld","label":"hello","version":1,"access":{"embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world"},"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
+            headers: {
+              'Accept' => 'application/json',
+              'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
+              'Content-Type' => 'application/json'
+            }
+          )
+          .to_return(status: 200, body: response_body, headers: {})
+        # rubocop:enable Layout/LineLength
+
+        allow(workflow_client).to receive(:create_workflow_by_name).and_raise(Dor::WorkflowException, 'broken')
+      end
+
+      let(:error) { JSON.parse(response.body)['errors'][0] }
+
+      it 'returns an error response' do
+        post '/v1/resources',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(response).to have_http_status(:bad_gateway)
+        expect(error['title']).to eq 'Error creating registrationWF with workflow-service'
         expect(error['detail']).to eq 'broken'
       end
     end
