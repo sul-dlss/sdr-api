@@ -10,7 +10,7 @@ class ResourcesController < ApplicationController
     begin
       response_cocina_obj = Dor::Services::Client.objects.register(params: cocina_model)
     rescue Dor::Services::Client::UnexpectedResponse => e
-      return render build_error('Bad Request', e, '400', :bad_request)
+      return render build_error('Error registering object with dor-services-app', e, '502', :bad_gateway)
     rescue Dor::Services::Client::ConnectionFailed => e
       return render build_error('Unable to reach dor-services-app', e, '504',
                                 :gateway_timeout)

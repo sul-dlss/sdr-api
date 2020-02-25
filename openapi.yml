@@ -104,6 +104,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateObjectResponse'
+        '502':
+          description: Bad gateway for DOR or workflow services
+        '504':
+          description: Gateway timeout
       requestBody:
         description: The metadata for the object
         required: true
