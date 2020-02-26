@@ -50,7 +50,7 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/.
-  def build_error(msg, err, code, status)
+  def build_error(msg, err, code, _status)
     m = err.message.match(/:\s(\d{3})/)
     !m.nil? && m[1] != code ? code = m[1] : ''
     {
@@ -64,7 +64,7 @@ class ResourcesController < ApplicationController
         ]
       },
       content_type: 'application/vnd.api+json',
-      status: status
+      status: code
     }
   end
 

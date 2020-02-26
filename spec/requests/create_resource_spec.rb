@@ -220,7 +220,7 @@ RSpec.describe 'Create a resource' do
         post '/v1/resources',
              params: request,
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status('409')
         expect(error['status']).to eq '409'
       end
     end
@@ -249,7 +249,7 @@ RSpec.describe 'Create a resource' do
         post '/v1/resources',
              params: request,
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-        expect(response).to have_http_status(:bad_gateway)
+        expect(response).to have_http_status('502')
         expect(error['title']).to eq 'Error creating registrationWF with workflow-service'
         expect(error['detail']).to eq 'broken'
       end
