@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Processes a deposit, namely creating contentMetadata, shipping files and starting the workflow
+# Processes a deposit, namely shipping files to assembly NFS mount and starting the workflow
 class IngestJob < ApplicationJob
   queue_as :default
 
@@ -12,12 +12,7 @@ class IngestJob < ApplicationJob
 
     dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
     file_nodes = filesets.flat_map { |fs| fs.fetch('structural').fetch('contains') }
-    file_names = copy_files_to_staging(dir, file_nodes)
-
-    # generate contentMetadata.xml
-    xml = ContentMetadataGenerator.generate(filesets: filesets, file_names: file_names, druid: druid)
-
-    dir.write_file('contentMetadata.xml', xml)
+    copy_files_to_staging(dir, file_nodes)
 
     # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
     # this an API parameter.
@@ -36,14 +31,10 @@ class IngestJob < ApplicationJob
 
   # Copy files to the staging directory from ActiveStorage for the assembly workflow
   # @param [Array<Hash>] a list of hashes representing Cocina File objects
-  # @return [Hash<String,String>] a map of filenames (from the metadata) to the full paths to the files that were copied
+  # @return [void]
   def copy_files_to_staging(dir, file_nodes)
     files(file_nodes).each do |blob|
       dir.copy_file(ActiveStorage::Blob.service.path_for(blob.key), blob.filename.to_s)
-    end
-    file_nodes.each_with_object({}) do |file_node, out|
-      filename = file_node.fetch('filename')
-      out[filename] = File.join(dir.content_dir, filename)
     end
   end
 
