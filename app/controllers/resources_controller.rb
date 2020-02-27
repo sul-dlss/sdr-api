@@ -49,8 +49,10 @@ class ResourcesController < ApplicationController
     Cocina::Models::RequestDRO.new(model_params)
   end
 
-  # JSON-API error response. See https://jsonapi.org/
-  def build_error(msg, err, code, status)
+  # JSON-API error response. See https://jsonapi.org/.
+  def build_error(msg, err, code, _status)
+    m = err.message.match(/:\s(\d{3})/)
+    !m.nil? && m[1] != code ? code = m[1] : ''
     {
       json: {
         errors: [
@@ -62,7 +64,7 @@ class ResourcesController < ApplicationController
         ]
       },
       content_type: 'application/vnd.api+json',
-      status: status
+      status: code
     }
   end
 
