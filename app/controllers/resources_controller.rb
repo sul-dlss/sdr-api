@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+
 class ResourcesController < ApplicationController
   before_action :authorize_request
 
@@ -43,10 +45,36 @@ class ResourcesController < ApplicationController
     model_params = params.to_unsafe_h
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
-    # Presently, the create model endpoint in dor-services-app, can't handle filesets,
-    # so, we remove them here and make contentMetadata.xml instead.
-    model_params[:structural].delete(:contains)
+    file_sets(model_params[:structural].fetch(:contains, []))
+
     Cocina::Models::RequestDRO.new(model_params)
+  end
+
+  # Decorates the provided FileSets with the information we have in the ActiveStorage table.
+  # externalIdentifier is also removed from the request.
+  def file_sets(filesets)
+    filesets.each do |fileset|
+      fileset['version'] = 1
+      fileset.dig('structural', 'contains').each do |file|
+        blob = blob_for_signed_id(file.delete('externalIdentifier'))
+        file['size'] = blob.byte_size
+        file['hasMimeType'] = blob.content_type
+        declared_md5 = file['hasMessageDigests'].find { |digest| digest.fetch('type') == 'md5' }.fetch('digest')
+        calculated_md5 = base64_to_hexdigest(blob.checksum)
+        raise "MD5 Mismatch for ActiveStorage::Blob<##{blob.id}>" if declared_md5 != calculated_md5
+
+        file['version'] = 1
+      end
+    end
+  end
+
+  def blob_for_signed_id(signed_id)
+    file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
+    ActiveStorage::Blob.find(file_id)
+  end
+
+  def base64_to_hexdigest(base64)
+    Base64.decode64(base64).unpack1('H*')
   end
 
   # JSON-API error response. See https://jsonapi.org/.
