@@ -45,7 +45,7 @@ class ResourcesController < ApplicationController
     model_params = params.to_unsafe_h
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
-    file_sets(model_params[:structural][:contains])
+    file_sets(model_params[:structural].fetch(:contains, []))
 
     Cocina::Models::RequestDRO.new(model_params)
   end
@@ -56,18 +56,21 @@ class ResourcesController < ApplicationController
     filesets.each do |fileset|
       fileset['version'] = 1
       fileset.dig('structural', 'contains').each do |file|
-        signed_id = file.delete('externalIdentifier')
-        file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
-        blob = ActiveStorage::Blob.find(file_id)
+        blob = blob_for_signed_id(file.delete('externalIdentifier'))
         file['size'] = blob.byte_size
         file['hasMimeType'] = blob.content_type
-        file['hasMessageDigests'] = [
-          Cocina::Models::File::Fixity.new(type: 'md5',
-                                           digest: base64_to_hexdigest(blob.checksum))
-        ]
+        declared_md5 = file['hasMessageDigests'].find { |digest| digest.fetch('type') == 'md5' }.fetch('digest')
+        calculated_md5 = base64_to_hexdigest(blob.checksum)
+        raise "MD5 Mismatch for ActiveStorage::Blob<##{blob.id}>" if declared_md5 != calculated_md5
+
         file['version'] = 1
       end
     end
+  end
+
+  def blob_for_signed_id(signed_id)
+    file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
+    ActiveStorage::Blob.find(file_id)
   end
 
   def base64_to_hexdigest(base64)

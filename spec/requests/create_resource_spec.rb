@@ -45,6 +45,9 @@ RSpec.describe 'Create a resource' do
                   "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
                   "filename":"file2.txt",
                   "label":"file2.txt",
+                  "hasMessageDigests":[
+                    {"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"}
+                  ],
                   "externalIdentifier":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03",
                   "administrative":{
                     "sdrPreserve":true,
