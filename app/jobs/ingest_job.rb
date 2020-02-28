@@ -16,7 +16,7 @@ class IngestJob < ApplicationJob
 
     # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
     # this an API parameter.
-    workflow_client.create_workflow_by_name(druid, 'assemblyWF', version: 1, lane_id: 'low')
+    workflow_client.create_workflow_by_name(druid, 'accessionWF', version: 1, lane_id: 'low')
   ensure
     background_job_result.complete!
   end
