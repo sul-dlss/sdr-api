@@ -293,7 +293,11 @@ components:
         hasMessageDigests:
           type: array
           items:
-            $ref: '#/components/schemas/MessageDigest'
+            oneOf:
+              - $ref: '#/components/schemas/MessageDigestMD5'
+              - $ref: '#/components/schemas/MessageDigestSHA1'
+          minItems: 2
+          uniqueItems: true
         administrative:
           $ref: '#/components/schemas/FileAdministrative'
         access:
@@ -392,8 +396,23 @@ components:
           example: Searchworks
         release:
           type: boolean
-    MessageDigest:
-      description: The output of the message digest algorithm.
+    MessageDigestSHA1:
+      description: The output of the sha1 message digest.
+      type: object
+      properties:
+        type:
+          description: The algorithm that was used
+          type: string
+          enum:
+            - sha1
+        digest:
+          description: The digest value
+          type: string
+      required:
+        - type
+        - digest
+    MessageDigestMD5:
+      description: The output of the md5 message digest.
       type: object
       properties:
         type:
@@ -401,7 +420,6 @@ components:
           type: string
           enum:
             - md5
-            - sha1
         digest:
           description: The digest value
           type: string
