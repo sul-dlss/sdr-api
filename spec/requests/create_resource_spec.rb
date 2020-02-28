@@ -26,32 +26,38 @@ RSpec.describe 'Create a resource' do
           ],
           "sourceId":"googlebooks:stanford_82323429"
         },
-        "structural":{
-          "isMemberOf":"druid:fg123hj4567",
-          "contains":[
-            {
-              "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
-              "label":"Page 1",
-              "structural":{
-                "contains":[
-                  {
-                    "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
-                    "filename":"file2.txt",
-                    "label":"file2.txt",
-                    "externalIdentifier":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03",
-                    "administrative":{
-                      "sdrPreserve":true,
-                      "shelve":true
-                    },
-                    "access": {
-                      "access":"citation-only"
-                    }
+        #{structural}
+      }
+    JSON
+  end
+
+  let(:structural) do
+    <<~JSON
+      "structural":{
+        "isMemberOf":"druid:fg123hj4567",
+        "contains":[
+          {
+            "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
+            "label":"Page 1",
+            "structural":{
+              "contains":[
+                {
+                  "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
+                  "filename":"file2.txt",
+                  "label":"file2.txt",
+                  "externalIdentifier":"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBOZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--89b7b484c80fe7f94d4aeff21c0c0e3e037d5c03",
+                  "administrative":{
+                    "sdrPreserve":true,
+                    "shelve":true
+                  },
+                  "access": {
+                    "access":"citation-only"
                   }
-                ]
-              }
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       }
     JSON
   end
@@ -252,6 +258,41 @@ RSpec.describe 'Create a resource' do
         expect(response).to have_http_status('502')
         expect(error['title']).to eq 'Error creating registrationWF with workflow-service'
         expect(error['detail']).to eq 'broken'
+      end
+    end
+  end
+
+  context 'without any files' do
+    let(:type_uri) { Cocina::Models::Vocab.object }
+    let(:structural) { '"structural":{"isMemberOf":"druid:fg123hj4567"}' }
+
+    context 'when the registration request is successful' do
+      before do
+        # rubocop:disable Layout/LineLength
+        stub_request(:post, 'http://localhost:3003/v1/objects')
+          .with(
+            body: '{"type":"http://cocina.sul.stanford.edu/models/object.jsonld","label":"hello","version":1,"access":{"embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world"},"access":"dark"},"administrative":{"releaseTags":[],"hasAdminPolicy":"druid:bc123df4567"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"structural":{"isMemberOf":"druid:fg123hj4567"}}',
+            headers: {
+              'Accept' => 'application/json',
+              'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
+              'Content-Type' => 'application/json'
+            }
+          )
+          .to_return(status: 200, body: response_body, headers: {})
+        # rubocop:enable Layout/LineLength
+
+        allow(IngestJob).to receive(:perform_later)
+      end
+
+      it 'registers the resource and kicks off IngestJob' do
+        post '/v1/resources',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(response).to be_created
+        expect(JSON.parse(response.body)['druid']).to be_present
+        expect(IngestJob).to have_received(:perform_later)
+        expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:abc123',
+                                                                                'registrationWF', version: 1)
       end
     end
   end

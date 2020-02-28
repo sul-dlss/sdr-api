@@ -27,7 +27,7 @@ class ResourcesController < ApplicationController
     result = BackgroundJobResult.create
 
     IngestJob.perform_later(druid: response_cocina_obj.externalIdentifier,
-                            filesets: params[:structural].to_unsafe_h.fetch(:contains),
+                            filesets: params[:structural].to_unsafe_h.fetch(:contains, []),
                             background_job_result: result)
 
     render json: { druid: response_cocina_obj.externalIdentifier },
