@@ -5,7 +5,6 @@ executors:
       IMAGE_NAME: suldlss/sdr-api
     docker:
       - image: circleci/buildpack-deps:stretch
-
 references:
   default_docker_ruby_executor: &default_docker_ruby_executor
     image: circleci/ruby:2.6.3-stretch-node
@@ -25,55 +24,18 @@ references:
       POSTGRES_USER: postgres
       POSTGRES_DB: sdr
       POSTGRES_PASSWORD: sekret
-
 jobs:
-  build:
-    docker:
-      - *default_docker_ruby_executor
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - run:
-          name: Install Bundler
-          command: gem install bundler
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - restore_cache:
-          keys:
-          - sdr-api-bundle-v2-{{ checksum "Gemfile.lock" }}
-          - sdr-api-bundle-v2-
-      - run:
-          name: Bundle Install
-          command: bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
-      - save_cache:
-          key: sdr-apis-bundle-v2-{{ checksum "Gemfile.lock" }}
-          paths:
-          - vendor/bundle
-      - persist_to_workspace:
-          root: .
-          paths: '*'
-  test:
+  test-branch:
     docker:
       - *default_docker_ruby_executor
       - *postgres
     steps:
-      - attach_workspace:
-          at: '~/project'
-      - restore_cache:
-          keys:
-          - sdr-api-bundle-v2-{{ checksum "Gemfile.lock" }}
-          - sdr-api-bundle-v2-
+      - checkout
       - run:
-          name: Install Bundler
+          name: Install bundler
           command: gem install bundler
       - run:
-          name: Which bundler?
-          command: bundle -v
-      - run:
-          name: Bundle Install
+          name: Install gem dependencies
           command: bundle check || bundle install
       - run:
           name: Lint using rubocop
@@ -110,13 +72,63 @@ jobs:
             chmod +x ./cc-test-reporter
             ./cc-test-reporter before-build
       - run:
-          name: rspec
+          name: Run RSpec test suite
           command: bundle exec rspec
       - run:
-          name: upload test coverage report to Code Climate
+          name: Send test coverage to CodeClimate
           command: ./cc-test-reporter after-build --coverage-input-type simplecov --exit-code $?
-      # - store_test_results:
-      #     path: test_results
+  test-merge:
+    docker:
+      - *default_docker_ruby_executor
+      - *postgres
+    steps:
+      - checkout
+      - run:
+          name: Build against master branch
+          command: |
+            git config --global url."https://github.com/".insteadOf git@github.com:
+            git fetch origin && git merge --no-edit origin/master
+            if [[ $? -ne 0 ]]; then
+            echo "Failed to merge `master` into $CIRCLE_BRANCH"
+            exit 1
+            fi
+      - run:
+          name: Install bundler
+          command: gem install bundler
+      - run:
+          name: Install gem dependencies
+          command: bundle check || bundle install
+      - run:
+          name: Lint using rubocop
+          command: bundle exec rubocop
+      - run:
+          name: Validate API specification
+          command: |
+            sudo npm install -g openapi-enforcer-cli
+            result=$(openapi-enforcer validate openapi.yml)
+            [[ $result =~ "Document is valid" ]] && {
+            echo "API specification is valid OAS (but may have warnings, see below)"
+            echo $result
+            exit 0
+            } || {
+            echo $result
+            exit 1
+            }
+      # Need `psql` command when you store the app schema as SQL instead of as Ruby
+      - run:
+          name: Install postgresql client
+          command: |
+            sudo apt update -y
+            sudo apt install -y postgresql-client || true
+      - run:
+          name: Wait for database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Database setup
+          command: bin/rails db:test:prepare
+      - run:
+          name: Run RSpec test suite
+          command: bundle exec rspec
   build-image:
     executor: docker-publisher
     steps:
@@ -165,15 +177,15 @@ jobs:
           echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
           docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_TAG
           docker push $IMAGE_NAME:$CIRCLE_TAG
-
 workflows:
   version: 2
-  build_and_test:
+  test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      - test-branch
+      - test-merge:
+          filters:
+            branches:
+              ignore: master
   build:
     jobs:
     - build-image:
@@ -182,7 +194,7 @@ workflows:
             only: master
     - publish-latest:
         requires:
-        - build-image
+          - build-image
         filters:
           branches:
             only: master
@@ -196,7 +208,7 @@ workflows:
             ignore: /.*/
     - publish-tag:
         requires:
-        - build-image
+          - build-image
         filters:
           tags:
             only: /^[0-9]+\.[0-9]+\.[0-9]+/
