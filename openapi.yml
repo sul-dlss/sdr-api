@@ -164,8 +164,22 @@ components:
     Access:
       type: object
       properties:
+        access:
+          type: string
+          enum:
+            - 'world'
+            - 'stanford'
+            - 'location-based'
+            - 'citation-only'
+            - 'dark'
+        copyright:
+          description: The human readable reuse and reproduction statement that applies
+          type: string
         embargo:
           $ref: '#/components/schemas/Embargo'
+        useAndReproductionStatement:
+          description: The human readable copyright statement that applies
+          type: string
     Embargo:
       type: object
       properties:
