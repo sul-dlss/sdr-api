@@ -12,6 +12,6 @@
 # Learn more: https://github.com/javan/whenever
 
 every :day do
-  set :output, standard: nil, error: 'log/uploads_sweeper.log'
+  set :output, standard: 'log/uploads_sweeper.log', error: 'log/uploads_sweeper.error.log'
   runner 'DirectUploadsSweeper.new(strategy: SelectOutdatedUploadsStrategy).sweep'
 end
