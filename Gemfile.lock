@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    action_policy (0.4.3)
     actioncable (6.0.2.1)
       actionpack (= 6.0.2.1)
       nio4r (~> 2.0)
@@ -370,6 +371,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  action_policy
   assembly-objectfile (~> 1.9)
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.2)

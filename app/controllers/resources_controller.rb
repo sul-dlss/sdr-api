@@ -9,6 +9,7 @@ class ResourcesController < ApplicationController
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   def create
+    authorize! :resource
     begin
       response_cocina_obj = Dor::Services::Client.objects.register(params: cocina_model)
     rescue Dor::Services::Client::UnexpectedResponse => e
