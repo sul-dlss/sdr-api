@@ -18,7 +18,11 @@ Metrics/BlockLength:
 
 RSpec/DescribeClass:
   Exclude:
-    - 'spec/requests/**/*.rb'
+    - 'spec/requests/**/*_spec.rb'
+
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/policies/**/*_spec.rb'
 
 RSpec/ExampleLength:
   Enabled: false
