@@ -451,8 +451,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FileSet'
-      required:
-        - isMemberOf
     FileSetStructural:
       type: object
       properties:
