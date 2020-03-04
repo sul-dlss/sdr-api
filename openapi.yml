@@ -155,6 +155,35 @@ paths:
                   description: password of the user
                   type: string
                   example: sekr3t!
+  /v1/auth/proxy:
+    post:
+      tags:
+        - authentication
+      summary: Retrieve a JSON web token for a different user
+      operationId: 'authentication#proxy'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The access token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+                  exp:
+                    type: string
+                    description: When the token will expire
+                    format: date-time
+      parameters:
+        - in: query
+          name: to
+          description: The email of the user to proxy to
+          required: true
+          schema:
+            type: string
 components:
   schemas:
     Druid:

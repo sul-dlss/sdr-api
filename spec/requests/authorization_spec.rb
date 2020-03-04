@@ -8,7 +8,7 @@ RSpec.describe 'Authorization' do
       User.create!(email: 'jcoyne85@stanford.edu', password: 'sekr3t!')
     end
 
-    it 'Logs tokens to honeybadger' do
+    it 'returns a token' do
       post '/v1/auth/login',
            params: { email: 'jcoyne85@stanford.edu', password: 'sekr3t!' }.to_json,
            headers: { 'Content-Type' => 'application/json' }
