@@ -298,8 +298,6 @@ components:
           type: string
         filename:
           type: string
-        externalIdentifier:
-          type: string
         hasMimeType:
           type: string
         use:
@@ -319,7 +317,6 @@ components:
       required:
         - label
         - filename
-        - externalIdentifier
         - administrative
         - access
     BackgroundJobResultResponse:
