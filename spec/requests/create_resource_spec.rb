@@ -18,7 +18,8 @@ RSpec.describe 'Create a resource' do
           }
         },
         "administrative": {
-          "hasAdminPolicy":"druid:bc123df4567"
+          "hasAdminPolicy":"druid:bc123df4567",
+          "partOfProject":"Google Books"
         },
         "identification": {
           "catalogLinks": [
@@ -83,7 +84,8 @@ RSpec.describe 'Create a resource' do
           }
         },
         "administrative": {
-          "hasAdminPolicy":"druid:bc123df4567"
+          "hasAdminPolicy":"druid:bc123df4567",
+          "partOfProject":"Google Books"
         },
         "identification": {
           "sourceId":"googlebooks:stanford_82323429",
@@ -147,7 +149,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[]},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/image.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[],"partOfProject":"Google Books"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/image.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -182,7 +184,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[]},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/book.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[],"partOfProject":"Google Books"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/book.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -249,7 +251,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[]},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/book.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[],"partOfProject":"Google Books"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/book.jsonld","version":1,"structural":{"contains":[{"identification":{},"label":"Page 1","type":"http://cocina.sul.stanford.edu/models/fileset.jsonld","version":1,"structural":{"contains":[{"access":{"access":"citation-only"},"administrative":{"sdrPreserve":true,"shelve":true},"label":"file2.txt","filename":"file2.txt","hasMessageDigests":[{"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},{"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}],"hasMimeType":"text/plain","size":26659,"type":"http://cocina.sul.stanford.edu/models/file.jsonld","version":1}]}}],"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
@@ -284,7 +286,7 @@ RSpec.describe 'Create a resource' do
         # rubocop:disable Layout/LineLength
         stub_request(:post, 'http://localhost:3003/v1/objects')
           .with(
-            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[]},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/object.jsonld","version":1,"structural":{"isMemberOf":"druid:fg123hj4567"}}',
+            body: '{"access":{"access":"dark","copyright":"All rights reserved unless otherwise indicated.","embargo":{"releaseDate":"2029-06-22T07:00:00.000+00:00","access":"world","useAndReproductionStatement":"Whatever you want"},"useAndReproductionStatement":"Property rights reside with the repository..."},"administrative":{"hasAdminPolicy":"druid:bc123df4567","releaseTags":[],"partOfProject":"Google Books"},"identification":{"sourceId":"googlebooks:stanford_82323429","catalogLinks":[{"catalog":"symphony","catalogRecordId":"123456"}]},"label":"hello","type":"http://cocina.sul.stanford.edu/models/object.jsonld","version":1,"structural":{"isMemberOf":"druid:fg123hj4567"}}',
             headers: {
               'Accept' => 'application/json',
               'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4',
