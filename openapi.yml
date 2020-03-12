@@ -179,6 +179,7 @@ components:
           $ref: '#/components/schemas/Embargo'
         useAndReproductionStatement:
           description: The human readable copyright statement that applies
+          example: Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Public Services Librarian of the Dept. of Special Collections (http://library.stanford.edu/spc).
           type: string
     Embargo:
       type: object
@@ -195,6 +196,10 @@ components:
             - location-based
             - citation-only
             - dark
+        useAndReproductionStatement:
+          description: The human readable use and reproduction statement that applies when the embargo expires.
+          example: These materials are in the public domain.
+          type: string
       required:
         - releaseDate
         - access
