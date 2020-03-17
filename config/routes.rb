@@ -4,8 +4,8 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do
   scope 'v1' do
-    # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
     post '/auth/login', to: 'authentication#login'
+    post '/auth/proxy', to: 'authentication#proxy'
 
     resources :resources, only: [:create]
     resources :background_job_results, only: [:show], defaults: { format: :json }
