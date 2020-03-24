@@ -43,7 +43,7 @@ class ResourcesController < ApplicationController
   private
 
   def cocina_model
-    model_params = params.to_unsafe_h
+    model_params = params.except(:action, :controller, :resource).to_unsafe_h
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
     file_sets(model_params[:structural].fetch(:contains, []))
