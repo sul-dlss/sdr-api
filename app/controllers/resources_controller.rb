@@ -12,19 +12,19 @@ class ResourcesController < ApplicationController
     authorize! :resource
     begin
       response_cocina_obj = Dor::Services::Client.objects.register(params: cocina_model)
+    rescue Dor::Services::Client::UnauthorizedResponse => e
+      return render build_error('Error registering object with dor-services-app', e, '500', true)
     rescue Dor::Services::Client::UnexpectedResponse => e
-      return render build_error('Error registering object with dor-services-app', e, '502', :bad_gateway)
+      return render build_error('Error registering object with dor-services-app', e, '502')
     rescue Dor::Services::Client::ConnectionFailed => e
-      return render build_error('Unable to reach dor-services-app', e, '504',
-                                :gateway_timeout)
+      return render build_error('Unable to reach dor-services-app', e, '504', true)
     end
 
     # Doing this here rather than IngestJob so that have accurate timestamp for milestone.
     begin
       workflow_client.create_workflow_by_name(response_cocina_obj.externalIdentifier, 'registrationWF', version: 1)
     rescue Dor::WorkflowException => e
-      return render build_error('Error creating registrationWF with workflow-service', e, '502',
-                                :bad_gateway)
+      return render build_error('Error creating registrationWF with workflow-service', e, '502')
     end
 
     result = BackgroundJobResult.create
@@ -79,22 +79,28 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/.
-  def build_error(msg, err, code, _status)
-    m = err.message.match(/:\s(\d{3})/)
-    !m.nil? && m[1] != code ? code = m[1] : ''
+  def build_error(msg, err, code, force_code = false)
+    error_code = code_for(err, code, force_code)
     {
       json: {
         errors: [
           {
-            "status": code,
+            "status": error_code,
             "title": msg,
             "detail": err.message
           }
         ]
       },
       content_type: 'application/vnd.api+json',
-      status: code
+      status: error_code
     }
+  end
+
+  def code_for(err, code, force_code)
+    m = err.message.match(/:\s(\d{3})/)
+    return m[1] if m && !force_code
+
+    code
   end
 
   def workflow_client
