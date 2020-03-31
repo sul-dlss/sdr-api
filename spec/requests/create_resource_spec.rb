@@ -254,6 +254,24 @@ RSpec.describe 'Create a resource' do
       end
     end
 
+    context 'when the registration request is unauthorized' do
+      before do
+        allow(Dor::Services::Client.objects).to receive(:register)
+          .and_raise(Dor::Services::Client::UnauthorizedResponse,
+                     'Unauthorized: 401')
+      end
+
+      let(:error) { JSON.parse(response.body)['errors'][0] }
+
+      it 'returns an error response' do
+        post '/v1/resources',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(response).to have_http_status('500')
+        expect(error['status']).to eq '500'
+      end
+    end
+
     context 'when the create registrationWF request fails' do
       before do
         # rubocop:disable Layout/LineLength
