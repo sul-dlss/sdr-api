@@ -54,12 +54,14 @@ RSpec.describe IngestJob, type: :job do
       f.write 'HELLO'
     end
     allow(Dor::Workflow::Client).to receive(:new).and_return(client)
+    allow(ActiveStorage::PurgeJob).to receive(:perform_later)
   end
 
-  it 'creates a workflow' do
+  it 'ingests an object' do
     run
     expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
     expect(client).to have_received(:create_workflow_by_name).with(druid, 'accessionWF', version: 1, lane_id: 'low')
     expect(result).to be_complete
+    expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
   end
 end

@@ -17,6 +17,7 @@ class IngestJob < ApplicationJob
     # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
     # this an API parameter.
     workflow_client.create_workflow_by_name(druid, 'accessionWF', version: 1, lane_id: 'low')
+    delete_from_active_storage(file_nodes)
   ensure
     background_job_result.complete!
   end
@@ -47,5 +48,10 @@ class IngestJob < ApplicationJob
 
     # This can raise ActiveRecord::RecordNotFound if one or more of the files don't exist
     ActiveStorage::Blob.find(file_ids)
+  end
+
+  def delete_from_active_storage(file_nodes)
+    # This is a purge_later so not worried about delete errors.
+    files(file_nodes).each(&:purge_later)
   end
 end
