@@ -9,3 +9,4 @@ OkComputer.check_in_parallel = true
 # REQUIRED checks, required to pass for /status/all
 #  individual checks also avail at /status/<name-of-check>
 OkComputer::Registry.register 'ruby_version', OkComputer::RubyVersionCheck.new
+OkComputer::Registry.register 'background_jobs', OkComputer::SidekiqLatencyCheck.new('default', 25)
