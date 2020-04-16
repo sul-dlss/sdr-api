@@ -28,10 +28,10 @@ class ResourcesController < ApplicationController
     end
 
     result = BackgroundJobResult.create
-
     IngestJob.perform_later(druid: response_cocina_obj.externalIdentifier,
                             filesets: params[:structural].to_unsafe_h.fetch(:contains, []),
-                            background_job_result: result)
+                            background_job_result: result,
+                            start_workflow: params[:accession])
 
     render json: { druid: response_cocina_obj.externalIdentifier },
            location: result,
@@ -43,7 +43,7 @@ class ResourcesController < ApplicationController
   private
 
   def cocina_model
-    model_params = params.except(:action, :controller, :resource).to_unsafe_h
+    model_params = params.except(:action, :controller, :resource, :accession).to_unsafe_h
     model_params[:label] = ':auto' if model_params[:label].nil?
     model_params[:version] = 1 if model_params[:version].nil?
     file_sets(model_params[:structural].fetch(:contains, []))
