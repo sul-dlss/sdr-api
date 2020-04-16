@@ -394,7 +394,7 @@ DEPENDENCIES
   cocina-models (~> 0.31.0)
   committee
   config (~> 2.0)
-  dlss-capistrano
+  dlss-capistrano (~> 3.5)
   dor-services-client (~> 5.1)
   dor-workflow-client
   druid-tools
