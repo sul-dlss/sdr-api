@@ -10,11 +10,16 @@ An HTTP API for the SDR.
 
 There is a [OAS 3.0 spec](http://spec.openapis.org/oas/v3.0.2) that documents the API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html].
 
-## Deposit
+## Functionality
+### Deposit
 This accepts a series of uploaded files and metadata (Cocina model) and begins the accessioning workflow.
 
-TODO:
-  - Create derivative images for access
+### Register
+Same as deposit, but doesn't begin the accessioning workflow
+
+## Future enhancements
+- Update an existing object. This depends on us having a complete mapping between Cocina descriptive metadata and MODS.
+- Create derivative images for access
 
 ## Local Development / Usage
 

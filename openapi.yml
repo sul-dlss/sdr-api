@@ -108,6 +108,11 @@ paths:
           description: Bad gateway for DOR or workflow services
         '504':
           description: Gateway timeout
+      parameters:
+        - in: query
+          name: accession
+          schema:
+            type: boolean
       requestBody:
         description: The metadata for the object
         required: true

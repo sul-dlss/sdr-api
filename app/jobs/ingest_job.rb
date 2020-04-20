@@ -7,7 +7,7 @@ class IngestJob < ApplicationJob
   # @param [String] druid
   # @param [Array<Hash>] filesets the data for creating the structure
   # @param [BackgroundJobResult] background_job_result
-  def perform(druid:, filesets:, background_job_result:)
+  def perform(druid:, filesets:, background_job_result:, start_workflow: true)
     background_job_result.processing!
 
     dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
@@ -16,7 +16,7 @@ class IngestJob < ApplicationJob
 
     # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
     # this an API parameter.
-    workflow_client.create_workflow_by_name(druid, 'accessionWF', version: 1, lane_id: 'low')
+    workflow_client.create_workflow_by_name(druid, 'accessionWF', version: 1, lane_id: 'low') if start_workflow
     delete_from_active_storage(file_nodes)
   ensure
     background_job_result.complete!

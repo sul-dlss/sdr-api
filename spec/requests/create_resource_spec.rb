@@ -325,15 +325,38 @@ RSpec.describe 'Create a resource' do
         allow(IngestJob).to receive(:perform_later)
       end
 
-      it 'registers the resource and kicks off IngestJob' do
-        post '/v1/resources',
-             params: request,
-             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-        expect(response).to be_created
-        expect(JSON.parse(response.body)['druid']).to be_present
-        expect(IngestJob).to have_received(:perform_later)
-        expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:bc123df4567',
-                                                                                'registrationWF', version: 1)
+      context 'when accession=true is provided' do
+        it 'registers the resource and kicks off IngestJob' do
+          post '/v1/resources?accession=true',
+               params: request,
+               headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+          expect(response).to be_created
+          expect(JSON.parse(response.body)['druid']).to be_present
+          expect(IngestJob).to have_received(:perform_later)
+            .with(background_job_result: BackgroundJobResult,
+                  druid: String,
+                  filesets: [],
+                  start_workflow: true)
+          expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:bc123df4567',
+                                                                                  'registrationWF', version: 1)
+        end
+      end
+
+      context 'when accession is not provided' do
+        it 'registers the resource and kicks off IngestJob' do
+          post '/v1/resources',
+               params: request,
+               headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+          expect(response).to be_created
+          expect(JSON.parse(response.body)['druid']).to be_present
+          expect(IngestJob).to have_received(:perform_later)
+            .with(background_job_result: BackgroundJobResult,
+                  druid: String,
+                  filesets: [],
+                  start_workflow: nil)
+          expect(workflow_client).to have_received(:create_workflow_by_name).with('druid:bc123df4567',
+                                                                                  'registrationWF', version: 1)
+        end
       end
     end
   end
