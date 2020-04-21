@@ -36,7 +36,6 @@ require 'capistrano/passenger'
 require 'capistrano/honeybadger'
 # require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
-require 'capistrano/sidekiq'
 require 'dlss/capistrano'
 require 'whenever/capistrano'
 

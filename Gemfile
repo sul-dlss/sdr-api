@@ -57,6 +57,5 @@ end
 group :deployment do
   gem 'capistrano-passenger', require: false
   gem 'capistrano-rails', require: false
-  gem 'capistrano-sidekiq', require: false
-  gem 'dlss-capistrano', '~> 3.5', require: false
+  gem 'dlss-capistrano', '~> 3.6', require: false
 end
