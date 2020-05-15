@@ -113,7 +113,8 @@ CREATE TABLE public.background_job_results (
     output json DEFAULT '{}'::json,
     status public.background_job_result_status DEFAULT 'pending'::public.background_job_result_status,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    try_count integer DEFAULT 0
 );
 
 
@@ -292,6 +293,7 @@ SET search_path TO "$user", public;
 INSERT INTO "schema_migrations" (version) VALUES
 ('20191114204827'),
 ('20191115013418'),
-('20200110154606');
+('20200110154606'),
+('20200514172809');
 
 

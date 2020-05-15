@@ -3,75 +3,77 @@
 require 'base64'
 
 class ResourcesController < ApplicationController
+  class BlobError < StandardError; end
+
   before_action :authorize_request
 
   # POST /objects
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
   def create
     authorize! :resource
-    begin
-      response_cocina_obj = Dor::Services::Client.objects.register(params: cocina_model)
-    rescue Dor::Services::Client::UnauthorizedResponse => e
-      return render build_error('Error registering object with dor-services-app', e, '500', true)
-    rescue Dor::Services::Client::UnexpectedResponse => e
-      return render build_error('Error registering object with dor-services-app', e, '502')
-    rescue Dor::Services::Client::ConnectionFailed => e
-      return render build_error('Unable to reach dor-services-app', e, '504', true)
-    end
 
-    # Doing this here rather than IngestJob so that have accurate timestamp for milestone.
     begin
-      workflow_client.create_workflow_by_name(response_cocina_obj.externalIdentifier, 'registrationWF', version: 1)
-    rescue Dor::WorkflowException => e
-      return render build_error('Error creating registrationWF with workflow-service', e, '502')
+      request_dro = cocina_model(params.except(:action, :controller, :resource, :accession).to_unsafe_h)
+    rescue BlobError => e
+      # Returning 500 because not clear whose fault it is.
+      return render build_error('500', e, 'Error matching uploading files to file parameters.')
     end
-
-    result = BackgroundJobResult.create
-    IngestJob.perform_later(druid: response_cocina_obj.externalIdentifier,
-                            filesets: params[:structural].to_unsafe_h.fetch(:contains, []),
+    result = BackgroundJobResult.create(output: {})
+    IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
+                            signed_ids: signed_ids(params),
                             background_job_result: result,
                             start_workflow: params[:accession])
 
-    render json: { druid: response_cocina_obj.externalIdentifier },
+    render json: { jobId: result.id },
            location: result,
            status: :created
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 
   private
 
-  def cocina_model
-    model_params = params.except(:action, :controller, :resource, :accession).to_unsafe_h
-    model_params[:label] = ':auto' if model_params[:label].nil?
-    model_params[:version] = 1 if model_params[:version].nil?
-    file_sets(model_params[:structural].fetch(:contains, []))
+  def cocina_model(model_params)
+    new_model_params = model_params.deep_dup
+    new_model_params[:version] = 1
+    decorate_file_sets(new_model_params)
 
-    Cocina::Models::RequestDRO.new(model_params)
+    Cocina::Models::RequestDRO.new(new_model_params)
   end
 
   # Decorates the provided FileSets with the information we have in the ActiveStorage table.
   # externalIdentifier is also removed from the request.
-  def file_sets(filesets)
-    filesets.each do |fileset|
-      fileset['version'] = 1
-      fileset.dig('structural', 'contains').each do |file|
-        blob = blob_for_signed_id(file.delete('externalIdentifier'))
-        file['size'] = blob.byte_size
-        file['hasMimeType'] = blob.content_type
-        declared_md5 = file['hasMessageDigests'].find { |digest| digest.fetch('type') == 'md5' }.fetch('digest')
+  # rubocop:disable Metrics/AbcSize
+  def decorate_file_sets(model_params)
+    file_sets(model_params).each do |fileset|
+      fileset[:version] = 1
+      fileset.dig(:structural, :contains).each do |file|
+        blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
+        file[:version] = 1
+        file[:size] = blob.byte_size
+        file[:hasMimeType] = blob.content_type || 'application/octet-stream'
+        declared_md5 = file[:hasMessageDigests].find { |digest| digest.fetch(:type) == 'md5' }.fetch(:digest)
         calculated_md5 = base64_to_hexdigest(blob.checksum)
-        raise "MD5 Mismatch for ActiveStorage::Blob<##{blob.id}>" if declared_md5 != calculated_md5
-
-        file['version'] = 1
+        raise BlobError, "MD5 mismatch for #{file[:filename]}" if declared_md5 != calculated_md5
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
-  def blob_for_signed_id(signed_id)
+  def blob_for_signed_id(signed_id, filename)
     file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
     ActiveStorage::Blob.find(file_id)
+  rescue ActiveRecord::RecordNotFound
+    raise BlobError, "Unable to find upload for #{filename} (#{signed_id})"
+  end
+
+  def file_sets(model_params)
+    model_params[:structural].fetch(:contains, [])
+  end
+
+  def signed_ids(model_params)
+    file_sets(model_params).flat_map do |fileset|
+      fileset.dig(:structural, :contains).map do |file|
+        file[:externalIdentifier]
+      end
+    end
   end
 
   def base64_to_hexdigest(base64)
@@ -79,8 +81,7 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/.
-  def build_error(msg, err, code, force_code = false)
-    error_code = code_for(err, code, force_code)
+  def build_error(error_code, err, msg)
     {
       json: {
         errors: [
@@ -94,18 +95,5 @@ class ResourcesController < ApplicationController
       content_type: 'application/vnd.api+json',
       status: error_code
     }
-  end
-
-  def code_for(err, code, force_code)
-    m = err.message.match(/:\s(\d{3})/)
-    return m[1] if m && !force_code
-
-    code
-  end
-
-  def workflow_client
-    Dor::Workflow::Client.new(url: Settings.workflow.url,
-                              logger: Rails.logger,
-                              timeout: 60)
   end
 end
