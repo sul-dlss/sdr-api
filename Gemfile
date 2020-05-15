@@ -28,7 +28,7 @@ gem 'dor-workflow-client'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'okcomputer'
-gem 'sidekiq', '~> 5.2'
+gem 'sidekiq', '~> 6.0'
 gem 'sidekiq-statistic'
 gem 'whenever', require: false
 
