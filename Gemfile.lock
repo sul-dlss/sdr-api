@@ -390,7 +390,7 @@ DEPENDENCIES
   committee
   config (~> 2.0)
   dlss-capistrano (~> 3.6)
-  dor-services-client (~> 6.0)
+  dor-services-client (~> 6.4)
   dor-workflow-client
   druid-tools
   equivalent-xml

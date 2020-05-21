@@ -101,13 +101,9 @@ paths:
                 format: uri
               description: URL to retrieve background job results.
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateObjectResponse'
-        '502':
-          description: Bad gateway for DOR or workflow services
-        '504':
-          description: Gateway timeout
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CreateObjectResponse'
       parameters:
         - in: query
           name: accession
@@ -1086,7 +1082,13 @@ components:
         output:
           type: object
           description: output from the job
-          $ref: '#/components/schemas/ErrorResponse'
+          properties:
+            druid:
+              $ref: '#/components/schemas/Druid'
+            errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/Error'
         status:
           type: string
           description: the status of the background job
@@ -1094,11 +1096,17 @@ components:
             - pending
             - processing
             - complete
+        try_count:
+          type: integer
+          description: the number of tries
     CreateObjectResponse:
       type: object
       properties:
-        druid:
-          $ref: '#/components/schemas/Druid'
+        jobId:
+          type: string
+          description: id for the background job that is processing the create object request
+      required:
+        - jobId
     ErrorResponse:
       type: object
       properties:
