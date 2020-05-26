@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe IngestJob, type: :job do
   let(:try_count) { 0 }
   let(:result) { create(:background_job_result, try_count: try_count) }
+  let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123de5678' }
   let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow: workflow) }
   let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
@@ -113,8 +114,8 @@ RSpec.describe IngestJob, type: :job do
         .with(druid, 'registrationWF', version: 1, lane_id: 'low')
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'low')
-      expect(result).to be_complete
-      expect(result.output).to match({ druid: druid })
+      expect(actual_result).to be_complete
+      expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
   end
@@ -133,8 +134,8 @@ RSpec.describe IngestJob, type: :job do
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'accessionWF')
-      expect(result).to be_complete
-      expect(result.output)
+      expect(actual_result).to be_complete
+      expect(actual_result.output)
         .to match({ errors: [title: 'Object with source_id already exists.',
                              message: "Obj (#{druid}) already exists"] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
@@ -159,8 +160,8 @@ RSpec.describe IngestJob, type: :job do
         .with(druid, 'registrationWF', version: 1, lane_id: 'low')
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'low')
-      expect(result).to be_complete
-      expect(result.output).to match({ druid: druid })
+      expect(actual_result).to be_complete
+      expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
   end
@@ -181,8 +182,8 @@ RSpec.describe IngestJob, type: :job do
         .with(druid, 'registrationWF', version: 1, lane_id: 'low')
       expect(workflow_client).not_to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'low')
-      expect(result).to be_complete
-      expect(result.output).to match({ druid: druid })
+      expect(actual_result).to be_complete
+      expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
   end
@@ -202,7 +203,7 @@ RSpec.describe IngestJob, type: :job do
                                       signed_ids: signed_ids)
         end
           .to raise_error(StandardError)
-        expect(result).to be_pending
+        expect(actual_result).to be_pending
       end
     end
 
@@ -211,8 +212,8 @@ RSpec.describe IngestJob, type: :job do
 
       it 'quits' do
         described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
-        expect(result).to be_complete
-        expect(result.output[:errors]).to be_present
+        expect(actual_result).to be_complete
+        expect(actual_result.output[:errors]).to be_present
       end
     end
   end

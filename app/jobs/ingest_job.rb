@@ -51,7 +51,8 @@ class IngestJob < ApplicationJob
     end
 
     # Otherwise return an error on background_job_result but exit cleanly.
-    background_job_result.output.merge!({ errors: [title: 'All retries failed', message: e.message] })
+    background_job_result.output = background_job_result.output.merge({ errors: [title: 'All retries failed',
+                                                                                 message: e.message] })
     background_job_result.complete!
   end
   # rubocop:enable Metrics/AbcSize
