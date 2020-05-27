@@ -208,7 +208,7 @@ RSpec.describe IngestJob, type: :job do
     end
 
     context 'without retries' do
-      let(:try_count) { 5 }
+      let(:try_count) { 8 }
 
       it 'quits' do
         described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
