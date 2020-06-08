@@ -30,7 +30,7 @@ class IngestJob < ApplicationJob
         return
       end
       # Get the druid from the error message
-      druid = /\((druid:.+)\)/.match(e.message)[1]
+      druid = /\((druid:.{11})\)/.match(e.message)[1]
     end
     background_job_result.output = { druid: druid }
 
