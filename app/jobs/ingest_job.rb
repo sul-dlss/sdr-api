@@ -5,7 +5,8 @@
 # Above that, it will exit and provide the error message in the background_job_result.
 class IngestJob < ApplicationJob
   queue_as :default
-  sidekiq_options retry: Settings.sdr_api.ingest_retries
+  # Note that deciding when to stop retrying is handled below. Hence, not providing additional retry configuration
+  # for Sidekiq.
 
   # @param [Hash] model_params
   # @param [Array<String>] signed_ids for the blobs
