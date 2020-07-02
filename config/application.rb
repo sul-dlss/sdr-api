@@ -29,7 +29,8 @@ module SdrApi
     # accept_request_filter omits OKComputer and Sidekiq
     accept_proc = proc { |request| request.path.start_with?('/v1') }
     config.middleware.use Committee::Middleware::RequestValidation, schema_path: 'openapi.yml', strict: true,
-                                                                    accept_request_filter: accept_proc
+                                                                    accept_request_filter: accept_proc,
+                                                                    parse_response_by_content_type: false
     config.middleware.use Committee::Middleware::ResponseValidation, schema_path: 'openapi.yml'
 
     # Settings in config/environments/* take precedence over those specified here.
