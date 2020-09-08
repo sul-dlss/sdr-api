@@ -526,8 +526,10 @@ components:
           additionalProperties: false
           properties:
             value:
-              description: String value of the descriptive element.
-              type: string
+              description: String or integer value of the descriptive element.
+              oneOf:
+              - type: string
+              - type: integer
             type:
               description: Type of value provided by the descriptive element.
               type: string
@@ -721,7 +723,10 @@ components:
           items:
             $ref: '#/components/schemas/Sequence'
         isMemberOf:
-          $ref: '#/components/schemas/Druid'
+          description: Collections that this DRO is a member of
+          type: array
+          items:
+            $ref: '#/components/schemas/Druid'
         hasAgreement:
           description: Agreement that covers the deposit of the DRO into SDR.
           type: string
@@ -1193,7 +1198,10 @@ components:
           items:
             $ref: '#/components/schemas/Sequence'
         isMemberOf:
-          $ref: '#/components/schemas/Druid'
+          description: Collections that this DRO is a member of
+          type: array
+          items:
+            $ref: '#/components/schemas/Druid'
         hasAgreement:
           type: string
     RequestFile:
