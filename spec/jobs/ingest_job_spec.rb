@@ -47,7 +47,7 @@ RSpec.describe IngestJob, type: :job do
         sourceId: 'googlebooks:stanford_82323429'
       },
       structural: {
-        isMemberOf: 'druid:fg123hj4567',
+        isMemberOf: ['druid:fg123hj4567'],
         contains: filesets
       }
     }

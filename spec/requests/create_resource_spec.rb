@@ -42,7 +42,7 @@ RSpec.describe 'Create a resource' do
   let(:structural) do
     <<~JSON
       "structural":{
-        "isMemberOf":"druid:fg123hj4567",
+        "isMemberOf":["druid:fg123hj4567"],
         "contains":[
           {
             "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
