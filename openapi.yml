@@ -264,7 +264,6 @@ components:
         - label
         - type
         - version
-        - administrative
     AdminPolicyAdministrative:
       type: object
       additionalProperties: false
@@ -563,6 +562,8 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/DescriptiveValue"
+            valueLanguage:
+              $ref: "#/components/schemas/DescriptiveValueLanguage"
     DescriptiveParallelValue:
       description: Value model for multiple representations of the same information (e.g. in different languages).
       type: object
@@ -588,6 +589,18 @@ components:
       allOf:
         - $ref: "#/components/schemas/DescriptiveBasicValue"
         - $ref: "#/components/schemas/AppliesTo"
+    DescriptiveValueLanguage:
+      description: Language of the descriptive element value
+      type: object
+      additionalProperties: false
+      allOf:
+        - $ref: "#/components/schemas/Standard"
+        - type: object
+          properties:
+            valueScript:
+              $ref: '#/components/schemas/Standard'
+              # description: An alphabet or other notation used to represent a
+              #   language or other symbolic system of the descriptive element value.
     DescriptiveValueRequired:
       type: object
       additionalProperties: false
@@ -600,6 +613,9 @@ components:
             - type: object
               required:
                 - structuredValue
+            - type: object
+              required:
+                - parallelValue
     DRO:
       description: Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.
       type: object
