@@ -1216,7 +1216,8 @@ components:
     RequestDRO:
       description: A request to create a DRO.  This has the same general structure as a DRO but doesn't have externalIdentifier and doesn't require the access subschema. If no access subschema is provided, these values will be inherited from the AdminPolicy.
       type: object
-      additionalProperties: false
+      # Committee requires this to be true in order to allow an endpoint using the schema to have query params.
+      additionalProperties: true
       properties:
         type:
           type: string
