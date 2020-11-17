@@ -34,12 +34,13 @@ class UpdateJob < ApplicationJob
       return
     end
 
+    object_client.version.open
     object_client.update(params: model)
 
     background_job_result.output = { druid: model.externalIdentifier }
 
     StageFiles.stage(signed_ids, model.externalIdentifier) do
-      Workflow.create_unless_exists(model.externalIdentifier, 'accessionWF', version: model.version)
+      object_client.version.close(description: 'Update via sdr-api', significance: 'major')
     end
 
     background_job_result.complete!
