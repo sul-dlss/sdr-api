@@ -47,7 +47,7 @@ class ResourcesController < ApplicationController
 
     render json: { jobId: result.id },
            location: result,
-           status: :created
+           status: :accepted
   end
 
   private

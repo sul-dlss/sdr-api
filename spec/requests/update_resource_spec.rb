@@ -108,7 +108,7 @@ RSpec.describe 'Update a resource' do
         params: request,
         headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
 
-    expect(response).to be_created
+    expect(response).to be_accepted
     expect(response.location).to be_present
     expect(JSON.parse(response.body)['jobId']).to be_present
     expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params,
