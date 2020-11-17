@@ -4,8 +4,10 @@
 class ResourcePolicy < ApplicationPolicy
   # See https://actionpolicy.evilmartians.io/#/writing_policies
 
-  # Any use with an account can create resources
+  # Any use with an account can create or update resources
   def create?
     true
   end
+
+  alias_rule :update?, to: :create?
 end

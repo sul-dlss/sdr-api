@@ -3,42 +3,41 @@
 # Processes a deposit, namely shipping files to assembly NFS mount and starting the workflow
 # If an error is raised, Sidekiq will retry up to a configured number of retries.
 # Above that, it will exit and provide the error message in the background_job_result.
-class IngestJob < ApplicationJob
+class UpdateJob < ApplicationJob
   queue_as :default
   # Note that deciding when to stop retrying is handled below. Hence, not providing additional retry configuration
   # for Sidekiq.
 
   # @param [Hash] model_params
   # @param [Array<String>] signed_ids for the blobs
-  # @param [Boolean] start_workflow if true, start accessionWF
   # @param [BackgroundJobResult] background_job_result
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true)
+  def perform(model_params:, signed_ids:, background_job_result:)
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
 
-    begin
-      response_cocina_obj = Dor::Services::Client.objects.register(params: Cocina::Models::RequestDRO.new(model_params))
-      druid = response_cocina_obj.externalIdentifier
-    rescue Dor::Services::Client::ConflictResponse => e
-      # Should not expect this on first try so return as error
-      if background_job_result.try_count == 1
-        background_job_result.output = { errors: [title: 'Object with source_id already exists.', message: e.message] }
-        background_job_result.complete!
-        return
-      end
-      # Get the druid from the error message
-      druid = /\((druid:.{11})\)/.match(e.message)[1]
+    model = Cocina::Models::DRO.new(model_params)
+
+    object_client = Dor::Services::Client.object(model.externalIdentifier)
+    existing = object_client.find
+    if existing.version >= model.version
+      background_job_result.output = {
+        errors: [
+          version: "The repository already has '#{existing.version}', and you provided '#{model.version}'"
+        ]
+      }
+      background_job_result.complete!
+      return
     end
-    background_job_result.output = { druid: druid }
 
-    # Create workflow destroys existing steps if called again, so need to check if already created.
-    Workflow.create_unless_exists(druid, 'registrationWF', version: 1)
+    object_client.update(params: model)
 
-    StageFiles.stage(signed_ids, druid) do
-      Workflow.create_unless_exists(druid, 'accessionWF', version: 1) if start_workflow
+    background_job_result.output = { druid: model.externalIdentifier }
+
+    StageFiles.stage(signed_ids, model.externalIdentifier) do
+      Workflow.create_unless_exists(model.externalIdentifier, 'accessionWF', version: model.version)
     end
 
     background_job_result.complete!

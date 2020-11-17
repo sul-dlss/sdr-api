@@ -117,6 +117,40 @@ paths:
             schema:
               # Need to set additionalProperties to true for RequestDRO to allow accession parameter.
               $ref: '#/components/schemas/RequestDRO'
+  /v1/resources/{id}:
+    put:
+      tags:
+        - objects
+      summary: Update an existing object
+      description: 'Does update and re-accessioning of the object'
+      operationId: 'objects#update'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: URL to retrieve background job results.
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CreateObjectResponse'
+      parameters:
+        - name: id
+          in: path
+          description: ID of object
+          required: true
+          schema:
+            $ref: '#/components/schemas/Druid'
+      requestBody:
+        description: The metadata for the object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DRO'
   /v1/auth/login:
     post:
       tags:
