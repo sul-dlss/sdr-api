@@ -183,7 +183,10 @@ RSpec.describe UpdateJob, type: :job do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
       expect(actual_result).to be_complete
       expect(actual_result.output[:errors]).to eq [
-        { 'version' => "The repository already has '2', and you provided '2'" }
+        {
+          'title' => 'Version conflict',
+          'detail' => "The repository already has a version '2' for druid:bc123dg5678, and you provided '2'"
+        }
       ]
     end
   end
