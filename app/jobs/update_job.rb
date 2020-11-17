@@ -25,7 +25,9 @@ class UpdateJob < ApplicationJob
     if existing.version >= model.version
       background_job_result.output = {
         errors: [
-          version: "The repository already has '#{existing.version}', and you provided '#{model.version}'"
+          title: 'Version conflict',
+          detail: "The repository already has a version '#{existing.version}' for " \
+                  "#{existing.externalIdentifier}, and you provided '#{model.version}'"
         ]
       }
       background_job_result.complete!
