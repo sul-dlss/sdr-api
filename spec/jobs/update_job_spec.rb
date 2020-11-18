@@ -8,9 +8,8 @@ RSpec.describe UpdateJob, type: :job do
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dg5678' }
   let(:workflow_client) do
-    instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow: workflow)
+    instance_double(Dor::Workflow::Client, create_workflow_by_name: true)
   end
-  let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
                                 filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
@@ -95,6 +94,7 @@ RSpec.describe UpdateJob, type: :job do
   end
 
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
+  let(:version_client) { instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true) }
 
   before do
     FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')
@@ -108,34 +108,15 @@ RSpec.describe UpdateJob, type: :job do
   end
 
   context 'when happy path' do
-    let(:object_client) { instance_double(Dor::Services::Client::Object, find: response_dro, update: true) }
-
-    it 'ingests an object' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
-
-      expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 2, lane_id: 'low')
-      expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: druid })
-      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
-    end
-  end
-
-  context 'when workflow already exists' do
-    let(:object_client) { instance_double(Dor::Services::Client::Object, find: response_dro, update: true) }
-
-    before do
-      allow(workflow).to receive(:empty?).and_return(false)
+    let(:object_client) do
+      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client, update: true)
     end
 
     it 'ingests an object' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
-      expect(workflow_client).not_to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 2, lane_id: 'low')
+      expect(version_client).to have_received(:open)
+      expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -143,7 +124,9 @@ RSpec.describe UpdateJob, type: :job do
   end
 
   context 'when error raised' do
-    let(:object_client) { instance_double(Dor::Services::Client::Object, find: response_dro) }
+    let(:object_client) do
+      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
+    end
 
     before do
       allow(object_client).to receive(:update).and_raise(StandardError, 'Something went wrong')
