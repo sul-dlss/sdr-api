@@ -55,15 +55,14 @@ class ResourcesController < ApplicationController
   def cocina_model(model_params)
     new_model_params = model_params.deep_dup
     decorate_file_sets(new_model_params)
-    Cocina::Models::DRO.new(new_model_params)
+    Cocina::Models.build(new_model_params)
   end
 
   def cocina_request_model(model_params)
     new_model_params = model_params.deep_dup
     new_model_params[:version] = 1
     decorate_request_file_sets(new_model_params)
-
-    Cocina::Models::RequestDRO.new(new_model_params)
+    Cocina::Models.build_request(new_model_params)
   end
 
   # Decorates the provided FileSets with the information we have in the ActiveStorage table.
@@ -111,7 +110,7 @@ class ResourcesController < ApplicationController
   end
 
   def file_sets(model_params)
-    model_params[:structural].fetch(:contains, [])
+    model_params.fetch(:structural, {}).fetch(:contains, [])
   end
 
   def signed_ids(model_params)

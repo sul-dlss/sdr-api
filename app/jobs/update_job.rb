@@ -18,7 +18,7 @@ class UpdateJob < ApplicationJob
     background_job_result.try_count += 1
     background_job_result.processing!
 
-    model = Cocina::Models::DRO.new(model_params)
+    model = Cocina::Models.build(model_params.with_indifferent_access)
 
     object_client = Dor::Services::Client.object(model.externalIdentifier)
     existing = object_client.find
