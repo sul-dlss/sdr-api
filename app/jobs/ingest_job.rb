@@ -18,9 +18,9 @@ class IngestJob < ApplicationJob
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
-
+    model = Cocina::Models.build_request(model_params.with_indifferent_access)
     begin
-      response_cocina_obj = Dor::Services::Client.objects.register(params: Cocina::Models::RequestDRO.new(model_params))
+      response_cocina_obj = Dor::Services::Client.objects.register(params: model)
       druid = response_cocina_obj.externalIdentifier
     rescue Dor::Services::Client::ConflictResponse => e
       # Should not expect this on first try so return as error

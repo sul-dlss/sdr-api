@@ -115,8 +115,10 @@ paths:
         content:
           application/json:
             schema:
-              # Need to set additionalProperties to true for RequestDRO to allow accession parameter.
-              $ref: '#/components/schemas/RequestDRO'
+              oneOf:
+                # Need to set additionalProperties to true for RequestDRO to allow accession parameter.
+                - $ref: '#/components/schemas/RequestDRO'
+                - $ref: '#/components/schemas/RequestCollection'
   /v1/resources/{id}:
     put:
       tags:
@@ -150,7 +152,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DRO'
+              oneOf:
+                - $ref: '#/components/schemas/DRO'
+                - $ref: '#/components/schemas/Collection'
   /v1/auth/login:
     post:
       tags:
@@ -1218,7 +1222,7 @@ components:
     RequestCollection:
       description: Same as a Collection, but doesn't have an externalIdentifier as one will be created
       type: object
-      additionalProperties: false
+      additionalProperties: true
       properties:
         type:
           type: string
