@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     post '/auth/login', to: 'authentication#login'
     post '/auth/proxy', to: 'authentication#proxy'
 
-    resources :resources, only: %i[create update]
+    resources :resources, only: %i[create update show]
     resources :background_job_results, only: [:show], defaults: { format: :json }
 
     # We don't need all of the activestorage routes, just these few:

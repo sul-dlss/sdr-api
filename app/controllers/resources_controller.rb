@@ -10,14 +10,14 @@ class ResourcesController < ApplicationController
 
   # POST /resource
   def create
-    authorize! :resource
-
     begin
       request_dro = cocina_request_model(params.except(:action, :controller, :resource, :accession).to_unsafe_h)
     rescue BlobError => e
       # Returning 500 because not clear whose fault it is.
       return render build_error('500', e, 'Error matching uploading files to file parameters.')
     end
+    authorize! request_dro, with: ResourcePolicy
+
     result = BackgroundJobResult.create(output: {})
     IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
@@ -31,14 +31,14 @@ class ResourcesController < ApplicationController
 
   # PUT /resource/:id
   def update
-    authorize! :resource
-
     begin
       request_dro = cocina_model(params.except(:action, :controller, :resource, :id).to_unsafe_h)
     rescue BlobError => e
       # Returning 500 because not clear whose fault it is.
       return render build_error('500', e, 'Error matching uploading files to file parameters.')
     end
+
+    authorize! request_dro, with: ResourcePolicy
 
     result = BackgroundJobResult.create(output: {})
     UpdateJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
@@ -48,6 +48,13 @@ class ResourcesController < ApplicationController
     render json: { jobId: result.id },
            location: result,
            status: :accepted
+  end
+
+  # This just proxies the response from DOR services app
+  def show
+    cocina_obj = Dor::Services::Client.object(params[:id]).find
+    authorize! cocina_obj, with: ResourcePolicy
+    render json: cocina_obj
   end
 
   private
