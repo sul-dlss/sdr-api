@@ -120,6 +120,41 @@ paths:
                 - $ref: '#/components/schemas/RequestDRO'
                 - $ref: '#/components/schemas/RequestCollection'
   /v1/resources/{id}:
+    get:
+      tags:
+        - objects
+      summary: Retrieve the object metadata
+      description: 'Returns a JSON representation of an object, collection or admin policy.'
+      operationId: 'resources#show'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DRO'
+                  - $ref: '#/components/schemas/Collection'
+                  - $ref: '#/components/schemas/AdminPolicy'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: id
+          in: path
+          description: ID of object
+          required: true
+          schema:
+            $ref: '#/components/schemas/Druid'
     put:
       tags:
         - objects
