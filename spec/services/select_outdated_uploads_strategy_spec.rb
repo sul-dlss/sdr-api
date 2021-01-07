@@ -28,11 +28,9 @@ RSpec.describe SelectOutdatedUploadsStrategy do
     context 'when injecting a days_ago attr' do
       let(:strategy) { described_class.new(days_ago: days_ago) }
       let(:days_ago) { 2 }
-      let(:date_difference) { (Date.today - days_ago.days.ago.to_date).to_i }
 
       it 'sets the days_ago attr to a normalized time object' do
         expect(strategy.days_ago.to_date).not_to eq(default_days_ago.days.ago.to_date)
-        expect(date_difference).to eq(days_ago)
       end
     end
   end
