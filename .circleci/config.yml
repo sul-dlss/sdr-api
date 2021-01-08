@@ -84,14 +84,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build against master branch
+          name: Build against main branch
           command: |
             git config --global user.name "sul-devops-team"
             git config --global user.email "sul-devops-team@lists.stanford.edu"
             git config --global url."https://github.com/".insteadOf git@github.com:
-            git fetch origin && git merge --no-edit origin/master
+            git fetch origin && git merge --no-edit origin/main
             if [[ $? -ne 0 ]]; then
-            echo "Failed to merge `master` into $CIRCLE_BRANCH"
+            echo "Failed to merge `main` into $CIRCLE_BRANCH"
             exit 1
             fi
       - run:
@@ -187,19 +187,19 @@ workflows:
       - test-merge:
           filters:
             branches:
-              ignore: master
+              ignore: main
   build:
     jobs:
     - build-image:
         filters:
           branches:
-            only: master
+            only: main
     - publish-latest:
         requires:
           - build-image
         filters:
           branches:
-            only: master
+            only: main
   build-tags:
     jobs:
     - build-image:

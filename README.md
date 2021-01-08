@@ -1,14 +1,14 @@
 [![CircleCI](https://circleci.com/gh/sul-dlss/sdr-api.svg?style=svg)](https://circleci.com/gh/sul-dlss/sdr-api)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6e11d54474bfaf70480b/maintainability)](https://codeclimate.com/github/sul-dlss/sdr-api/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/6e11d54474bfaf70480b/test_coverage)](https://codeclimate.com/github/sul-dlss/sdr-api/test_coverage)
-[![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/master/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/master/openapi.yml)
+[![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/main/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/main/openapi.yml)
 [![Docker image](https://images.microbadger.com/badges/image/suldlss/sdr-api.svg)](https://microbadger.com/images/suldlss/sdr-api "Get your own image badge on microbadger.com")
 
 # Stanford Digital Repository API (SDR-API)
 
 An HTTP API for the SDR.
 
-There is a [OAS 3.0 spec](http://spec.openapis.org/oas/v3.0.2) that documents the API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html].
+There is a [OAS 3.0 spec](http://spec.openapis.org/oas/v3.0.2) that documents the API in [openapi.yml].  If you clone this repo, you can view this by opening [docs/index.html](docs/index.html).
 
 ## Functionality
 ### Deposit
@@ -88,7 +88,7 @@ Given that we have a DRO with two Filesets each with a File (image1.png) and (im
 
 ## Docker
 
-Note that this project's continuous integration build will automatically create and publish an updated image whenever there is a passing build from the `master` branch. If you do need to manually create and publish an image, do the following:
+Note that this project's continuous integration build will automatically create and publish an updated image whenever there is a passing build from the `main` branch. If you do need to manually create and publish an image, do the following:
 
 Build image:
 ```
