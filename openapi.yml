@@ -605,7 +605,8 @@ components:
         - $ref: "#/components/schemas/DescriptiveParallelValue"
         - $ref: "#/components/schemas/DescriptiveGroupedValue"
         - type: object
-          additionalProperties: false
+          # additionalProperties: false
+          # additionalProperties breaks the validator for DescriptiveValue, unclear as to why.
           properties:
             value:
               description: String or integer value of the descriptive element.
@@ -702,8 +703,7 @@ components:
     DescriptiveValue:
       description: Default value model for descriptive elements.
       type: object
-      # additionalProperties breaks the validator for allOf, unclear as to why.
-      # additionalProperties: false
+      additionalProperties: false
       allOf:
         - $ref: "#/components/schemas/DescriptiveBasicValue"
         - $ref: "#/components/schemas/AppliesTo"
