@@ -337,6 +337,11 @@ components:
           default: <?xml version="1.0" encoding="UTF-8"?><rightsMetadata><access type="discover"><machine><world/></machine></access><access type="read"><machine><world/></machine></access><use><human type="useAndReproduction"/><human type="creativeCommons"/><machine type="creativeCommons" uri=""/><human type="openDataCommons"/><machine type="openDataCommons" uri=""/></use><copyright><human/></copyright></rightsMetadata>
         registrationWorkflow:
           type: string
+        collectionsForRegistration:
+          description: When you register an item with this admin policy, these are the collections that are available.
+          type: array
+          items:
+            type: string
         hasAdminPolicy:
           type: string
       required:
@@ -407,6 +412,8 @@ components:
       type: object
       additionalProperties: false
       properties:
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
         catalogLinks:
           type: array
           items:
@@ -1116,7 +1123,7 @@ components:
           description: present for mapping to additional schemas in the future and for consistency but not otherwise used
           type: array
           items:
-            $ref: "#/components/schemas/DescriptiveValue"          
+            $ref: "#/components/schemas/DescriptiveValue"
         note:
           description: present for mapping to additional schemas in the future and for consistency but not otherwise used
           type: array
