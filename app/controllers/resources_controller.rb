@@ -138,9 +138,9 @@ class ResourcesController < ApplicationController
       json: {
         errors: [
           {
-            "status": error_code,
-            "title": msg,
-            "detail": err.message
+            status: error_code,
+            title: msg,
+            detail: err.message
           }
         ]
       },
