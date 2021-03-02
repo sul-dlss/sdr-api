@@ -156,6 +156,30 @@ RSpec.describe 'Create a resource' do
                                                               start_workflow: nil)
     end
 
+    context 'when the accession flag is explcitly set to true' do
+      it 'kicks off accession workflow' do
+        post '/v1/resources?accession=true',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                                background_job_result: instance_of(BackgroundJobResult),
+                                                                signed_ids: [signed_id],
+                                                                start_workflow: true)
+      end
+    end
+
+    context 'when the accession flag is explcitly set to false' do
+      it 'does not kick off accession workflow' do
+        post '/v1/resources?accession=false',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                                background_job_result: instance_of(BackgroundJobResult),
+                                                                signed_ids: [signed_id],
+                                                                start_workflow: false)
+      end
+    end
+
     context 'when blob not found for file' do
       let(:signed_id) { 'abc123' }
 
