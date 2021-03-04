@@ -749,7 +749,6 @@ components:
       type: object
       additionalProperties: false
       allOf:
-        - $ref: "#/components/schemas/DescriptiveValueLanguage"
         - $ref: "#/components/schemas/DescriptiveStructuredValue"
         - type: object
           additionalProperties: false
@@ -785,6 +784,9 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/DescriptiveValue"
+            valueLanguage:
+              # description: Language of the descriptive element value
+              $ref: "#/components/schemas/DescriptiveValueLanguage"
     DescriptiveParallelValue:
       description: Value model for multiple representations of the same information (e.g. in different languages).
       type: object
@@ -822,27 +824,6 @@ components:
               $ref: '#/components/schemas/Standard'
               # description: An alphabet or other notation used to represent a
               #   language or other symbolic system of the descriptive element value.
-    Title:
-      type: object
-      additionalProperties: false
-      allOf:
-        - $ref: "#/components/schemas/DescriptiveValue"
-        - anyOf:
-            - type: object
-              required:
-                - value
-            - type: object
-              required:
-                - structuredValue
-            - type: object
-              required:
-                - parallelValue
-            - type: object
-              required:
-                - groupedValue
-            - type: object
-              required:
-                - valueAt
     DRO:
       description: Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.
       type: object
@@ -1007,7 +988,6 @@ components:
       additionalProperties: false
       allOf:
         - $ref: "#/components/schemas/DescriptiveStructuredValue"
-        - $ref: "#/components/schemas/DescriptiveValueLanguage"
         - type: object
           additionalProperties: false
           properties:
@@ -1042,6 +1022,9 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/DescriptiveValue"
+            valueLanguage:
+              # description: Language of the descriptive element value
+              $ref: "#/components/schemas/DescriptiveValueLanguage"
             parallelEvent:
               description: For multiple representations of information about the same event (e.g. in different languages)
               type: array
@@ -1685,6 +1668,27 @@ components:
           type: string
         source:
           $ref: "#/components/schemas/Source"
+    Title:
+      type: object
+      additionalProperties: false
+      allOf:
+        - $ref: "#/components/schemas/DescriptiveValue"
+        - anyOf:
+            - type: object
+              required:
+                - value
+            - type: object
+              required:
+                - structuredValue
+            - type: object
+              required:
+                - parallelValue
+            - type: object
+              required:
+                - groupedValue
+            - type: object
+              required:
+                - valueAt
     BackgroundJobResultResponse:
       type: object
       properties:
