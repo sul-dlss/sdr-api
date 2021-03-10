@@ -105,6 +105,7 @@ RSpec.describe 'Create a resource' do
                     ],
                     "externalIdentifier":"#{signed_id}",
                     "administrative":{
+                      "publish":true,
                       "sdrPreserve":true,
                       "shelve":true
                     },

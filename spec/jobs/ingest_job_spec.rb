@@ -60,6 +60,7 @@ RSpec.describe IngestJob, type: :job do
       label: 'file2.txt',
       hasMimeType: 'text/plain',
       administrative: {
+        publish: true,
         sdrPreserve: true,
         shelve: true
       },
