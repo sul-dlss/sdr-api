@@ -91,7 +91,7 @@ RSpec.describe 'Create a resource' do
           "isMemberOf":["druid:fg123hj4567"],
           "contains":[
             {
-              "type":"http://cocina.sul.stanford.edu/models/fileset.jsonld",
+              "type":"http://cocina.sul.stanford.edu/models/resources/file.jsonld",
               "label":"Page 1",
               "structural":{
                 "contains":[

@@ -78,7 +78,7 @@ RSpec.describe IngestJob, type: :job do
   let(:filesets) do
     [
       {
-        type: 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
+        type: 'http://cocina.sul.stanford.edu/models/resources/file.jsonld',
         label: 'Page 1',
         structural: { contains: [file] },
         version: 1

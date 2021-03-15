@@ -81,7 +81,7 @@ RSpec.describe UpdateJob, type: :job do
   let(:filesets) do
     [
       {
-        type: 'http://cocina.sul.stanford.edu/models/fileset.jsonld',
+        type: 'http://cocina.sul.stanford.edu/models/resources/file.jsonld',
         externalIdentifier: 'bc123df4567_1',
         label: 'Page 1',
         structural: { contains: [file] },
