@@ -22,7 +22,7 @@ RSpec.describe UpdateJob, type: :job do
     {
       type: Cocina::Models::Vocab.book,
       label: 'hello',
-      externalIdentifier: 'druid:bc123dg5678',
+      externalIdentifier: druid,
       version: 2,
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
@@ -59,7 +59,7 @@ RSpec.describe UpdateJob, type: :job do
     {
       type: 'http://cocina.sul.stanford.edu/models/file.jsonld',
       filename: 'file2.txt',
-      externalIdentifier: 'druid:bc123dg5678/file2.txt',
+      externalIdentifier: "#{druid}/file2.txt",
       label: 'file2.txt',
       hasMimeType: 'text/plain',
       administrative: {
@@ -104,7 +104,7 @@ RSpec.describe UpdateJob, type: :job do
       f.write 'HELLO'
     end
     allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
-    allow(Dor::Services::Client).to receive(:object).with('druid:bc123dg5678').and_return(object_client)
+    allow(Dor::Services::Client).to receive(:object).with(druid).and_return(object_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
   end
 
