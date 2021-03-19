@@ -13,7 +13,7 @@ class UpdateJob < ApplicationJob
   # @param [BackgroundJobResult] background_job_result
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:)
+  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true)
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -22,25 +22,35 @@ class UpdateJob < ApplicationJob
 
     object_client = Dor::Services::Client.object(model.externalIdentifier)
     existing = object_client.find
-    if existing.version >= model.version
-      background_job_result.output = {
-        errors: [
-          title: 'Version conflict',
-          detail: "The repository already has a version '#{existing.version}' for " \
-                  "#{existing.externalIdentifier}, and you provided '#{model.version}'"
-        ]
-      }
+
+    unless [existing.version, existing.version + 1].include?(model.version)
+      error_title = 'Version conflict'
+      error_detail = "The repository is on version '#{existing.version}' for #{existing.externalIdentifier}. " \
+                     'You may either: update the current version (for v1 registered, or a later open version); ' \
+                     "or open a new version.  You tried to create/update version '#{model.version}'."
+
+      Honeybadger.notify("#{error_title}: #{error_detail}")
+      background_job_result.output = { errors: [title: error_title, detail: error_detail] }
       background_job_result.complete!
+
       return
     end
 
-    object_client.version.open
     object_client.update(params: model)
 
     background_job_result.output = { druid: model.externalIdentifier }
 
+    versioning_params = { description: 'Update via sdr-api', significance: 'major' }
     StageFiles.stage(signed_ids, model.externalIdentifier) do
-      object_client.version.close(description: 'Update via sdr-api', significance: 'major')
+      if start_workflow
+        # this will check openability, open/close a version as needed, and then kick off accessioning after
+        # that regardless of whether a version was opened/closed.
+        object_client.accession.start(versioning_params.merge(workflow: 'accessionWF'))
+      elsif model.version == existing.version + 1
+        # don't kick off accessioning, just create a new version where only metadata was updated
+        object_client.version.open
+        object_client.version.close(versioning_params.merge(start_accession: false))
+      end
     end
 
     background_job_result.complete!

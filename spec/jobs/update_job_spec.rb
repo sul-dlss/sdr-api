@@ -7,9 +7,7 @@ RSpec.describe UpdateJob, type: :job do
   let(:result) { create(:background_job_result, try_count: try_count) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dg5678' }
-  let(:workflow_client) do
-    instance_double(Dor::Workflow::Client, create_workflow_by_name: true)
-  end
+  let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true) }
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
                                 filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
@@ -18,12 +16,13 @@ RSpec.describe UpdateJob, type: :job do
     [ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)]
   end
 
+  let(:update_version) { 2 }
   let(:model) do
     {
       type: Cocina::Models::Vocab.book,
       label: 'hello',
       externalIdentifier: druid,
-      version: 2,
+      version: update_version,
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
         download: 'none',
@@ -90,12 +89,19 @@ RSpec.describe UpdateJob, type: :job do
     ]
   end
 
+  let(:existing_version) { 1 }
   let(:response_dro) do
-    instance_double(Cocina::Models::DRO, externalIdentifier: druid, version: 1)
+    instance_double(Cocina::Models::DRO, externalIdentifier: druid, version: existing_version)
   end
 
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
   let(:version_client) { instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true) }
+
+  let(:accession_client) { instance_double(Dor::Services::Client::Accession, start: true) }
+  let(:object_client) do
+    instance_double(Dor::Services::Client::Object,
+                    find: response_dro, version: version_client, update: true, accession: accession_client)
+  end
 
   before do
     FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')
@@ -103,24 +109,37 @@ RSpec.describe UpdateJob, type: :job do
     File.open('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'w') do |f|
       f.write 'HELLO'
     end
-    allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
     allow(Dor::Services::Client).to receive(:object).with(druid).and_return(object_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
+    allow(Honeybadger).to receive(:notify)
   end
 
-  context 'when happy path' do
-    let(:object_client) do
-      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client, update: true)
-    end
-
-    it 'ingests an object' do
+  context 'when updating to a new version' do
+    it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(version_client).to have_received(:open)
-      expect(version_client).to have_received(:close)
+      cocina_object = Cocina::Models.build(model.with_indifferent_access)
+      expect(object_client).to have_received(:update).with(params: cocina_object)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+    end
+
+    it 'accessions an object by default without explicitly opening/closing a version' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
+      expect(version_client).not_to have_received(:open)
+      expect(version_client).not_to have_received(:close)
+      expect(accession_client).to have_received(:start)
+        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF')
+    end
+
+    it 'opens and closes the version without kicking off accessioning if start_workflow is false' do
+      described_class.perform_now(model_params: model, background_job_result: result,
+                                  signed_ids: signed_ids, start_workflow: false)
+      expect(version_client).to have_received(:open)
+      expect(version_client).to have_received(:close)
+        .with(description: 'Update via sdr-api', significance: 'major', start_accession: false)
+      expect(accession_client).not_to have_received(:start)
     end
   end
 
@@ -156,22 +175,56 @@ RSpec.describe UpdateJob, type: :job do
     end
   end
 
-  context 'when the versions match' do
-    let(:object_client) { instance_double(Dor::Services::Client::Object, find: response_dro) }
+  context 'when updating the current version' do
+    let(:existing_version) { 2 }
 
-    let(:response_dro) do
-      instance_double(Cocina::Models::DRO, externalIdentifier: druid, version: 2)
+    it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      cocina_object = Cocina::Models.build(model.with_indifferent_access)
+      expect(object_client).to have_received(:update).with(params: cocina_object)
+      expect(actual_result).to be_complete
+      expect(actual_result.output).to match({ druid: druid })
+      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
 
-    it 'quits' do
+    it 'accessions an object by default without explicitly opening/closing a version' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
+      expect(version_client).not_to have_received(:open)
+      expect(version_client).not_to have_received(:close)
+      expect(accession_client).to have_received(:start)
+        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF')
+    end
+
+    it 'does not kick off accessioning if start_workflow is false' do
+      described_class.perform_now(model_params: model, background_job_result: result,
+                                  signed_ids: signed_ids, start_workflow: false)
+      expect(accession_client).not_to have_received(:start)
+    end
+
+    it 'does not open/close the version' do
+      described_class.perform_now(model_params: model, background_job_result: result,
+                                  signed_ids: signed_ids, start_workflow: false)
+      expect(version_client).not_to have_received(:open)
+      expect(version_client).not_to have_received(:close)
+    end
+  end
+
+  context 'when updating neither the current version nor the next version' do
+    let(:update_version) { 5 }
+    let(:existing_version) { 3 }
+
+    it 'quits with an error' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+
+      err_title = 'Version conflict'
+      err_detail = "The repository is on version '#{existing_version}' for #{druid}. " \
+                   'You may either: update the current version (for v1 registered, or a later open version); ' \
+                   "or open a new version.  You tried to create/update version '#{update_version}'."
+
       expect(actual_result).to be_complete
-      expect(actual_result.output[:errors]).to eq [
-        {
-          'title' => 'Version conflict',
-          'detail' => "The repository already has a version '2' for druid:bc123dg5678, and you provided '2'"
-        }
-      ]
+      expect(actual_result.output[:errors]).to eq [{ 'title' => err_title, 'detail' => err_detail }]
+      expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}")
     end
   end
 end
