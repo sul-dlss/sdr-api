@@ -2,6 +2,11 @@
 
 require 'sidekiq/web'
 
+# From Sidekiq docs: https://github.com/mperham/sidekiq/wiki/Monitoring#rails-api-application-session-configuration
+# Configure Sidekiq-specific session middleware
+Sidekiq::Web.use ActionDispatch::Cookies
+Sidekiq::Web.use Rails.application.config.session_store, Rails.application.config.session_options
+
 Rails.application.routes.draw do
   scope 'v1' do
     post '/auth/login', to: 'authentication#login'
