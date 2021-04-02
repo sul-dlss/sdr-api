@@ -51,5 +51,9 @@ module SdrApi
 
     # turn off drawing of Active Storage's default routes, we'll add the ones we want
     config.active_storage.draw_routes = false
+
+    # Set up a session store so we can access the Sidekiq Web UI
+    # See: https://github.com/mperham/sidekiq/wiki/Monitoring#rails-api-application-session-configuration
+    config.session_store :cookie_store, key: '_sdr-api_session'
   end
 end
