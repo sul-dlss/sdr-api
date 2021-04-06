@@ -11,6 +11,7 @@ class UpdateJob < ApplicationJob
   # @param [Hash] model_params
   # @param [Array<String>] signed_ids for the blobs
   # @param [BackgroundJobResult] background_job_result
+  # @param [Boolean] start_workflow starts accessionWF if true; if false, opens/closes new version without accessioning
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true)
