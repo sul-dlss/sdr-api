@@ -117,6 +117,21 @@ RSpec.describe 'Update a resource' do
                                                             signed_ids: [signed_id])
   end
 
+  context 'when wrong version of cocina models is supplied' do
+    it 'returns 400' do
+      put '/v1/resources/druid:bc123df4567',
+          params: request,
+          headers: {
+            'Content-Type' => 'application/json',
+            'Authorization' => "Bearer #{jwt}",
+            'X-Cocina-Models-Version' => '0.33.1'
+          }
+      expect(response).to have_http_status(:bad_request)
+      body = JSON.parse(response.body)
+      expect(body['errors'][0]['title']).to eq 'Cocina-models version mismatch'
+    end
+  end
+
   context 'when blob not found for file' do
     let(:signed_id) { 'abc123' }
 
