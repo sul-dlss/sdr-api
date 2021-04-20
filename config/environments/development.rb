@@ -63,7 +63,10 @@ Rails.application.configure do
     config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 
-  config.active_job.queue_adapter = :sidekiq
+  # Use the async adapter in development mode, so we can use one container
+  # (rather than two containers) for sdr-api in the Argo test suite.
+  config.active_job.queue_adapter = :async
+
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 end
