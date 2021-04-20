@@ -15,6 +15,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*.rb
+    - config/environments/*.rb
 
 RSpec/DescribeClass:
   Exclude:
