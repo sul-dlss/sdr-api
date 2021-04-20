@@ -17,3 +17,5 @@ staging_location: '/dor/workspace'
 # This user is allowed to proxy other users, we expect that it'll be argo and it
 # will be responible for only proxying users which it has verififed with Shibboleth.
 argo_user: argo@dlss.sul.stanford.edu
+
+redis_url: 'redis://localhost:6379/'
