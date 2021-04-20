@@ -63,6 +63,7 @@ RSpec.describe 'Create a resource' do
             "embargo": {
               "releaseDate": "2029-06-22T07:00:00.000+00:00",
               "access": "world",
+              "download":"world",
               "useAndReproductionStatement": "Whatever you want"
             }
           },
@@ -110,8 +111,8 @@ RSpec.describe 'Create a resource' do
                       "shelve":true
                     },
                     "access": {
-                      "access":"citation-only",
-                      "download":"none"
+                      "access":"stanford",
+                      "download":"stanford"
                     },
                     "version":1
                   }
@@ -147,7 +148,6 @@ RSpec.describe 'Create a resource' do
       post '/v1/resources',
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-
       expect(response).to be_created
       expect(response.location).to be_present
       expect(JSON.parse(response.body)['jobId']).to be_present

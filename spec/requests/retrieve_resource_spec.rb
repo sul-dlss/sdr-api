@@ -18,6 +18,7 @@ RSpec.describe 'Retrieve a resource' do
           "embargo": {
             "releaseDate": "2029-06-22T07:00:00.000+00:00",
             "access": "world",
+            "download": "world",
             "useAndReproductionStatement": "Whatever you want"
           }
         },
