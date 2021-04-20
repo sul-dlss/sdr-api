@@ -157,6 +157,21 @@ RSpec.describe 'Create a resource' do
                                                               start_workflow: nil)
     end
 
+    context 'when wrong version of cocina models is supplied' do
+      it 'returns 400' do
+        post '/v1/resources?accession=true',
+             params: request,
+             headers: {
+               'Content-Type' => 'application/json',
+               'Authorization' => "Bearer #{jwt}",
+               'X-Cocina-Models-Version' => '0.33.1'
+             }
+        expect(response).to have_http_status(:bad_request)
+        body = JSON.parse(response.body)
+        expect(body['errors'][0]['title']).to eq 'Cocina-models version mismatch'
+      end
+    end
+
     context 'when the accession flag is explcitly set to true' do
       it 'kicks off accession workflow' do
         post '/v1/resources?accession=true',
