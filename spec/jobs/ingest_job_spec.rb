@@ -24,11 +24,13 @@ RSpec.describe IngestJob, type: :job do
       version: 1,
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
+        access: 'world',
         download: 'none',
         useAndReproductionStatement: 'Property rights reside with the repository...',
         embargo: {
           releaseDate: '2029-06-22T07:00:00.000+00:00',
           access: 'world',
+          download: 'world',
           useAndReproductionStatement: 'Whatever you want'
         }
       },
@@ -65,7 +67,8 @@ RSpec.describe IngestJob, type: :job do
         shelve: true
       },
       access: {
-        access: 'citation-only'
+        access: 'stanford',
+        download: 'stanford'
       },
       hasMessageDigests: [
         { type: 'md5', digest: '7f99d78a78a233ebbf81ec5b364380fc' },
