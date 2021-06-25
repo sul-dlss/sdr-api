@@ -31,6 +31,12 @@ class IngestJob < ApplicationJob
       end
       # Get the druid from the error message
       druid = /\((druid:.{11})\)/.match(e.message)[1]
+    rescue Dor::Services::Client::BadRequestError => e
+      # report as error and do not retry
+      background_job_result.output = { errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
+                                                message: e.message] }
+      background_job_result.complete!
+      return
     end
     background_job_result.output = { druid: druid }
 

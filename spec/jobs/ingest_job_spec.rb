@@ -124,7 +124,7 @@ RSpec.describe IngestJob, type: :job do
     end
   end
 
-  context 'when conflict on first register' do
+  context 'when Dor::Services::Client::ConflictResponse on first register attempt' do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects) }
 
     before do
@@ -146,7 +146,7 @@ RSpec.describe IngestJob, type: :job do
     end
   end
 
-  context 'when conflict on subsequent register' do
+  context 'when conflict on subsequent register attempts' do
     let(:try_count) { 2 }
     let(:objects_client) { instance_double(Dor::Services::Client::Objects) }
 
@@ -189,6 +189,28 @@ RSpec.describe IngestJob, type: :job do
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+    end
+  end
+
+  context 'when Dor::Services::Client::BadRequestError error' do
+    let(:objects_client) { instance_double(Dor::Services::Client::Objects) }
+
+    before do
+      allow(objects_client)
+        .to receive(:register).and_raise(Dor::Services::Client::BadRequestError, 'Catkey not in Symphony blah blah')
+    end
+
+    it 'reports error and will not retry' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      expect(workflow_client).not_to have_received(:workflow)
+        .with(pid: druid, workflow_name: 'registrationWF')
+      expect(workflow_client).not_to have_received(:workflow)
+        .with(pid: druid, workflow_name: 'accessionWF')
+      expect(actual_result).to be_complete
+      expect(actual_result.output)
+        .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
+                             message: 'Catkey not in Symphony blah blah'] })
+      expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
 
