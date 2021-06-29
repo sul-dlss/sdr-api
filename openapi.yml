@@ -339,7 +339,6 @@ components:
           type: string
           enum:
             - 'http://cocina.sul.stanford.edu/models/admin_policy.jsonld'
-          example: item
         externalIdentifier:
           $ref: '#/components/schemas/Druid'
         label:
@@ -536,7 +535,6 @@ components:
             - 'http://cocina.sul.stanford.edu/models/user-collection.jsonld'
             - 'http://cocina.sul.stanford.edu/models/exhibit.jsonld'
             - 'http://cocina.sul.stanford.edu/models/series.jsonld'
-          example: item
         externalIdentifier:
           $ref: '#/components/schemas/Druid'
         label:
@@ -1021,7 +1019,6 @@ components:
             - 'http://cocina.sul.stanford.edu/models/track.jsonld'
             - 'http://cocina.sul.stanford.edu/models/webarchive-binary.jsonld'
             - 'http://cocina.sul.stanford.edu/models/webarchive-seed.jsonld'
-          example: item
         externalIdentifier:
           $ref: '#/components/schemas/Druid'
         label:
@@ -1622,7 +1619,6 @@ components:
           type: string
           enum:
             - 'http://cocina.sul.stanford.edu/models/admin_policy.jsonld'
-          example: item
         label:
           type: string
         version:
@@ -1649,7 +1645,6 @@ components:
             - 'http://cocina.sul.stanford.edu/models/user-collection.jsonld'
             - 'http://cocina.sul.stanford.edu/models/exhibit.jsonld'
             - 'http://cocina.sul.stanford.edu/models/series.jsonld'
-          example: item
         label:
           type: string
         version:
@@ -1691,7 +1686,6 @@ components:
             - 'http://cocina.sul.stanford.edu/models/track.jsonld'
             - 'http://cocina.sul.stanford.edu/models/webarchive-binary.jsonld'
             - 'http://cocina.sul.stanford.edu/models/webarchive-seed.jsonld'
-          example: item
         label:
           type: string
         version:
