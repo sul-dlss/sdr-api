@@ -28,10 +28,20 @@ module SdrApi
 
     # accept_request_filter omits OKComputer and Sidekiq
     accept_proc = proc { |request| request.path.start_with?('/v1') }
-    config.middleware.use Committee::Middleware::RequestValidation, schema_path: 'openapi.yml', strict: true,
-                                                                    accept_request_filter: accept_proc,
-                                                                    parse_response_by_content_type: false
-    config.middleware.use Committee::Middleware::ResponseValidation, schema_path: 'openapi.yml'
+    config.middleware.use(
+      Committee::Middleware::RequestValidation,
+      schema_path: 'openapi.yml',
+      strict: true,
+      accept_request_filter: accept_proc,
+      parse_response_by_content_type: false, # hush committee deprecation warning
+      query_hash_key: 'action_dispatch.request.query_parameters' # hush committee deprecation warning
+    )
+    config.middleware.use(
+      Committee::Middleware::ResponseValidation,
+      schema_path: 'openapi.yml',
+      parse_response_by_content_type: false, # hush committee deprecation warning
+      query_hash_key: 'action_dispatch.request.query_parameters' # hush committee deprecation warning
+    )
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
