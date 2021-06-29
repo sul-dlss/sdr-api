@@ -55,6 +55,17 @@ class UpdateJob < ApplicationJob
     end
 
     background_job_result.complete!
+  rescue Dor::Services::Client::BadRequestError => e
+    # report as error and do not retry
+    error = { errors: [title: 'HTTP 400 (Bad Request) from dor-services-app', message: e.message] }
+    background_job_result.output = background_job_result.output.merge(error)
+    background_job_result.complete!
+  rescue Dor::Services::Client::ConflictResponse => e
+    # RoundtripValidationError for cocina uses HTTP 409 as status
+    # report as error and do not retry
+    error = { errors: [title: 'HTTP 409 (Conflict) from dor-services-app', message: e.message] }
+    background_job_result.output = background_job_result.output.merge(error)
+    background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.
     if background_job_result.try_count < Settings.sdr_api.ingest_retries

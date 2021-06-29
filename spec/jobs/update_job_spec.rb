@@ -146,7 +146,47 @@ RSpec.describe UpdateJob, type: :job do
     end
   end
 
-  context 'when error raised' do
+  context 'when Dor::Services::Client::BadRequestError error' do
+    let(:object_client) do
+      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
+    end
+
+    before do
+      allow(object_client)
+        .to receive(:update).and_raise(Dor::Services::Client::BadRequestError, 'cocina validation error blah blah')
+    end
+
+    it 'reports error and will not retry' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      expect(actual_result).to be_complete
+      expect(actual_result.output)
+        .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
+                             message: 'cocina validation error blah blah'] })
+      expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
+    end
+  end
+
+  context 'when Dor::Services::Client::ConflictResponse error' do
+    let(:object_client) do
+      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
+    end
+
+    before do
+      allow(object_client)
+        .to receive(:update).and_raise(Dor::Services::Client::ConflictResponse, 'cocina roundtrip validation error ...')
+    end
+
+    it 'reports error and will not retry' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      expect(actual_result).to be_complete
+      expect(actual_result.output)
+        .to match({ errors: [title: 'HTTP 409 (Conflict) from dor-services-app',
+                             message: 'cocina roundtrip validation error ...'] })
+      expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
+    end
+  end
+
+  context 'when StandardError raised' do
     let(:object_client) do
       instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
     end
