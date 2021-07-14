@@ -109,6 +109,10 @@ paths:
           name: accession
           schema:
             type: boolean
+        - in: query
+          name: assign_doi
+          schema:
+            type: boolean
       requestBody:
         description: The metadata for the object
         required: true

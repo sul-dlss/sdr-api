@@ -11,16 +11,17 @@ class IngestJob < ApplicationJob
   # @param [Hash] model_params
   # @param [Array<String>] signed_ids for the blobs
   # @param [Boolean] start_workflow if true, start accessionWF
+  # @param [Boolean] assign_doi if true, adds DOI to Cocina obj
   # @param [BackgroundJobResult] background_job_result
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true)
+  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true, assign_doi: false)
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
     model = Cocina::Models.build_request(model_params.with_indifferent_access)
     begin
-      response_cocina_obj = Dor::Services::Client.objects.register(params: model)
+      response_cocina_obj = Dor::Services::Client.objects.register(params: model, assign_doi: assign_doi)
       druid = response_cocina_obj.externalIdentifier
     rescue Dor::Services::Client::ConflictResponse => e
       # Should not expect this on first try so return as error
