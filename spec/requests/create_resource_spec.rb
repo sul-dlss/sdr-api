@@ -44,7 +44,8 @@ RSpec.describe 'Create a resource' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: JSON.parse(request),
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: [],
-                                                              start_workflow: nil)
+                                                              start_workflow: false,
+                                                              assign_doi: false)
     end
   end
 
@@ -154,7 +155,8 @@ RSpec.describe 'Create a resource' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: [signed_id],
-                                                              start_workflow: nil)
+                                                              start_workflow: false,
+                                                              assign_doi: false)
     end
 
     context 'when wrong version of cocina models is supplied' do
@@ -172,7 +174,7 @@ RSpec.describe 'Create a resource' do
       end
     end
 
-    context 'when the accession flag is explcitly set to true' do
+    context 'when the accession flag is set to true' do
       it 'kicks off accession workflow' do
         post '/v1/resources?accession=true',
              params: request,
@@ -180,11 +182,12 @@ RSpec.describe 'Create a resource' do
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
                                                                 signed_ids: [signed_id],
-                                                                start_workflow: true)
+                                                                start_workflow: true,
+                                                                assign_doi: false)
       end
     end
 
-    context 'when the accession flag is explcitly set to false' do
+    context 'when the accession flag is set to false' do
       it 'does not kick off accession workflow' do
         post '/v1/resources?accession=false',
              params: request,
@@ -192,7 +195,21 @@ RSpec.describe 'Create a resource' do
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
                                                                 signed_ids: [signed_id],
-                                                                start_workflow: false)
+                                                                start_workflow: false,
+                                                                assign_doi: false)
+      end
+    end
+
+    context 'when the assign_doi flag is set to true' do
+      it 'kicks off accession workflow' do
+        post '/v1/resources?assign_doi=true',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                                background_job_result: instance_of(BackgroundJobResult),
+                                                                signed_ids: [signed_id],
+                                                                start_workflow: false,
+                                                                assign_doi: true)
       end
     end
 

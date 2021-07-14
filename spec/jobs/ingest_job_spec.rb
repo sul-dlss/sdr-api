@@ -124,6 +124,17 @@ RSpec.describe IngestJob, type: :job do
     end
   end
 
+  context 'when assigning DOI' do
+    let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
+
+    it 'ingests an object' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids,
+                                  assign_doi: true)
+      expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
+                                                              assign_doi: true)
+    end
+  end
+
   context 'when Dor::Services::Client::ConflictResponse on first register attempt' do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects) }
 

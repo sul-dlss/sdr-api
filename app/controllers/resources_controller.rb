@@ -10,9 +10,12 @@ class ResourcesController < ApplicationController
   before_action :validate_version
 
   # POST /resource
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def create
     begin
-      request_dro = cocina_request_model(params.except(:action, :controller, :resource, :accession).to_unsafe_h)
+      request_dro = cocina_request_model(params.except(:action, :controller, :resource, :accession,
+                                                       :assign_doi).to_unsafe_h)
     rescue BlobError => e
       # Returning 500 because not clear whose fault it is.
       return render build_error('500', e, 'Error matching uploading files to file parameters.')
@@ -23,12 +26,15 @@ class ResourcesController < ApplicationController
     IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
                             background_job_result: result,
-                            start_workflow: params[:accession])
+                            start_workflow: params.fetch(:accession, false),
+                            assign_doi: params.fetch(:assign_doi, false))
 
     render json: { jobId: result.id },
            location: result,
            status: :created
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   # PUT /resource/:id
   def update
