@@ -62,6 +62,9 @@ module SdrApi
     # turn off drawing of Active Storage's default routes, we'll add the ones we want
     config.active_storage.draw_routes = false
 
+    # Override the default (5.minutes), so that large files have enough time to upload
+    config.active_storage.service_urls_expire_in = 20.minutes
+
     # Set up a session store so we can access the Sidekiq Web UI
     # See: https://github.com/mperham/sidekiq/wiki/Monitoring#rails-api-application-session-configuration
     config.session_store :cookie_store, key: '_sdr-api_session'
