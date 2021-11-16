@@ -46,8 +46,5 @@ set :rails_env, 'production'
 # Allow dlss-capistrano to manage sidekiq via systemd
 set :sidekiq_systemd_use_hooks, true
 
-# Use bundler2-style configuration (from dlss-capistrano)
-set :bundler2_config_use_hook, true
-
 # Update shared_configs as part of deployment process
 before 'deploy:restart', 'shared_configs:update'
