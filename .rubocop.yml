@@ -2,7 +2,7 @@ require: rubocop-rspec
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.6.4
+  TargetRubyVersion: 3.0
   Exclude:
     - 'bin/bundle'
     - 'db/schema.rb'
