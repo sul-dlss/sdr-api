@@ -7,9 +7,9 @@ executors:
       - image: circleci/buildpack-deps:stretch
 references:
   default_docker_ruby_executor: &default_docker_ruby_executor
-    image: circleci/ruby:2.7.1-node
+    image: circleci/ruby:3.0-node
     environment:
-      BUNDLER_VERSION: 2.1.4
+      BUNDLER_VERSION: 2.3.4
       BUNDLE_JOBS: 3
       BUNDLE_RETRY: 3
       BUNDLE_PATH: vendor/bundle
