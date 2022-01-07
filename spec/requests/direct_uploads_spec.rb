@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Direct upload' do
   let(:json) do
     '{"blob":{"filename":"Gemfile.lock","byte_size":1751,"checksum":"vQ0xN+GwJBg9iEAcD4v73g==",' \
-    '"content_type":"text/html"}}'
+      '"content_type":"text/html"}}'
   end
 
   context 'when unauthorized' do

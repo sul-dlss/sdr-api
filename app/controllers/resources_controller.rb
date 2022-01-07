@@ -71,7 +71,8 @@ class ResourcesController < ApplicationController
     return if !request_version || request_version == Cocina::Models::VERSION
 
     error = StandardError.new("The API accepts cocina-models version #{Cocina::Models::VERSION} " \
-      "but you provided #{request_version}.  Run \"bundle update\" and then retry your request.")
+                              "but you provided #{request_version}.  " \
+                              'Run "bundle update" and then retry your request.')
     render build_error('400', error, 'Cocina-models version mismatch')
   end
 
