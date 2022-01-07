@@ -98,9 +98,7 @@ RSpec.describe IngestJob, type: :job do
   before do
     FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')
     FileUtils.mkdir_p('tmp/storage/to/zu')
-    File.open('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'w') do |f|
-      f.write 'HELLO'
-    end
+    File.write('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'HELLO')
     allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
     allow(Dor::Services::Client).to receive(:objects).and_return(objects_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)

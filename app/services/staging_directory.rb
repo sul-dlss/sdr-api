@@ -12,9 +12,7 @@ class StagingDirectory
 
   def write_file(filename, content)
     ensure_directory_exists!
-    File.open(File.join(metadata_dir, filename), 'w') do |f|
-      f.write content
-    end
+    File.write(File.join(metadata_dir, filename), content)
   end
 
   def copy_file(source, dest)
