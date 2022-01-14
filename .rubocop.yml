@@ -5,6 +5,7 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 3.0
+  DisplayCopNames: true
   Exclude:
     - 'bin/bundle'
     - 'db/schema.rb'
