@@ -22,6 +22,8 @@ CREATE TYPE public.background_job_result_status AS ENUM (
 
 SET default_tablespace = '';
 
+SET default_table_access_method = heap;
+
 --
 -- Name: active_storage_attachments; Type: TABLE; Schema: public; Owner: -
 --

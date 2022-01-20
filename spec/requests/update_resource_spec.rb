@@ -92,13 +92,13 @@ RSpec.describe 'Update a resource' do
   end
 
   let(:expected_model_params) do
-    JSON.parse(request).tap do |model_params|
-      file_params = model_params['structural']['contains'][0]['structural']['contains'][0]
-      file_params.delete('externalIdentifier')
-      file_params['hasMimeType'] = 'application/octet-stream'
-      file_params['size'] = 10
-      file_params['externalIdentifier'] = 'druid:bc999dg9999/file2.txt'
-    end
+    model_params = Cocina::Models::DRO.new(JSON.parse(request)).to_h
+    file_params = model_params[:structural][:contains][0][:structural][:contains][0]
+    file_params.delete(:externalIdentifier)
+    file_params[:hasMimeType] = 'application/octet-stream'
+    file_params[:size] = 10
+    file_params[:externalIdentifier] = 'druid:bc999dg9999/file2.txt'
+    model_params.with_indifferent_access
   end
 
   before do

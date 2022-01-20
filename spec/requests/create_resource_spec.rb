@@ -137,12 +137,12 @@ RSpec.describe 'Create a resource' do
     end
 
     let(:expected_model_params) do
-      model_params = JSON.parse(request)
-      file_params = model_params['structural']['contains'][0]['structural']['contains'][0]
-      file_params.delete('externalIdentifier')
-      file_params['hasMimeType'] = 'application/octet-stream'
-      file_params['size'] = 10
-      model_params
+      model_params = Cocina::Models::RequestDRO.new(JSON.parse(request)).to_h
+      file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
+      file_params.delete(:externalIdentifier)
+      file_params[:hasMimeType] = 'application/octet-stream'
+      file_params[:size] = 10
+      model_params.with_indifferent_access
     end
 
     it 'registers the resource and kicks off IngestJob' do
