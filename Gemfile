@@ -20,10 +20,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'action_policy'
 gem 'assembly-objectfile', '~> 1.9'
-gem 'cocina-models', '~> 0.62.0'
+gem 'cocina-models', '~> 0.63.1'
 gem 'committee'
 gem 'config', '~> 2.0'
-gem 'dor-services-client', '~> 7.1'
+gem 'dor-services-client', '~> 7.7'
 gem 'dor-workflow-client'
 gem 'druid-tools'
 gem 'honeybadger'
