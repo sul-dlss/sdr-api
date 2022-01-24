@@ -285,9 +285,14 @@ components:
           description: Name of role
           type: string
           enum:
+            - 'dor-apo-creator'
+            - 'dor-apo-depositor'
+            - 'dor-apo-manager'
+            - 'dor-apo-metadata'
+            - 'dor-apo-reviewer'
+            - 'dor-apo-viewer'
             - 'sdr-administrator'
             - 'sdr-viewer'
-            - 'dor-apo-manager'
             - 'hydrus-collection-creator'
             - 'hydrus-collection-manager'
             - 'hydrus-collection-depositor'
@@ -370,7 +375,7 @@ components:
           deprecated: true
           default: <?xml version="1.0" encoding="UTF-8"?><rightsMetadata><access type="discover"><machine><world/></machine></access><access type="read"><machine><world/></machine></access><use><human type="useAndReproduction"/><human type="creativeCommons"/><machine type="creativeCommons" uri=""/><human type="openDataCommons"/><machine type="openDataCommons" uri=""/></use><copyright><human/></copyright></rightsMetadata>
         defaultAccess:
-          $ref: '#/components/schemas/DROAccess'
+          $ref: '#/components/schemas/AdminPolicyDefaultAccess'
         registrationWorkflow:
           description: When you register an item with this admin policy, these are the workflows that are available.
           type: array
@@ -416,8 +421,7 @@ components:
           description: The human readable copyright statement that applies
           example: Copyright World Trade Organization
           type: string
-        embargo:
-          $ref: '#/components/schemas/Embargo'
+          nullable: true
         download:
           description: >
             Download access level. This is used in the transition from Fedora as
@@ -437,6 +441,7 @@ components:
             readLocation at registration that is copied down to all the files.
 
           type: string
+          nullable: true
           enum:
             - 'spec'
             - 'music'
@@ -448,9 +453,11 @@ components:
           description: The human readable use and reproduction statement that applies
           example: Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Public Services Librarian of the Dept. of Special Collections (http://library.stanford.edu/spc).
           type: string
+          nullable: true
         license:
           description: The license governing reuse of the Collection. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).
           type: string
+          nullable: true
     AppliesTo:
       description: Property model for indicating the parts, aspects, or versions of the resource to which a
         descriptive element is applicable.
@@ -577,6 +584,7 @@ components:
           description: The human readable copyright statement that applies
           example: Copyright World Trade Organization
           type: string
+          nullable: true
         useAndReproductionStatement:
           description: The human readable use and reproduction statement that applies
           example: Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Public Services Librarian of the Dept. of Special Collections (http://library.stanford.edu/spc).
@@ -588,12 +596,12 @@ components:
       type: object
       additionalProperties: false
       properties:
-        sourceId:
-          $ref: '#/components/schemas/SourceId'
         catalogLinks:
           type: array
           items:
             $ref: '#/components/schemas/CatalogLink'
+        sourceId:
+          $ref: '#/components/schemas/SourceId'
     Contributor:
       description: Property model for describing agents contributing in some way to
         the creation and history of the resource.
@@ -631,6 +639,11 @@ components:
         valueAt:
           description: URL or other pointer to the location of the contributor information.
           type: string
+        parallelContributor:
+          description: For multiple representations of information about the same contributor (e.g. in different languages).
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptiveParallelContributor"
     ControlledDigitalLendingAccess:
       type: object
       properties:
@@ -917,6 +930,43 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/DescriptiveValue"
+    DescriptiveParallelContributor:
+      description: Value model for multiple representations of information about the same contributor (e.g. in different languages).
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          description: Names associated with a contributor.
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptiveValue"
+        type:
+          description: Entity type of the contributor (person, organization, etc.).
+          type: string
+        status:
+          description: Status of the contributor relative to other parallel contributors (e.g. the primary author among a group of contributors).
+          type: string
+        role:
+          description: Relationships of the contributor to the resource or to an event in its history.
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptiveValue"
+        identifier:
+          description: Identifiers and URIs associated with the contributor entity.
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptiveValue"
+        note:
+          description: Other information associated with the contributor.
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptiveValue"
+        valueAt:
+          description: URL or other pointer to the location of the contributor information.
+          type: string
+        valueLanguage:
+          # description: Language of the descriptive element value
+          $ref: "#/components/schemas/DescriptiveValueLanguage"            
     DescriptiveParallelEvent:
       description: Value model for multiple representations of information about the same event (e.g. in different languages).
       type: object
@@ -1064,6 +1114,7 @@ components:
               description: The human readable copyright statement that applies
               example: Copyright World Trade Organization
               type: string
+              nullable: true
             embargo:
               $ref: '#/components/schemas/Embargo'
             useAndReproductionStatement:
@@ -1835,8 +1886,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CatalogLink'
-        doi:
-          $ref: '#/components/schemas/DOI'
         sourceId:
           $ref: '#/components/schemas/SourceId'
       required:
