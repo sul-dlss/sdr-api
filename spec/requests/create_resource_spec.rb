@@ -11,6 +11,7 @@ RSpec.describe 'Create a resource' do
     let(:request) do
       <<~JSON
         {
+          "cocinaVersion":"#{Cocina::Models::VERSION}",
           "label":"hello",
           "version":1,
           "type":"#{Cocina::Models::Vocab.collection}",
@@ -53,6 +54,7 @@ RSpec.describe 'Create a resource' do
     let(:request) do
       <<~JSON
         {
+          "cocinaVersion":"#{Cocina::Models::VERSION}",
           "label":"hello",
           "version":1,
           "type":"#{Cocina::Models::Vocab.book}",

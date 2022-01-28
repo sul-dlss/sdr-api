@@ -6,6 +6,7 @@ RSpec.describe 'Update a resource' do
   let(:request) do
     <<~JSON
       {
+        "cocinaVersion":"0.0.1",
         "label":"hello",
         "externalIdentifier":"druid:bc999dg9999",
         "version":2,
