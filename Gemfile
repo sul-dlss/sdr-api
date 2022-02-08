@@ -20,7 +20,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'action_policy'
 gem 'assembly-objectfile', '~> 1.9'
-gem 'cocina-models', '~> 0.64.0'
+gem 'cocina-models', '~> 0.65.0'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 7.8'
