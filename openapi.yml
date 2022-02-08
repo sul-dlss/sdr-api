@@ -397,8 +397,6 @@ components:
           $ref: '#/components/schemas/Druid'
         hasAgreement:
           $ref: '#/components/schemas/Druid'
-        referencesAgreement:
-          $ref: '#/components/schemas/Druid'
         roles:
           description: The access roles conferred by this AdminPolicy (used by Argo)
           type: array
@@ -476,6 +474,7 @@ components:
             $ref: "#/components/schemas/DescriptiveBasicValue"
     Barcode:
       description: 'A barcode'
+      nullable: true
       oneOf:
         - $ref: '#/components/schemas/BusinessBarcode'
         - $ref: '#/components/schemas/LaneMedicalBarcode'
@@ -918,7 +917,7 @@ components:
           type: string
         valueLanguage:
           # description: Language of the descriptive element value
-          $ref: "#/components/schemas/DescriptiveValueLanguage"            
+          $ref: "#/components/schemas/DescriptiveValueLanguage"
     DescriptiveParallelEvent:
       description: Value model for multiple representations of information about the same event (e.g. in different languages).
       type: object
@@ -1079,6 +1078,7 @@ components:
             license:
               description: The license governing reuse of the DRO. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).
               type: string
+              nullable: true
               enum:
                 - 'https://www.gnu.org/licenses/agpl.txt'
                 - 'https://www.apache.org/licenses/LICENSE-2.0'
@@ -1757,7 +1757,7 @@ components:
           description: URL or other pointer to the location of the resource description.
           type: string
       required:
-        - title        
+        - title
     RequestDRO:
       description: A request to create a DRO.  This has the same general structure as a DRO but doesn't have externalIdentifier and doesn't require the access subschema. If no access subschema is provided, these values will be inherited from the AdminPolicy.
       type: object
