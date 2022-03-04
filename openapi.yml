@@ -338,6 +338,7 @@ components:
           description: Administrative or Internal project this resource is a part of
           example: Google Books
           type: string
+          nullable: true
       required:
         - hasAdminPolicy
     AdminPolicy:
@@ -570,6 +571,7 @@ components:
           $ref: '#/components/schemas/CollectionIdentification'
       required:
         - cocinaVersion
+        - description
         - externalIdentifier
         - label
         - type
@@ -1049,6 +1051,7 @@ components:
         - cocinaVersion
         - access
         - administrative
+        - description
         - externalIdentifier
         - label
         - type
@@ -1639,6 +1642,9 @@ components:
           type: string
         version:
           type: integer
+          default: 1
+          enum:
+            - 1
         administrative:
           $ref: '#/components/schemas/AdminPolicyAdministrative'
         description:
@@ -1668,6 +1674,9 @@ components:
           type: string
         version:
           type: integer
+          default: 1
+          enum:
+            - 1
         access:
           $ref: '#/components/schemas/CollectionAccess'
         administrative:
@@ -1785,6 +1794,9 @@ components:
           type: string
         version:
           type: integer
+          default: 1
+          enum:
+            - 1
         access:
           $ref: '#/components/schemas/DROAccess'
         administrative:

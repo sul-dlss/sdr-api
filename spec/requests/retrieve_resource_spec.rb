@@ -10,6 +10,10 @@ RSpec.describe 'Retrieve a resource' do
         "externalIdentifier":"druid:bc999dg9999",
         "version":2,
         "type":"#{Cocina::Models::Vocab.book}",
+        "description": {
+          "title": [{"value":"hello"}],
+          "purl": "https://purl.stanford.edu/bc999dg9999"
+        },
         "access": {
           "access":"world",
           "copyright":"All rights reserved unless otherwise indicated.",

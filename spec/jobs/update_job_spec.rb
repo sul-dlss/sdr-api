@@ -23,6 +23,10 @@ RSpec.describe UpdateJob, type: :job do
       label: 'hello',
       externalIdentifier: druid,
       version: update_version,
+      description: {
+        title: [{ value: 'hello' }],
+        purl: "https://purl.stanford.edu/#{druid.delete_prefix('druid:')}"
+      },
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
         access: 'world',
