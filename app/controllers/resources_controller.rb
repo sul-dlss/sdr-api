@@ -62,6 +62,10 @@ class ResourcesController < ApplicationController
     cocina_obj = Dor::Services::Client.object(params[:id]).find
     authorize! cocina_obj, with: ResourcePolicy
     render json: cocina_obj
+  rescue Dor::Services::Client::NotFoundResponse => e
+    render build_error('404', e, "Object not found: #{params[:id]}")
+  rescue Dor::Services::Client::UnexpectedResponse => e
+    render build_error('500', e, 'Internal server error')
   end
 
   private
