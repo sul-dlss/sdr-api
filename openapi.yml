@@ -140,6 +140,12 @@ paths:
                   - $ref: '#/components/schemas/DRO'
                   - $ref: '#/components/schemas/Collection'
                   - $ref: '#/components/schemas/AdminPolicy'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Unprocessable Entity
           content:
