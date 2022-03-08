@@ -95,12 +95,12 @@ RSpec.describe 'Create a resource' do
           "isMemberOf":["druid:fg123hj4567"],
           "contains":[
             {
-              "type":"http://cocina.sul.stanford.edu/models/resources/file.jsonld",
+              "type":"#{Cocina::Models::Vocab::Resources.file}",
               "label":"Page 1",
               "structural":{
                 "contains":[
                   {
-                    "type":"http://cocina.sul.stanford.edu/models/file.jsonld",
+                    "type":"#{Cocina::Models::Vocab.file}",
                     "filename":"file2.txt",
                     "label":"file2.txt",
                     "hasMessageDigests":[
