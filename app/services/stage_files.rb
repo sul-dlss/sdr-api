@@ -3,6 +3,9 @@
 # Moves files from the ActiveStorage to the staging mount
 class StageFiles
   def self.stage(signed_ids, druid)
+    # Skip side effects if no signed IDs provided
+    return yield if signed_ids.blank?
+
     blobs = Blobs.blobs_for(signed_ids)
     copy_files_to_staging(druid, blobs)
     yield
