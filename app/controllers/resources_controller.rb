@@ -99,6 +99,22 @@ class ResourcesController < ApplicationController
     file_sets(model_params).each do |fileset|
       fileset[:version] = model_params[:version]
       fileset.dig(:structural, :contains).each do |file|
+        # NOTE: sdr-api receives requests from both:
+        #
+        #   1. systems like H2 that rely on the API to deposit files to SDR; and
+        #   2. users hand-creating objects via the sdr-client CLI.
+        #
+        # The latter use case allows a user to update an existing SDR object, e.g., to
+        # amend an item's APO. This operation does not require sdr-api to handle files
+        # and is merely passing through Cocina to SDR. One way we can tell whether a Cocina
+        # structure depends on sdr-api to manage files is by sniffing files' external
+        # identifiers. If the external identifier of a file is a legitimate HTTP(S) URI,
+        # SDR already has a file on hand for the object, and sdr-api can simply pass through
+        # the structure undecorated. If on the other hand the external identifier is not
+        # an HTTP(S) URI, that is a signal that the originating user or system expects
+        # the API to manage files for them.
+        next if file[:externalIdentifier].match?(%r{^https?://})
+
         decorate_file(file: file,
                       external_id: "#{model_params[:externalIdentifier]}/#{file[:filename]}",
                       version: model_params[:version])
