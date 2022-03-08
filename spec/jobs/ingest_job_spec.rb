@@ -57,7 +57,7 @@ RSpec.describe IngestJob, type: :job do
 
   let(:file) do
     {
-      type: 'http://cocina.sul.stanford.edu/models/file.jsonld',
+      type: Cocina::Models::Vocab.file,
       filename: 'file2.txt',
       label: 'file2.txt',
       hasMimeType: 'text/plain',
@@ -81,7 +81,7 @@ RSpec.describe IngestJob, type: :job do
   let(:filesets) do
     [
       {
-        type: 'http://cocina.sul.stanford.edu/models/resources/file.jsonld',
+        type: Cocina::Models::Vocab::Resources.file,
         label: 'Page 1',
         structural: { contains: [file] },
         version: 1

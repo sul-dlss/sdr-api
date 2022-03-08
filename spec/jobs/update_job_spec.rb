@@ -62,7 +62,7 @@ RSpec.describe UpdateJob, type: :job do
 
   let(:file) do
     {
-      type: 'http://cocina.sul.stanford.edu/models/file.jsonld',
+      type: Cocina::Models::Vocab.file,
       filename: 'file2.txt',
       externalIdentifier: "#{druid}/file2.txt",
       label: 'file2.txt',
@@ -87,7 +87,7 @@ RSpec.describe UpdateJob, type: :job do
   let(:filesets) do
     [
       {
-        type: 'http://cocina.sul.stanford.edu/models/resources/file.jsonld',
+        type: Cocina::Models::Vocab::Resources.file,
         externalIdentifier: 'bc123df4567_1',
         label: 'Page 1',
         structural: { contains: [file] },
