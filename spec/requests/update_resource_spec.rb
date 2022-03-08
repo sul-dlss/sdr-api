@@ -164,7 +164,7 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [file_id])
+                                                              signed_ids: [])
     end
   end
 
@@ -180,7 +180,7 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [file_id])
+                                                              signed_ids: [])
     end
   end
 

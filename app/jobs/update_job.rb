@@ -42,6 +42,7 @@ class UpdateJob < ApplicationJob
     background_job_result.output = { druid: model.externalIdentifier }
 
     versioning_params = { description: 'Update via sdr-api', significance: 'major' }
+
     StageFiles.stage(signed_ids, model.externalIdentifier) do
       if start_workflow
         # this will check openability, open/close a version as needed, and then kick off accessioning after
