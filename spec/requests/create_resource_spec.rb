@@ -228,7 +228,7 @@ RSpec.describe 'Create a resource' do
       end
     end
 
-    context 'when md5mismatch' do
+    context 'when md5 mismatch' do
       let(:checksum) { 'g5nXiniiM+u/gexbNkOA/A==' }
 
       it 'returns 500' do

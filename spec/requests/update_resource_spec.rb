@@ -45,7 +45,6 @@ RSpec.describe 'Update a resource' do
       }
     JSON
   end
-
   let(:structural) do
     <<~JSON
       "structural":{
@@ -65,7 +64,7 @@ RSpec.describe 'Update a resource' do
                     {"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},
                     {"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}
                   ],
-                  "externalIdentifier":"#{signed_id}",
+                  "externalIdentifier":"#{file_id}",
                   "administrative":{
                     "publish":true,
                     "sdrPreserve":true,
@@ -85,25 +84,27 @@ RSpec.describe 'Update a resource' do
       }
     JSON
   end
-
   let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
-
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
                                 filename: 'file2.txt', byte_size: 10, checksum: checksum)
   end
-  let(:signed_id) do
+  let(:file_id) do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
   end
-
-  let(:expected_model_params) do
-    model_params = Cocina::Models::DRO.new(JSON.parse(request)).to_h
-    file_params = model_params[:structural][:contains][0][:structural][:contains][0]
-    file_params.delete(:externalIdentifier)
-    file_params[:hasMimeType] = 'application/octet-stream'
-    file_params[:size] = 10
-    file_params[:externalIdentifier] = 'druid:bc999dg9999/file2.txt'
-    model_params.with_indifferent_access
+  let(:expected_model_params_without_file_ids) do
+    # NOTE: These params are expected when a request expects sdr-api to manage files on its behalf
+    expected_model_params_with_file_ids.dup.tap do |model_params|
+      file_params = model_params[:structural][:contains][0][:structural][:contains][0]
+      file_params.delete(:externalIdentifier)
+      file_params[:hasMimeType] = 'application/octet-stream'
+      file_params[:size] = 10
+      file_params[:externalIdentifier] = 'druid:bc999dg9999/file2.txt'
+    end
+  end
+  let(:expected_model_params_with_file_ids) do
+    # NOTE: These params are expected when a request expects sdr-api NOT to manage files on its behalf
+    Cocina::Models::DRO.new(JSON.parse(request)).to_h.with_indifferent_access
   end
 
   before do
@@ -118,9 +119,9 @@ RSpec.describe 'Update a resource' do
     expect(response).to be_accepted
     expect(response.location).to be_present
     expect(JSON.parse(response.body)['jobId']).to be_present
-    expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params,
+    expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                             background_job_result: instance_of(BackgroundJobResult),
-                                                            signed_ids: [signed_id])
+                                                            signed_ids: [file_id])
   end
 
   context 'when wrong version of cocina models is supplied' do
@@ -139,7 +140,7 @@ RSpec.describe 'Update a resource' do
   end
 
   context 'when blob not found for file' do
-    let(:signed_id) { 'abc123' }
+    let(:file_id) { 'abc123' }
 
     it 'returns 500' do
       put '/v1/resources/druid:bc123df4567',
@@ -151,7 +152,39 @@ RSpec.describe 'Update a resource' do
     end
   end
 
-  context 'when md5mismatch' do
+  context 'when file ID is an HTTP URI' do
+    let(:file_id) { 'http://cocina.sul.stanford.edu/file/foobar' }
+
+    it 'registers the resource and kicks off UpdateJob' do
+      put '/v1/resources/druid:bc123df4567',
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to be_accepted
+      expect(response.location).to be_present
+      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: [file_id])
+    end
+  end
+
+  context 'when file ID is an HTTPS URI' do
+    let(:file_id) { 'https://cocina.sul.stanford.edu/file/foobar' }
+
+    it 'registers the resource and kicks off UpdateJob' do
+      put '/v1/resources/druid:bc123df4567',
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to be_accepted
+      expect(response.location).to be_present
+      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: [file_id])
+    end
+  end
+
+  context 'when md5 mismatch' do
     let(:checksum) { 'g5nXiniiM+u/gexbNkOA/A==' }
 
     it 'returns 500' do
