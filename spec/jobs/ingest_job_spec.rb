@@ -19,17 +19,17 @@ RSpec.describe IngestJob, type: :job do
 
   let(:model) do
     {
-      type: Cocina::Models::Vocab.book,
+      type: Cocina::Models::ObjectType.book,
       label: 'hello',
       version: 1,
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
-        access: 'world',
+        view: 'world',
         download: 'none',
         useAndReproductionStatement: 'Property rights reside with the repository...',
         embargo: {
           releaseDate: '2029-06-22T07:00:00.000+00:00',
-          access: 'world',
+          view: 'world',
           download: 'world',
           useAndReproductionStatement: 'Whatever you want'
         }
@@ -57,7 +57,7 @@ RSpec.describe IngestJob, type: :job do
 
   let(:file) do
     {
-      type: Cocina::Models::Vocab.file,
+      type: Cocina::Models::ObjectType.file,
       filename: 'file2.txt',
       label: 'file2.txt',
       hasMimeType: 'text/plain',
@@ -67,7 +67,7 @@ RSpec.describe IngestJob, type: :job do
         shelve: true
       },
       access: {
-        access: 'stanford',
+        view: 'stanford',
         download: 'stanford'
       },
       hasMessageDigests: [
@@ -81,7 +81,7 @@ RSpec.describe IngestJob, type: :job do
   let(:filesets) do
     [
       {
-        type: Cocina::Models::Vocab::Resources.file,
+        type: Cocina::Models::FileSetType.file,
         label: 'Page 1',
         structural: { contains: [file] },
         version: 1

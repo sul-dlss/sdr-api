@@ -4,7 +4,7 @@
 class AdministrativeTags
   def self.for(type:, user:)
     case type
-    when Cocina::Models::Vocab.book
+    when Cocina::Models::ObjectType.book
       # NOTE: For now, we assume all books are LTR until we learn how to discern
       #       otherwise. See related issue:
       #       https://github.com/sul-dlss/google-books/issues/184

@@ -19,7 +19,7 @@ RSpec.describe UpdateJob, type: :job do
   let(:update_version) { 2 }
   let(:model) do
     {
-      type: Cocina::Models::Vocab.book,
+      type: Cocina::Models::ObjectType.book,
       label: 'hello',
       externalIdentifier: druid,
       version: update_version,
@@ -29,19 +29,18 @@ RSpec.describe UpdateJob, type: :job do
       },
       access: {
         copyright: 'All rights reserved unless otherwise indicated.',
-        access: 'world',
+        view: 'world',
         download: 'none',
         useAndReproductionStatement: 'Property rights reside with the repository...',
         embargo: {
           releaseDate: '2029-06-22T07:00:00.000+00:00',
-          access: 'world',
+          view: 'world',
           download: 'world',
           useAndReproductionStatement: 'Whatever you want'
         }
       },
       administrative: {
         hasAdminPolicy: 'druid:bc123df4567',
-        partOfProject: 'Google Books',
         releaseTags: []
       },
       identification: {
@@ -62,7 +61,7 @@ RSpec.describe UpdateJob, type: :job do
 
   let(:file) do
     {
-      type: Cocina::Models::Vocab.file,
+      type: Cocina::Models::ObjectType.file,
       filename: 'file2.txt',
       externalIdentifier: "#{druid}/file2.txt",
       label: 'file2.txt',
@@ -73,7 +72,7 @@ RSpec.describe UpdateJob, type: :job do
         shelve: true
       },
       access: {
-        access: 'stanford',
+        view: 'stanford',
         download: 'stanford'
       },
       hasMessageDigests: [
@@ -87,7 +86,7 @@ RSpec.describe UpdateJob, type: :job do
   let(:filesets) do
     [
       {
-        type: Cocina::Models::Vocab::Resources.file,
+        type: Cocina::Models::FileSetType.file,
         externalIdentifier: 'bc123df4567_1',
         label: 'Page 1',
         structural: { contains: [file] },
