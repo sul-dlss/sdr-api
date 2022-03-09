@@ -103,7 +103,7 @@ GEM
       capistrano-bundler (>= 1.1, < 3)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.67.1)
+    cocina-models (0.68.0)
       activesupport
       dry-struct (~> 1.0)
       dry-types (~> 1.1)
@@ -134,9 +134,9 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (8.1.1)
+    dor-services-client (8.2.0)
       activesupport (>= 4.2, < 8)
-      cocina-models (~> 0.67.1)
+      cocina-models (~> 0.68.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -391,7 +391,7 @@ DEPENDENCIES
   byebug
   capistrano-passenger
   capistrano-rails
-  cocina-models (~> 0.67.1)
+  cocina-models (~> 0.68.0)
   committee
   config (~> 2.0)
   dlss-capistrano
@@ -422,4 +422,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   2.3.7
+   2.3.8

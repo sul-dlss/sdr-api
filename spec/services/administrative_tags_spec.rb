@@ -7,13 +7,13 @@ RSpec.describe AdministrativeTags do
 
   describe '.for' do
     context 'with a book object' do
-      let(:type_uri) { Cocina::Models::Vocab.book }
+      let(:type_uri) { Cocina::Models::ObjectType.book }
 
       it { is_expected.to eq(['Process : Content Type : Book (ltr)', 'Registered By : bergeraj']) }
     end
 
     context 'with a non-book object' do
-      let(:type_uri) { Cocina::Models::Vocab.image }
+      let(:type_uri) { Cocina::Models::ObjectType.image }
 
       it { is_expected.to eq([]) }
     end

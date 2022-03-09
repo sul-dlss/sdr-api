@@ -14,9 +14,9 @@ RSpec.describe 'Create a resource' do
           "cocinaVersion":"#{Cocina::Models::VERSION}",
           "label":"hello",
           "version":1,
-          "type":"#{Cocina::Models::Vocab.collection}",
+          "type":"#{Cocina::Models::ObjectType.collection}",
           "access": {
-            "access":"world"
+            "view":"world"
           },
           "administrative": {
             "hasAdminPolicy":"druid:bc123df4567",
@@ -57,15 +57,15 @@ RSpec.describe 'Create a resource' do
           "cocinaVersion":"#{Cocina::Models::VERSION}",
           "label":"hello",
           "version":1,
-          "type":"#{Cocina::Models::Vocab.book}",
+          "type":"#{Cocina::Models::ObjectType.book}",
           "access": {
-            "access":"world",
+            "view":"world",
             "copyright":"All rights reserved unless otherwise indicated.",
             "download":"none",
             "useAndReproductionStatement":"Property rights reside with the repository...",
             "embargo": {
               "releaseDate": "2029-06-22T07:00:00.000+00:00",
-              "access": "world",
+              "view": "world",
               "download":"world",
               "useAndReproductionStatement": "Whatever you want"
             }
@@ -95,12 +95,12 @@ RSpec.describe 'Create a resource' do
           "isMemberOf":["druid:fg123hj4567"],
           "contains":[
             {
-              "type":"#{Cocina::Models::Vocab::Resources.file}",
+              "type":"#{Cocina::Models::FileSetType.file}",
               "label":"Page 1",
               "structural":{
                 "contains":[
                   {
-                    "type":"#{Cocina::Models::Vocab.file}",
+                    "type":"#{Cocina::Models::ObjectType.file}",
                     "filename":"file2.txt",
                     "label":"file2.txt",
                     "hasMessageDigests":[
@@ -114,7 +114,7 @@ RSpec.describe 'Create a resource' do
                       "shelve":true
                     },
                     "access": {
-                      "access":"stanford",
+                      "view":"stanford",
                       "download":"stanford"
                     },
                     "version":1

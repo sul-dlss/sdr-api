@@ -10,26 +10,25 @@ RSpec.describe 'Update a resource' do
         "label":"hello",
         "externalIdentifier":"druid:bc999dg9999",
         "version":2,
-        "type":"#{Cocina::Models::Vocab.book}",
+        "type":"#{Cocina::Models::ObjectType.book}",
         "description": {
           "title": [{"value":"hello"}],
           "purl": "https://purl.stanford.edu/bc999dg9999"
         },
         "access": {
-          "access":"world",
+          "view":"world",
           "copyright":"All rights reserved unless otherwise indicated.",
           "download":"none",
           "useAndReproductionStatement":"Property rights reside with the repository...",
           "embargo": {
             "releaseDate": "2029-06-22T07:00:00.000+00:00",
-            "access": "world",
+            "view": "world",
             "download": "world",
             "useAndReproductionStatement": "Whatever you want"
           }
         },
         "administrative": {
           "hasAdminPolicy":"druid:bc123df4567",
-          "partOfProject":"Google Books",
           "releaseTags":[]
         },
         "identification": {
@@ -51,13 +50,13 @@ RSpec.describe 'Update a resource' do
         "isMemberOf":["druid:fg123hj4567"],
         "contains":[
           {
-            "type":"#{Cocina::Models::Vocab::Resources.file}",
+            "type":"#{Cocina::Models::FileSetType.file}",
             "externalIdentifier":"9999",
             "label":"Page 1",
             "structural":{
               "contains":[
                 {
-                  "type":"#{Cocina::Models::Vocab.file}",
+                  "type":"#{Cocina::Models::ObjectType.file}",
                   "filename":"file2.txt",
                   "label":"file2.txt",
                   "hasMessageDigests":[
@@ -71,7 +70,7 @@ RSpec.describe 'Update a resource' do
                     "shelve":true
                   },
                   "access": {
-                    "access":"stanford",
+                    "view":"stanford",
                     "download":"stanford"
                   },
                   "version":2
