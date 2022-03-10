@@ -48,3 +48,7 @@ set :sidekiq_systemd_use_hooks, true
 
 # Update shared_configs as part of deployment process
 before 'deploy:restart', 'shared_configs:update'
+
+# the honeybadger gem should integrate automatically with capistrano-rvm but it
+# doesn't appear to do so on our new Ubuntu boxes :shrug:
+set :rvm_map_bins, fetch(:rvm_map_bins, []).push('honeybadger')
