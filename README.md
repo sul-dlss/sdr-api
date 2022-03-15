@@ -3,7 +3,7 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/6e11d54474bfaf70480b/test_coverage)](https://codeclimate.com/github/sul-dlss/sdr-api/test_coverage)
 [![OpenAPI Validator](http://validator.swagger.io/validator?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/main/openapi.yml)](http://validator.swagger.io/validator/debug?url=https://raw.githubusercontent.com/sul-dlss/sdr-api/main/openapi.yml)
 
-# Stanford Digital Repository API (SDR-API)
+# Stanford Digital Repository API (SDR-API) --foobar
 
 An HTTP API for the SDR.
 
