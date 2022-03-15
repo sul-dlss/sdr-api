@@ -75,6 +75,7 @@ GEM
       mini_exiftool
       nokogiri
     ast (2.4.2)
+    attr_extras (6.2.5)
     bcrypt (3.1.16)
     bootsnap (1.11.1)
       msgpack (~> 1.2)
@@ -106,12 +107,13 @@ GEM
       sshkit (~> 1.2)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.68.0)
+    cocina-models (0.69.0)
       activesupport
       dry-struct (~> 1.0)
       dry-types (~> 1.1)
       openapi3_parser
       openapi_parser (>= 0.11.1, < 1.0)
+      super_diff
       thor
       zeitwerk (~> 2.1)
     committee (4.4.0)
@@ -137,9 +139,9 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (8.2.0)
+    dor-services-client (8.3.0)
       activesupport (>= 4.2, < 8)
-      cocina-models (~> 0.68.0)
+      cocina-models (~> 0.69.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -254,9 +256,12 @@ GEM
       commonmarker (~> 0.17)
       psych (~> 3.1)
     openapi_parser (0.15.0)
+    optimist (3.0.1)
     parallel (1.21.0)
     parser (3.1.1.0)
       ast (~> 2.4.1)
+    patience_diff (1.2.0)
+      optimist (~> 3.0)
     pg (1.3.4)
     psych (3.3.2)
     public_suffix (4.0.6)
@@ -365,6 +370,10 @@ GEM
     sshkit (1.21.2)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    super_diff (0.8.0)
+      attr_extras (>= 6.2.4)
+      diff-lcs
+      patience_diff
     thor (1.2.1)
     tilt (2.0.10)
     tzinfo (2.0.4)
@@ -395,7 +404,7 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
-  cocina-models (~> 0.68.0)
+  cocina-models (~> 0.69.0)
   committee
   config (~> 2.0)
   dlss-capistrano
