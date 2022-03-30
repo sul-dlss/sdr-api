@@ -52,7 +52,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring', '~> 2.0'
   # Use Puma as the app server
-  gem 'puma', '~> 5.5'
+  gem 'puma', '~> 5.6'
 end
 
 group :deployment do
