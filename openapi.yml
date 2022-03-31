@@ -1360,6 +1360,8 @@ components:
           $ref: '#/components/schemas/DOI'
         sourceId:
           $ref: '#/components/schemas/SourceId'
+      required:
+        - sourceId
     Language:
       description: Languages, scripts, symbolic systems, and notations used in all
         or part of a resource or its descriptive metadata.
