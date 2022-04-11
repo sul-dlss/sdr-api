@@ -35,7 +35,8 @@ RSpec.describe 'Retrieve a resource' do
             "catalogLinks": [
                 {
                   "catalog":"symphony",
-                  "catalogRecordId":"123456"
+                  "catalogRecordId":"123456",
+                  "refresh":true
                 }
             ],
             "sourceId":"googlebooks:stanford_82323429"
