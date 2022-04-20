@@ -37,7 +37,8 @@ class UpdateJob < ApplicationJob
       return
     end
 
-    object_client.update(params: model)
+    # Note that not using a lock here since all model params are being provided rather than updating retrieved params.
+    object_client.update(params: model, skip_lock: true)
 
     background_job_result.output = { druid: model.externalIdentifier }
 

@@ -123,7 +123,7 @@ RSpec.describe UpdateJob, type: :job do
     it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
       cocina_object = Cocina::Models.build(model.with_indifferent_access)
-      expect(object_client).to have_received(:update).with(params: cocina_object)
+      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -226,7 +226,7 @@ RSpec.describe UpdateJob, type: :job do
     it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
       cocina_object = Cocina::Models.build(model.with_indifferent_access)
-      expect(object_client).to have_received(:update).with(params: cocina_object)
+      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)

@@ -67,7 +67,12 @@ RSpec.describe 'Retrieve a resource' do
 
     before do
       stub_request(:get, 'http://localhost:3003/v1/objects/druid:bc999dg9999')
-        .to_return(status: 200, body: request, headers: {})
+        .to_return(status: 200, body: request, headers: {
+                     'Last-Modified' => 'Wed, 03 Mar 2021 18:58:00 GMT',
+                     'X-Created-At' => 'Wed, 01 Jan 2021 12:58:00 GMT',
+                     'X-Served-By' => 'Awesome webserver',
+                     'ETag' => 'W/"d41d8cd98f00b204e9800998ecf8427e"'
+                   })
     end
 
     it 'returns the cocina model' do
