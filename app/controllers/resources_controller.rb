@@ -59,7 +59,7 @@ class ResourcesController < ApplicationController
 
   # This just proxies the response from DOR services app
   def show
-    cocina_obj = Dor::Services::Client.object(params[:id]).find
+    cocina_obj = Cocina::Models.without_metadata(Dor::Services::Client.object(params[:id]).find)
     authorize! cocina_obj, with: ResourcePolicy
     render json: cocina_obj
   rescue Dor::Services::Client::NotFoundResponse => e
