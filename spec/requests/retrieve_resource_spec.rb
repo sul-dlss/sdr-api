@@ -88,8 +88,7 @@ RSpec.describe 'Retrieve a resource' do
 
     before do
       allow(Dor::Services::Client).to receive(:object).and_raise(
-        Dor::Services::Client::UnexpectedResponse,
-        error_message
+        Dor::Services::Client::UnexpectedResponse.new(response: '', errors: [{ 'title' => error_message }])
       )
     end
 
@@ -101,7 +100,7 @@ RSpec.describe 'Retrieve a resource' do
       expect(JSON.parse(response.body)['errors'].first).to include(
         'status' => '500',
         'title' => 'Internal server error',
-        'detail' => error_message
+        'detail' => "#{error_message} ()"
       )
     end
   end
