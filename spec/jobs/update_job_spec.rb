@@ -155,7 +155,11 @@ RSpec.describe UpdateJob, type: :job do
 
     before do
       allow(object_client)
-        .to receive(:update).and_raise(Dor::Services::Client::BadRequestError, 'cocina validation error blah blah')
+        .to receive(:update)
+        .and_raise(Dor::Services::Client::BadRequestError.new(response: '',
+                                                              errors: [
+                                                                { 'title' => 'cocina validation error blah blah' }
+                                                              ]))
     end
 
     it 'reports error and will not retry' do
@@ -163,7 +167,7 @@ RSpec.describe UpdateJob, type: :job do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                             message: 'cocina validation error blah blah'] })
+                             message: 'cocina validation error blah blah ()'] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
@@ -175,7 +179,11 @@ RSpec.describe UpdateJob, type: :job do
 
     before do
       allow(object_client)
-        .to receive(:update).and_raise(Dor::Services::Client::ConflictResponse, 'cocina roundtrip validation error ...')
+        .to receive(:update)
+        .and_raise(Dor::Services::Client::ConflictResponse.new(response: '',
+                                                               errors: [
+                                                                 { 'title' => 'cocina roundtrip validation error ...' }
+                                                               ]))
     end
 
     it 'reports error and will not retry' do
@@ -183,7 +191,7 @@ RSpec.describe UpdateJob, type: :job do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 409 (Conflict) from dor-services-app',
-                             message: 'cocina roundtrip validation error ...'] })
+                             message: 'cocina roundtrip validation error ... ()'] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end

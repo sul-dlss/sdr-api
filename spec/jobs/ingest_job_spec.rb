@@ -139,7 +139,11 @@ RSpec.describe IngestJob, type: :job do
 
     before do
       allow(objects_client)
-        .to receive(:register).and_raise(Dor::Services::Client::ConflictResponse, "Obj (#{druid}) already exists")
+        .to receive(:register)
+        .and_raise(Dor::Services::Client::ConflictResponse.new(response: '',
+                                                               errors: [
+                                                                 { 'title' => "Obj (#{druid}) already exists" }
+                                                               ]))
     end
 
     it 'quits' do
@@ -151,7 +155,7 @@ RSpec.describe IngestJob, type: :job do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'Object with source_id already exists.',
-                             message: "Obj (#{druid}) already exists"] })
+                             message: "Obj (#{druid}) already exists ()"] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
@@ -162,7 +166,10 @@ RSpec.describe IngestJob, type: :job do
 
     before do
       allow(objects_client).to receive(:register)
-        .and_raise(Dor::Services::Client::ConflictResponse, "Obj (#{druid}) already exists")
+        .and_raise(Dor::Services::Client::ConflictResponse.new(response: '',
+                                                               errors: [
+                                                                 { 'title' => "Obj (#{druid}) already exists" }
+                                                               ]))
     end
 
     it 'retries' do
@@ -207,7 +214,11 @@ RSpec.describe IngestJob, type: :job do
 
     before do
       allow(objects_client)
-        .to receive(:register).and_raise(Dor::Services::Client::BadRequestError, 'Catkey not in Symphony blah blah')
+        .to receive(:register)
+        .and_raise(Dor::Services::Client::BadRequestError.new(response: '',
+                                                              errors: [
+                                                                { 'title' => 'Catkey not in Symphony blah blah' }
+                                                              ]))
     end
 
     it 'reports error and will not retry' do
@@ -219,7 +230,7 @@ RSpec.describe IngestJob, type: :job do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                             message: 'Catkey not in Symphony blah blah'] })
+                             message: 'Catkey not in Symphony blah blah ()'] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
