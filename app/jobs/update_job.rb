@@ -51,7 +51,7 @@ class UpdateJob < ApplicationJob
         object_client.accession.start(versioning_params.merge(workflow: 'accessionWF'))
       elsif model.version == existing.version + 1
         # don't kick off accessioning, just create a new version where only metadata was updated
-        object_client.version.open
+        object_client.version.open(versioning_params)
         object_client.version.close(versioning_params.merge(start_accession: false))
       end
     end
