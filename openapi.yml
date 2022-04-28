@@ -503,6 +503,7 @@ components:
         catalogRecordId:
           description: Record identifier that is unique within the context of the linked record's catalog.
           type: string
+          pattern: '^\d+(:\d+)*$'
           example: '11403803'
       required:
         - catalog
@@ -691,7 +692,6 @@ components:
       required:
         - view
         - download
-        - controlledDigitalLending
     DarkAccess:
       type: object
       properties:
