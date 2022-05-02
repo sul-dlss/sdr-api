@@ -34,6 +34,9 @@ require 'action_policy/rspec/dsl'
 #
 Dir[Rails.root.join('spec', 'support', '**', '*.rb')].each { |f| require f }
 
+# Must be required *after* FactoryBot is required (via spec/support/ requires)
+require 'cocina/rspec'
+
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin

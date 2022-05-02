@@ -3,87 +3,45 @@
 require 'rails_helper'
 
 RSpec.describe 'Update a resource' do
-  let(:request) do
-    <<~JSON
-      {
-        "cocinaVersion":"0.0.1",
-        "label":"hello",
-        "externalIdentifier":"druid:bc999dg9999",
-        "version":2,
-        "type":"#{Cocina::Models::ObjectType.book}",
-        "description": {
-          "title": [{"value":"hello"}],
-          "purl": "https://purl.stanford.edu/bc999dg9999"
-        },
-        "access": {
-          "view":"world",
-          "copyright":"All rights reserved unless otherwise indicated.",
-          "download":"none",
-          "useAndReproductionStatement":"Property rights reside with the repository...",
-          "embargo": {
-            "releaseDate": "2029-06-22T07:00:00.000+00:00",
-            "view": "world",
-            "download": "world",
-            "useAndReproductionStatement": "Whatever you want"
-          }
-        },
-        "administrative": {
-          "hasAdminPolicy":"druid:bc123df4567",
-          "releaseTags":[]
-        },
-        "identification": {
-          "catalogLinks": [
-              {
-                "catalog":"symphony",
-                "catalogRecordId":"123456",
-                "refresh":true
-              }
-          ],
-          "sourceId":"googlebooks:stanford_82323429"
-        },
-        #{structural}
-      }
-    JSON
-  end
   let(:structural) do
-    <<~JSON
-      "structural":{
-        "isMemberOf":["druid:fg123hj4567"],
-        "contains":[
-          {
-            "type":"#{Cocina::Models::FileSetType.file}",
-            "externalIdentifier":"9999",
-            "label":"Page 1",
-            "structural":{
-              "contains":[
-                {
-                  "type":"#{Cocina::Models::ObjectType.file}",
-                  "filename":"file2.txt",
-                  "label":"file2.txt",
-                  "hasMessageDigests":[
-                    {"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},
-                    {"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}
-                  ],
-                  "externalIdentifier":"#{file_id}",
-                  "administrative":{
-                    "publish":true,
-                    "sdrPreserve":true,
-                    "shelve":true
-                  },
-                  "access": {
-                    "view":"stanford",
-                    "download":"stanford"
-                  },
-                  "version":2
-                }
-              ]
-            },
-            "version":2
-          }
-        ]
-      }
-    JSON
+    {
+      'isMemberOf' => ['druid:fg123hj4567'],
+      'contains' => [
+        {
+          'type' => Cocina::Models::FileSetType.file,
+          'externalIdentifier' => '9999',
+          'label' => 'Page 1',
+          'structural' => {
+            'contains' => [
+              {
+                'type' => Cocina::Models::ObjectType.file,
+                'filename' => 'file2.txt',
+                'label' => 'file2.txt',
+                'hasMessageDigests' => [
+                  { 'type' => 'md5', 'digest' => '7f99d78a78a233ebbf81ec5b364380fc' },
+                  { 'type' => 'sha1', 'digest' => 'c65f99f8c5376adadddc46d5cbcf5762f9e55eb7' }
+                ],
+                'externalIdentifier' => file_id,
+                'administrative' => {
+                  'publish' => false,
+                  'sdrPreserve' => true,
+                  'shelve' => false
+                },
+                'access' => {
+                  'view' => 'dark',
+                  'download' => 'none'
+                },
+                'version' => 1
+              }
+            ]
+          },
+          'version' => 1
+        }
+      ]
+    }
   end
+  let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural: structural) }
+  let(:request) { dro.to_json }
   let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
@@ -104,7 +62,7 @@ RSpec.describe 'Update a resource' do
   end
   let(:expected_model_params_with_file_ids) do
     # NOTE: These params are expected when a request expects sdr-api NOT to manage files on its behalf
-    Cocina::Models::DRO.new(JSON.parse(request)).to_h.with_indifferent_access
+    dro.to_h.with_indifferent_access
   end
 
   before do

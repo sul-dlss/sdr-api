@@ -18,46 +18,7 @@ RSpec.describe UpdateJob, type: :job do
 
   let(:update_version) { 2 }
   let(:model) do
-    {
-      type: Cocina::Models::ObjectType.book,
-      label: 'hello',
-      externalIdentifier: druid,
-      version: update_version,
-      description: {
-        title: [{ value: 'hello' }],
-        purl: "https://purl.stanford.edu/#{druid.delete_prefix('druid:')}"
-      },
-      access: {
-        copyright: 'All rights reserved unless otherwise indicated.',
-        view: 'world',
-        download: 'none',
-        useAndReproductionStatement: 'Property rights reside with the repository...',
-        embargo: {
-          releaseDate: '2029-06-22T07:00:00.000+00:00',
-          view: 'world',
-          download: 'world',
-          useAndReproductionStatement: 'Whatever you want'
-        }
-      },
-      administrative: {
-        hasAdminPolicy: 'druid:bc123df4567',
-        releaseTags: []
-      },
-      identification: {
-        catalogLinks: [
-          {
-            catalog: 'symphony',
-            catalogRecordId: '123456',
-            refresh: true
-          }
-        ],
-        sourceId: 'googlebooks:stanford_82323429'
-      },
-      structural: {
-        isMemberOf: ['druid:fg123hj4567'],
-        contains: filesets
-      }
-    }
+    build(:dro, id: druid, version: update_version).new(structural: { contains: filesets }).to_h
   end
 
   let(:file) do
@@ -68,13 +29,13 @@ RSpec.describe UpdateJob, type: :job do
       label: 'file2.txt',
       hasMimeType: 'text/plain',
       administrative: {
-        publish: true,
+        publish: false,
         sdrPreserve: true,
-        shelve: true
+        shelve: false
       },
       access: {
-        view: 'stanford',
-        download: 'stanford'
+        view: 'dark',
+        download: 'none'
       },
       hasMessageDigests: [
         { type: 'md5', digest: '7f99d78a78a233ebbf81ec5b364380fc' },
@@ -98,7 +59,7 @@ RSpec.describe UpdateJob, type: :job do
 
   let(:existing_version) { 1 }
   let(:response_dro) do
-    instance_double(Cocina::Models::DRO, externalIdentifier: druid, version: existing_version)
+    build(:dro, id: druid, version: existing_version)
   end
 
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
