@@ -8,33 +8,7 @@ RSpec.describe 'Create a resource' do
   end
 
   context 'with a Collection' do
-    let(:request) do
-      <<~JSON
-        {
-          "cocinaVersion":"#{Cocina::Models::VERSION}",
-          "label":"hello",
-          "version":1,
-          "type":"#{Cocina::Models::ObjectType.collection}",
-          "access": {
-            "view":"world"
-          },
-          "administrative": {
-            "hasAdminPolicy":"druid:bc123df4567",
-            "partOfProject":"Google Books",
-            "releaseTags":[]
-          },
-          "identification": {
-            "catalogLinks": [
-                {
-                  "catalog":"symphony",
-                  "catalogRecordId":"123456",
-                  "refresh":true
-                }
-            ]
-          }
-        }
-      JSON
-    end
+    let(:request) { build(:request_collection).to_json }
 
     it 'registers the resource and kicks off IngestJob' do
       post '/v1/resources',
@@ -52,82 +26,43 @@ RSpec.describe 'Create a resource' do
   end
 
   context 'with a DRO' do
-    let(:request) do
-      <<~JSON
-        {
-          "cocinaVersion":"#{Cocina::Models::VERSION}",
-          "label":"hello",
-          "version":1,
-          "type":"#{Cocina::Models::ObjectType.book}",
-          "access": {
-            "view":"world",
-            "copyright":"All rights reserved unless otherwise indicated.",
-            "download":"none",
-            "useAndReproductionStatement":"Property rights reside with the repository...",
-            "embargo": {
-              "releaseDate": "2029-06-22T07:00:00.000+00:00",
-              "view": "world",
-              "download":"world",
-              "useAndReproductionStatement": "Whatever you want"
-            }
-          },
-          "administrative": {
-            "hasAdminPolicy":"druid:bc123df4567",
-            "partOfProject":"Google Books",
-            "releaseTags":[]
-          },
-          "identification": {
-            "catalogLinks": [
-                {
-                  "catalog":"symphony",
-                  "catalogRecordId":"123456",
-                  "refresh":true
-                }
-            ],
-            "sourceId":"googlebooks:stanford_82323429"
-          },
-          #{structural}
-        }
-      JSON
-    end
-
+    let(:dro) { build(:request_dro).new(structural: structural) }
+    let(:request) { dro.to_json }
     let(:structural) do
-      <<~JSON
-        "structural":{
-          "isMemberOf":["druid:fg123hj4567"],
-          "contains":[
-            {
-              "type":"#{Cocina::Models::FileSetType.file}",
-              "label":"Page 1",
-              "structural":{
-                "contains":[
-                  {
-                    "type":"#{Cocina::Models::ObjectType.file}",
-                    "filename":"file2.txt",
-                    "label":"file2.txt",
-                    "hasMessageDigests":[
-                      {"type":"md5","digest":"7f99d78a78a233ebbf81ec5b364380fc"},
-                      {"type":"sha1","digest":"c65f99f8c5376adadddc46d5cbcf5762f9e55eb7"}
-                    ],
-                    "externalIdentifier":"#{signed_id}",
-                    "administrative":{
-                      "publish":true,
-                      "sdrPreserve":true,
-                      "shelve":true
-                    },
-                    "access": {
-                      "view":"stanford",
-                      "download":"stanford"
-                    },
-                    "version":1
-                  }
-                ]
-              },
-              "version":1
-            }
-          ]
-        }
-      JSON
+      {
+        isMemberOf: ['druid:fg123hj4567'],
+        contains: [
+          {
+            type: Cocina::Models::FileSetType.file,
+            label: 'Page 1',
+            structural: {
+              contains: [
+                {
+                  externalIdentifier: signed_id,
+                  type: Cocina::Models::ObjectType.file,
+                  filename: 'file2.txt',
+                  label: 'file2.txt',
+                  hasMessageDigests: [
+                    { type: 'md5', digest: '7f99d78a78a233ebbf81ec5b364380fc' },
+                    { type: 'sha1', digest: 'c65f99f8c5376adadddc46d5cbcf5762f9e55eb7' }
+                  ],
+                  administrative: {
+                    publish: false,
+                    sdrPreserve: true,
+                    shelve: false
+                  },
+                  access: {
+                    view: 'dark',
+                    download: 'none'
+                  },
+                  version: 1
+                }
+              ]
+            },
+            version: 1
+          }
+        ]
+      }
     end
 
     let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
@@ -141,7 +76,7 @@ RSpec.describe 'Create a resource' do
     end
 
     let(:expected_model_params) do
-      model_params = Cocina::Models::RequestDRO.new(JSON.parse(request)).to_h
+      model_params = dro.to_h
       file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
       file_params.delete(:externalIdentifier)
       file_params[:hasMimeType] = 'application/octet-stream'

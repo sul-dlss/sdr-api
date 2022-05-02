@@ -6,7 +6,7 @@ RSpec.describe IngestJob, type: :job do
   let(:try_count) { 0 }
   let(:result) { create(:background_job_result, try_count: try_count) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }
-  let(:druid) { 'druid:bc123de5678' }
+  let(:druid) { 'druid:bc123dh5678' }
   let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow: workflow) }
   let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
   let(:blob) do
@@ -18,42 +18,7 @@ RSpec.describe IngestJob, type: :job do
   end
 
   let(:model) do
-    {
-      type: Cocina::Models::ObjectType.book,
-      label: 'hello',
-      version: 1,
-      access: {
-        copyright: 'All rights reserved unless otherwise indicated.',
-        view: 'world',
-        download: 'none',
-        useAndReproductionStatement: 'Property rights reside with the repository...',
-        embargo: {
-          releaseDate: '2029-06-22T07:00:00.000+00:00',
-          view: 'world',
-          download: 'world',
-          useAndReproductionStatement: 'Whatever you want'
-        }
-      },
-      administrative: {
-        hasAdminPolicy: 'druid:bc123df4567',
-        partOfProject: 'Google Books',
-        releaseTags: []
-      },
-      identification: {
-        catalogLinks: [
-          {
-            catalog: 'symphony',
-            catalogRecordId: '123456',
-            refresh: true
-          }
-        ],
-        sourceId: 'googlebooks:stanford_82323429'
-      },
-      structural: {
-        isMemberOf: ['druid:fg123hj4567'],
-        contains: filesets
-      }
-    }
+    build(:request_dro).new(structural: { contains: filesets }).to_h
   end
 
   let(:file) do
@@ -63,13 +28,13 @@ RSpec.describe IngestJob, type: :job do
       label: 'file2.txt',
       hasMimeType: 'text/plain',
       administrative: {
-        publish: true,
+        publish: false,
         sdrPreserve: true,
-        shelve: true
+        shelve: false
       },
       access: {
-        view: 'stanford',
-        download: 'stanford'
+        view: 'dark',
+        download: 'none'
       },
       hasMessageDigests: [
         { type: 'md5', digest: '7f99d78a78a233ebbf81ec5b364380fc' },
@@ -91,10 +56,10 @@ RSpec.describe IngestJob, type: :job do
   end
 
   let(:response_dro) do
-    instance_double(Cocina::Models::DRO, externalIdentifier: druid)
+    build(:dro, id: druid)
   end
 
-  let(:assembly_dir) { 'tmp/assembly/bc/123/de/5678/bc123de5678' }
+  let(:assembly_dir) { 'tmp/assembly/bc/123/dh/5678/bc123dh5678' }
 
   before do
     FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')

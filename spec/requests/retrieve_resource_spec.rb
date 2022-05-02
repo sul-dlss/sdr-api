@@ -4,66 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retrieve a resource' do
   context 'when happy path' do
-    let(:request) do
-      <<~JSON
-        {
-          "label":"hello",
-          "externalIdentifier":"druid:bc999dg9999",
-          "version":2,
-          "type":"#{Cocina::Models::ObjectType.book}",
-          "description": {
-            "title": [{"value":"hello"}],
-            "purl": "https://purl.stanford.edu/bc999dg9999"
-          },
-          "access": {
-            "view":"world",
-            "copyright":"All rights reserved unless otherwise indicated.",
-            "download":"none",
-            "useAndReproductionStatement":"Property rights reside with the repository...",
-            "embargo": {
-              "releaseDate": "2029-06-22T07:00:00.000+00:00",
-              "view": "world",
-              "download": "world",
-              "useAndReproductionStatement": "Whatever you want"
-            }
-          },
-          "administrative": {
-            "hasAdminPolicy":"druid:bc123df4567",
-            "releaseTags":[]
-          },
-          "identification": {
-            "catalogLinks": [
-                {
-                  "catalog":"symphony",
-                  "catalogRecordId":"123456",
-                  "refresh":true
-                }
-            ],
-            "sourceId":"googlebooks:stanford_82323429"
-          },
-          #{structural}
-        }
-      JSON
-    end
-
-    let(:structural) do
-      <<~JSON
-        "structural":{
-          "isMemberOf":["druid:fg123hj4567"],
-          "contains":[
-            {
-              "type":"#{Cocina::Models::FileSetType.file}",
-              "externalIdentifier":"9999",
-              "label":"Page 1",
-              "structural":{
-                "contains":[]
-              },
-              "version":2
-            }
-          ]
-        }
-      JSON
-    end
+    let(:request) { build(:dro, id: 'druid:bc999dg9999').to_json }
 
     before do
       stub_request(:get, 'http://localhost:3003/v1/objects/druid:bc999dg9999')
