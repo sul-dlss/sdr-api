@@ -107,7 +107,7 @@ GEM
       sshkit (~> 1.2)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.80.0)
+    cocina-models (0.81.0)
       activesupport
       deprecation
       dry-struct (~> 1.0)
@@ -123,7 +123,7 @@ GEM
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (>= 0.11.1, < 1.0)
       rack (>= 1.5)
-    commonmarker (0.23.4)
+    commonmarker (0.23.5)
     concurrent-ruby (1.1.10)
     config (2.2.3)
       deep_merge (~> 1.2, >= 1.2.1)
@@ -142,9 +142,9 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (12.2.0)
+    dor-services-client (12.3.0)
       activesupport (>= 4.2, < 8)
-      cocina-models (~> 0.80.0)
+      cocina-models (~> 0.81.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -405,7 +405,7 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
-  cocina-models (~> 0.80.0)
+  cocina-models (~> 0.81.0)
   committee
   config (~> 2.0)
   dlss-capistrano
