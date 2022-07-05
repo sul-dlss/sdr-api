@@ -107,7 +107,7 @@ GEM
       sshkit (~> 1.2)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.82.0)
+    cocina-models (0.83.0)
       activesupport
       deprecation
       dry-struct (~> 1.0)
@@ -145,9 +145,9 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (12.4.0)
+    dor-services-client (12.6.0)
       activesupport (>= 4.2, < 8)
-      cocina-models (~> 0.82.0)
+      cocina-models (~> 0.83.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -249,7 +249,7 @@ GEM
     mini_exiftool (2.10.2)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    minitest (5.16.1)
+    minitest (5.16.2)
     msgpack (1.5.2)
     multi_json (1.15.0)
     net-scp (3.0.0)
@@ -416,7 +416,7 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rvm
-  cocina-models (~> 0.82.0)
+  cocina-models (~> 0.83.0)
   committee
   config (~> 2.0)
   dlss-capistrano
