@@ -62,7 +62,7 @@ RSpec.describe IngestJob, type: :job do
   let(:assembly_dir) { 'tmp/assembly/bc/123/dh/5678/bc123dh5678' }
 
   before do
-    FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')
+    FileUtils.rm_rf('tmp/assembly/bc')
     FileUtils.mkdir_p('tmp/storage/to/zu')
     File.write('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'HELLO')
     allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
