@@ -72,7 +72,7 @@ RSpec.describe UpdateJob, type: :job do
   end
 
   before do
-    FileUtils.rm_r('tmp/assembly/bc') if File.exist?('tmp/assembly/bc')
+    FileUtils.rm_rf('tmp/assembly/bc')
     FileUtils.mkdir_p('tmp/storage/to/zu')
     File.write('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'HELLO')
     allow(Dor::Services::Client).to receive(:object).with(druid).and_return(object_client)
