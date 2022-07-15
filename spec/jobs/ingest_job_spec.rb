@@ -70,21 +70,48 @@ RSpec.describe IngestJob, type: :job do
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
   end
 
-  context 'when happy path' do
+  context 'when API calls are successful' do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
 
-    it 'ingests an object' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
-      expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'registrationWF', version: 1, lane_id: 'low')
-      expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'low')
-      expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: druid })
-      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+    before do
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  priority: priority)
+    end
+
+    context 'when priority is default' do
+      let(:priority) { 'default' }
+
+      it 'ingests an object' do
+        expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
+        expect(workflow_client).to have_received(:create_workflow_by_name)
+          .with(druid, 'registrationWF', version: 1, lane_id: 'default')
+        expect(workflow_client).to have_received(:create_workflow_by_name)
+          .with(druid, 'accessionWF', version: 1, lane_id: 'default')
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: druid })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
+    end
+
+    context 'when priority is low' do
+      let(:priority) { 'low' }
+
+      it 'ingests an object' do
+        expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
+        expect(workflow_client).to have_received(:create_workflow_by_name)
+          .with(druid, 'registrationWF', version: 1, lane_id: 'low')
+        expect(workflow_client).to have_received(:create_workflow_by_name)
+          .with(druid, 'accessionWF', version: 1, lane_id: 'low')
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: druid })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
     end
   end
 
@@ -143,9 +170,9 @@ RSpec.describe IngestJob, type: :job do
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
       expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'registrationWF', version: 1, lane_id: 'low')
+        .with(druid, 'registrationWF', version: 1, lane_id: 'default')
       expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'low')
+        .with(druid, 'accessionWF', version: 1, lane_id: 'default')
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)

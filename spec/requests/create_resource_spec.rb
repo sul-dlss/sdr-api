@@ -21,7 +21,8 @@ RSpec.describe 'Create a resource' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: [],
                                                               start_workflow: false,
-                                                              assign_doi: false)
+                                                              assign_doi: false,
+                                                              priority: 'default')
     end
   end
 
@@ -84,18 +85,21 @@ RSpec.describe 'Create a resource' do
       model_params.with_indifferent_access
     end
 
-    it 'registers the resource and kicks off IngestJob' do
-      post '/v1/resources',
-           params: request,
-           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-      expect(response).to be_created
-      expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
-      expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
-                                                              background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [signed_id],
-                                                              start_workflow: false,
-                                                              assign_doi: false)
+    context 'when priority is not provided' do
+      it 'registers the resource and kicks off IngestJob' do
+        post '/v1/resources',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(response).to be_created
+        expect(response.location).to be_present
+        expect(JSON.parse(response.body)['jobId']).to be_present
+        expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                                background_job_result: instance_of(BackgroundJobResult),
+                                                                signed_ids: [signed_id],
+                                                                start_workflow: false,
+                                                                assign_doi: false,
+                                                                priority: 'default')
+      end
     end
 
     context 'when wrong version of cocina models is supplied' do
@@ -113,6 +117,20 @@ RSpec.describe 'Create a resource' do
       end
     end
 
+    context 'when the priority flag is set to low' do
+      it 'kicks off accession workflow' do
+        post '/v1/resources?accession=true&priority=low',
+             params: request,
+             headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+        expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                                background_job_result: instance_of(BackgroundJobResult),
+                                                                signed_ids: [signed_id],
+                                                                start_workflow: true,
+                                                                assign_doi: false,
+                                                                priority: 'low')
+      end
+    end
+
     context 'when the accession flag is set to true' do
       it 'kicks off accession workflow' do
         post '/v1/resources?accession=true',
@@ -122,7 +140,8 @@ RSpec.describe 'Create a resource' do
                                                                 background_job_result: instance_of(BackgroundJobResult),
                                                                 signed_ids: [signed_id],
                                                                 start_workflow: true,
-                                                                assign_doi: false)
+                                                                assign_doi: false,
+                                                                priority: 'default')
       end
     end
 
@@ -135,7 +154,8 @@ RSpec.describe 'Create a resource' do
                                                                 background_job_result: instance_of(BackgroundJobResult),
                                                                 signed_ids: [signed_id],
                                                                 start_workflow: false,
-                                                                assign_doi: false)
+                                                                assign_doi: false,
+                                                                priority: 'default')
       end
     end
 
@@ -148,7 +168,8 @@ RSpec.describe 'Create a resource' do
                                                                 background_job_result: instance_of(BackgroundJobResult),
                                                                 signed_ids: [signed_id],
                                                                 start_workflow: false,
-                                                                assign_doi: true)
+                                                                assign_doi: true,
+                                                                priority: 'default')
       end
     end
 

@@ -14,8 +14,7 @@ class ResourcesController < ApplicationController
   # rubocop:disable Metrics/MethodLength
   def create
     begin
-      request_dro = cocina_request_model(params.except(:action, :controller, :resource, :accession,
-                                                       :assign_doi).to_unsafe_h)
+      request_dro = cocina_request_model
     rescue BlobError => e
       # Returning 500 because not clear whose fault it is.
       return render build_error('500', e, 'Error matching uploading files to file parameters.')
@@ -27,7 +26,8 @@ class ResourcesController < ApplicationController
                             signed_ids: signed_ids(params),
                             background_job_result: result,
                             start_workflow: params.fetch(:accession, false),
-                            assign_doi: params.fetch(:assign_doi, false))
+                            assign_doi: params.fetch(:assign_doi, false),
+                            priority: params.fetch(:priority, 'default'))
 
     render json: { jobId: result.id },
            location: result,
@@ -39,16 +39,16 @@ class ResourcesController < ApplicationController
   # PUT /resource/:id
   def update
     begin
-      request_dro = cocina_model(params.except(:action, :controller, :resource, :id).to_unsafe_h)
+      cocina_dro = cocina_update_model
     rescue BlobError => e
       # Returning 500 because not clear whose fault it is.
       return render build_error('500', e, 'Error matching uploading files to file parameters.')
     end
 
-    authorize! request_dro, with: ResourcePolicy
+    authorize! cocina_dro, with: ResourcePolicy
 
     result = BackgroundJobResult.create(output: {})
-    UpdateJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
+    UpdateJob.perform_later(model_params: JSON.parse(cocina_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
                             background_job_result: result)
 
@@ -70,6 +70,16 @@ class ResourcesController < ApplicationController
 
   private
 
+  CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi].freeze
+
+  def cocina_create_params
+    params.except(*CREATE_PARAMS_EXCLUDE_FROM_COCINA).to_unsafe_h
+  end
+
+  def cocina_update_params
+    params.except(:action, :controller, :resource, :id).to_unsafe_h
+  end
+
   def validate_version
     request_version = request.headers['X-Cocina-Models-Version']
     return if !request_version || request_version == Cocina::Models::VERSION
@@ -80,14 +90,14 @@ class ResourcesController < ApplicationController
     render build_error('400', error, 'Cocina-models version mismatch')
   end
 
-  def cocina_model(model_params)
-    new_model_params = model_params.deep_dup
+  def cocina_update_model
+    new_model_params = cocina_update_params.deep_dup
     decorate_file_sets(new_model_params)
     Cocina::Models.build(new_model_params)
   end
 
-  def cocina_request_model(model_params)
-    new_model_params = model_params.deep_dup
+  def cocina_request_model
+    new_model_params = cocina_create_params.deep_dup
     new_model_params[:version] = 1
     decorate_request_file_sets(new_model_params)
     Cocina::Models.build_request(new_model_params)

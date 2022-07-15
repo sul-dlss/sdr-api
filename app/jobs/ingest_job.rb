@@ -10,12 +10,16 @@ class IngestJob < ApplicationJob
 
   # @param [Hash] model_params
   # @param [Array<String>] signed_ids for the blobs
+  # @param [BackgroundJobResult] background_job_result
   # @param [Boolean] start_workflow if true, start accessionWF
   # @param [Boolean] assign_doi if true, adds DOI to Cocina obj
-  # @param [BackgroundJobResult] background_job_result
+  # @param [String] priority ('default') determines the relative priority used for the workflow.
+  #                                      Value may be 'low' or 'default'
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true, assign_doi: false)
+  # rubocop:disable Metrics/ParameterLists
+  def perform(model_params:, signed_ids:, background_job_result:,
+              start_workflow: true, assign_doi: false, priority: 'default')
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -42,10 +46,10 @@ class IngestJob < ApplicationJob
     background_job_result.output = { druid: druid }
 
     # Create workflow destroys existing steps if called again, so need to check if already created.
-    Workflow.create_unless_exists(druid, 'registrationWF', version: 1)
+    Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority: priority)
 
     StageFiles.stage(signed_ids, druid) do
-      Workflow.create_unless_exists(druid, 'accessionWF', version: 1) if start_workflow
+      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
     end
 
     background_job_result.complete!
@@ -61,6 +65,7 @@ class IngestJob < ApplicationJob
                                                                                  message: e.message] })
     background_job_result.complete!
   end
+  # rubocop:enable Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 end

@@ -107,8 +107,16 @@ paths:
       parameters:
         - in: query
           name: accession
+          description: If set to true the accessioning workflow will be started
           schema:
             type: boolean
+        - in: query
+          name: priority
+          schema:
+            type: string
+            enum:
+              - 'default'
+              - 'low'          
         - in: query
           name: assign_doi
           schema:
