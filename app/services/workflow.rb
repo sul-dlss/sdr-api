@@ -2,12 +2,15 @@
 
 # Methods for interfacing with the workflow service
 class Workflow
-  def self.create_unless_exists(druid, workflow_name, version: 1)
+  # @param [String] druid
+  # @param [String] workflow_name
+  # @param [Integer] version (1)
+  # @param [String] priority ('default') determines the relative priority used for the workflow.
+  #                                      Value may be 'low' or 'default'
+  def self.create_unless_exists(druid, workflow_name, version: 1, priority: 'default')
     return unless workflow_client.workflow(pid: druid, workflow_name: workflow_name).empty?
 
-    # Setting lane_id to low for all, which is appropriate for all current use cases. In the future, may want to make
-    # this an API parameter.
-    workflow_client.create_workflow_by_name(druid, workflow_name, version: version, lane_id: 'low')
+    workflow_client.create_workflow_by_name(druid, workflow_name, version: version, lane_id: priority)
   end
 
   def self.workflow_client
