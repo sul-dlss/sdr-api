@@ -64,13 +64,14 @@ RSpec.describe 'Update a resource' do
     # NOTE: These params are expected when a request expects sdr-api NOT to manage files on its behalf
     dro.to_h.with_indifferent_access
   end
+  let(:version_description) { 'Updated metadata' }
 
   before do
     allow(UpdateJob).to receive(:perform_later)
   end
 
   it 'registers the resource and kicks off UpdateJob' do
-    put '/v1/resources/druid:bc999dg9999',
+    put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}",
         params: request,
         headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
 
@@ -79,7 +80,8 @@ RSpec.describe 'Update a resource' do
     expect(JSON.parse(response.body)['jobId']).to be_present
     expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                             background_job_result: instance_of(BackgroundJobResult),
-                                                            signed_ids: [file_id])
+                                                            signed_ids: [file_id],
+                                                            version_description: version_description)
   end
 
   context 'when wrong version of cocina models is supplied' do
@@ -122,7 +124,7 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [])
+                                                              signed_ids: [], version_description: nil)
     end
   end
 
@@ -138,7 +140,7 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [])
+                                                              signed_ids: [], version_description: nil)
     end
   end
 

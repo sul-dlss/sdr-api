@@ -12,9 +12,10 @@ class UpdateJob < ApplicationJob
   # @param [Array<String>] signed_ids for the blobs
   # @param [BackgroundJobResult] background_job_result
   # @param [Boolean] start_workflow starts accessionWF if true; if false, opens/closes new version without accessioning
+  # @param [String] version_description
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true)
+  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true, version_description: nil)
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -42,7 +43,7 @@ class UpdateJob < ApplicationJob
 
     background_job_result.output = { druid: model.externalIdentifier }
 
-    versioning_params = { description: 'Update via sdr-api', significance: 'major' }
+    versioning_params = { description: version_description || 'Update via sdr-api', significance: 'major' }
 
     StageFiles.stage(signed_ids, model.externalIdentifier) do
       if start_workflow
