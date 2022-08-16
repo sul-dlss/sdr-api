@@ -91,12 +91,13 @@ RSpec.describe UpdateJob, type: :job do
     end
 
     it 'accessions an object by default without explicitly opening/closing a version' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids,
+                                  version_description: 'Updated metadata')
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
       expect(accession_client).to have_received(:start)
-        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF')
+        .with(description: 'Updated metadata', significance: 'major', workflow: 'accessionWF')
     end
 
     it 'opens and closes the version without kicking off accessioning if start_workflow is false' do

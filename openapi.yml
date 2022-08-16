@@ -199,6 +199,10 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Druid'
+        - name: versionDescription
+          in: query          
+          schema:
+            type: string
       requestBody:
         description: The metadata for the object
         required: true

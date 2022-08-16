@@ -34,7 +34,6 @@ class ResourcesController < ApplicationController
            status: :created
   end
   # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 
   # PUT /resource/:id
   def update
@@ -50,12 +49,14 @@ class ResourcesController < ApplicationController
     result = BackgroundJobResult.create(output: {})
     UpdateJob.perform_later(model_params: JSON.parse(cocina_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
+                            version_description: params[:versionDescription],
                             background_job_result: result)
 
     render json: { jobId: result.id },
            location: result,
            status: :accepted
   end
+  # rubocop:enable Metrics/MethodLength
 
   # This just proxies the response from DOR services app
   def show
@@ -77,7 +78,7 @@ class ResourcesController < ApplicationController
   end
 
   def cocina_update_params
-    params.except(:action, :controller, :resource, :id).to_unsafe_h
+    params.except(:action, :controller, :resource, :id, :versionDescription).to_unsafe_h
   end
 
   def validate_version
