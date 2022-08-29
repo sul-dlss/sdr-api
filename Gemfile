@@ -29,6 +29,7 @@ gem 'druid-tools'
 gem 'honeybadger'
 gem 'lograge'
 gem 'okcomputer'
+gem 'redis', '~> 4.0' # redis 5.x has breaking changes with resque, see https://github.com/resque/resque/issues/1821
 gem 'sidekiq', '~> 6.0'
 gem 'sidekiq-statistic'
 gem 'whenever', require: false
