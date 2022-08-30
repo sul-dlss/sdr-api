@@ -233,13 +233,16 @@ RSpec.describe UpdateJob, type: :job do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
 
       err_title = 'Version conflict'
-      err_detail = "The repository is on version '#{existing_version}' for #{druid}. " \
-                   'You may either: update the current version (for v1 registered, or a later open version); ' \
-                   "or open a new version.  You tried to create/update version '#{update_version}'."
+      err_detail = "The repository is on version '3' and " \
+                   "you tried to create/update version '5'. Version is limited to 3 or 4."
 
       expect(actual_result).to be_complete
       expect(actual_result.output[:errors]).to eq [{ 'title' => err_title, 'detail' => err_detail }]
-      expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}")
+      expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}", {
+                                                           curent_version: 3,
+                                                           external_identifier: 'druid:bc123dg5678',
+                                                           provided_version: 5
+                                                         })
     end
   end
 end

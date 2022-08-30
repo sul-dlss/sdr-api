@@ -24,14 +24,17 @@ class UpdateJob < ApplicationJob
 
     object_client = Dor::Services::Client.object(model.externalIdentifier)
     existing = object_client.find
-
-    unless [existing.version, existing.version + 1].include?(model.version)
+    allowed_versions = [existing.version, existing.version + 1]
+    unless allowed_versions.include?(model.version)
       error_title = 'Version conflict'
-      error_detail = "The repository is on version '#{existing.version}' for #{existing.externalIdentifier}. " \
-                     'You may either: update the current version (for v1 registered, or a later open version); ' \
-                     "or open a new version.  You tried to create/update version '#{model.version}'."
+      error_detail = "The repository is on version '#{existing.version}' and you " \
+                     "tried to create/update version '#{model.version}'. " \
+                     "Version is limited to #{allowed_versions.join(' or ')}."
 
-      Honeybadger.notify("#{error_title}: #{error_detail}")
+      Honeybadger.notify("#{error_title}: #{error_detail}",
+                         { external_identifier: existing.externalIdentifier,
+                           curent_version: existing.version,
+                           provided_version: model.version })
       background_job_result.output = { errors: [title: error_title, detail: error_detail] }
       background_job_result.complete!
 
