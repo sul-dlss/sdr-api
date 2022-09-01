@@ -33,7 +33,7 @@ class UpdateJob < ApplicationJob
 
       Honeybadger.notify("#{error_title}: #{error_detail}",
                          { external_identifier: existing.externalIdentifier,
-                           curent_version: existing.version,
+                           current_version: existing.version,
                            provided_version: model.version })
       background_job_result.output = { errors: [title: error_title, detail: error_detail] }
       background_job_result.complete!
