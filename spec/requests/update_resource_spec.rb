@@ -57,7 +57,7 @@ RSpec.describe 'Update a resource' do
       file_params.delete(:externalIdentifier)
       file_params[:hasMimeType] = 'application/octet-stream'
       file_params[:size] = 10
-      file_params[:externalIdentifier] = 'druid:bc999dg9999/file2.txt'
+      file_params[:externalIdentifier] = 'https://cocina.sul.stanford.edu/file/bc999dg9999-9999/ffef5496-7b89-4df6-b8c0-de37805a43ec'
     end
   end
   let(:expected_model_params_with_file_ids) do
@@ -68,6 +68,7 @@ RSpec.describe 'Update a resource' do
 
   before do
     allow(UpdateJob).to receive(:perform_later)
+    allow(SecureRandom).to receive(:uuid).and_return('ffef5496-7b89-4df6-b8c0-de37805a43ec')
   end
 
   it 'registers the resource and kicks off UpdateJob' do

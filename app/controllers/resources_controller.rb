@@ -72,6 +72,7 @@ class ResourcesController < ApplicationController
   private
 
   CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi].freeze
+  ID_NAMESPACE = 'https://cocina.sul.stanford.edu'
 
   def cocina_create_params
     params.except(*CREATE_PARAMS_EXCLUDE_FROM_COCINA).to_unsafe_h
@@ -114,10 +115,14 @@ class ResourcesController < ApplicationController
         next unless signed_id?(file[:externalIdentifier])
 
         decorate_file(file: file,
-                      external_id: "#{model_params[:externalIdentifier]}/#{file[:filename]}",
+                      external_id: file_identifier(model_params[:externalIdentifier], fileset[:externalIdentifier]),
                       version: model_params[:version])
       end
     end
+  end
+
+  def file_identifier(object_id, resource_id)
+    "#{ID_NAMESPACE}/file/#{object_id.delete_prefix('druid:')}-#{resource_id}/#{SecureRandom.uuid}"
   end
 
   # rubocop:disable Metrics/AbcSize
