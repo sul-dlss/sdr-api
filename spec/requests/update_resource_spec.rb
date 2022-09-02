@@ -103,6 +103,10 @@ RSpec.describe 'Update a resource' do
   context 'when blob not found for file' do
     let(:file_id) { 'abc123' }
 
+    before do
+      allow(ActiveStorage.verifier).to receive(:valid_message?).and_return(true)
+    end
+
     it 'returns 500' do
       put '/v1/resources/druid:bc123df4567',
           params: request,
