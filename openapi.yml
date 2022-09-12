@@ -212,6 +212,7 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/DRO'
                 - $ref: '#/components/schemas/Collection'
+                - $ref: '#/components/schemas/AdminPolicy'
   /v1/auth/login:
     post:
       tags:
