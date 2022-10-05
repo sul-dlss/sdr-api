@@ -47,7 +47,7 @@ RSpec.describe SelectOutdatedUploadsStrategy do
     let!(:current_upload2) { create(:active_storage_blob) }
     let!(:current_upload3) { create(:active_storage_blob) }
 
-    it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+    it { is_expected.to be_a(ActiveRecord::Relation) }
 
     it 'returns both outdated uploads and none of the current ones' do
       expect(selection.size).to eq(2)
