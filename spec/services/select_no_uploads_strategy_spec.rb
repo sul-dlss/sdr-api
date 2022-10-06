@@ -21,7 +21,7 @@ RSpec.describe SelectNoUploadsStrategy do
   describe '#select' do
     subject(:selection) { strategy.select }
 
-    it { is_expected.to be_kind_of(ActiveRecord::Relation) }
+    it { is_expected.to be_a(ActiveRecord::Relation) }
 
     it 'returns an empty set' do
       expect(selection.size).to be_zero
