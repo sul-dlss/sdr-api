@@ -7,7 +7,7 @@ RSpec.describe StageFiles do
     let(:druid) { 'druid:bc123df4567' }
 
     before do
-      allow(Blobs).to receive(:blobs_for)
+      allow(Blobs).to receive(:blobs_for).and_return({})
       allow(described_class).to receive(:copy_files_to_staging)
       allow(described_class).to receive(:delete_from_active_storage)
     end

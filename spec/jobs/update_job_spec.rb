@@ -13,7 +13,7 @@ RSpec.describe UpdateJob, type: :job do
                                 filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
   end
   let(:signed_ids) do
-    [ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)]
+    { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
   end
 
   let(:update_version) { 2 }

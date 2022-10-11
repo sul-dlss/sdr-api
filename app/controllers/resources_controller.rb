@@ -161,10 +161,12 @@ class ResourcesController < ApplicationController
   end
 
   def signed_ids(model_params)
-    file_sets(model_params).flat_map do |fileset|
-      fileset.dig(:structural, :contains).filter_map do |file|
-        # Only include ActiveStorage signed IDs
-        file[:externalIdentifier] if signed_id?(file[:externalIdentifier])
+    {}.tap do |signed_ids|
+      file_sets(model_params).flat_map do |fileset|
+        fileset.dig(:structural, :contains).filter_map do |file|
+          # Only include ActiveStorage signed IDs
+          signed_ids[file[:filename]] = file[:externalIdentifier] if signed_id?(file[:externalIdentifier])
+        end
       end
     end
   end

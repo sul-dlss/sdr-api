@@ -9,7 +9,7 @@ class UpdateJob < ApplicationJob
   # for Sidekiq.
 
   # @param [Hash] model_params
-  # @param [Array<String>] signed_ids for the blobs
+  # @param [Hash] filename, signed_ids for the blobs
   # @param [BackgroundJobResult] background_job_result
   # @param [Boolean] start_workflow starts accessionWF if true; if false, opens/closes new version without accessioning
   # @param [String] version_description
