@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe IngestJob, type: :job do
+RSpec.describe IngestJob do
   let(:try_count) { 0 }
   let(:result) { create(:background_job_result, try_count: try_count) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }

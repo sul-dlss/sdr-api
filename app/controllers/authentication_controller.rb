@@ -5,7 +5,7 @@ class AuthenticationController < ApplicationController
 
   # POST /auth/login
   def login
-    @user = User.find_by_email(params[:email])
+    @user = User.find_by(email: params[:email])
     if @user&.authenticate(params[:password])
       render json: make_token_response(@user), status: :ok
     else
@@ -28,7 +28,7 @@ class AuthenticationController < ApplicationController
   private
 
   def make_token_response(user)
-    exp = Time.now + 24.hours.to_i
+    exp = Time.zone.now + 24.hours.to_i
     token = JsonWebToken.encode({ user_id: user.id }, exp)
     { token: token, exp: exp.strftime('%m-%d-%Y %H:%M') }
   end

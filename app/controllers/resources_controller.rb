@@ -10,8 +10,19 @@ class ResourcesController < ApplicationController
   before_action :validate_version
 
   # POST /resource
-  # rubocop:disable Metrics/AbcSize
+  def show
+    cocina_obj = Cocina::Models.without_metadata(Dor::Services::Client.object(params[:id]).find)
+    authorize! cocina_obj, with: ResourcePolicy
+    render json: cocina_obj
+  rescue Dor::Services::Client::NotFoundResponse => e
+    render build_error('404', e, "Object not found: #{params[:id]}")
+  rescue Dor::Services::Client::UnexpectedResponse => e
+    render build_error('500', e, 'Internal server error')
+  end
+
+  # PUT /resource/:id
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def create
     begin
       request_dro = cocina_request_model
@@ -33,9 +44,11 @@ class ResourcesController < ApplicationController
            location: result,
            status: :created
   end
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
-  # PUT /resource/:id
+  # This just proxies the response from DOR services app
+  # rubocop:disable Metrics/MethodLength
   def update
     begin
       cocina_dro = cocina_update_model
@@ -57,17 +70,6 @@ class ResourcesController < ApplicationController
            status: :accepted
   end
   # rubocop:enable Metrics/MethodLength
-
-  # This just proxies the response from DOR services app
-  def show
-    cocina_obj = Cocina::Models.without_metadata(Dor::Services::Client.object(params[:id]).find)
-    authorize! cocina_obj, with: ResourcePolicy
-    render json: cocina_obj
-  rescue Dor::Services::Client::NotFoundResponse => e
-    render build_error('404', e, "Object not found: #{params[:id]}")
-  rescue Dor::Services::Client::UnexpectedResponse => e
-    render build_error('500', e, 'Internal server error')
-  end
 
   private
 
@@ -194,6 +196,7 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/.
+  # rubocop:disable Metrics/MethodLength
   def build_error(error_code, err, msg)
     {
       json: {
@@ -209,5 +212,6 @@ class ResourcesController < ApplicationController
       status: error_code
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end
 # rubocop:enable Metrics/ClassLength
