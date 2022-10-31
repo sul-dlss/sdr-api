@@ -9,7 +9,7 @@ class IngestJob < ApplicationJob
   # for Sidekiq.
 
   # @param [Hash] model_params
-  # @param [Array<String>] signed_ids for the blobs
+  # @param [Hash] filename, signed_ids for the blobs
   # @param [BackgroundJobResult] background_job_result
   # @param [Boolean] start_workflow if true, start accessionWF
   # @param [Boolean] assign_doi if true, adds DOI to Cocina obj

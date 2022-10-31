@@ -10,15 +10,10 @@ class StagingDirectory
   end
 
   def copy_file(source, dest)
-    ensure_directory_exists!
-    FileUtils.cp source, File.join(content_dir, dest)
+    dest_filepath = File.join(content_dir, dest)
+    FileUtils.mkdir_p File.dirname(dest_filepath)
+    FileUtils.cp source, dest_filepath
   end
 
   attr_reader :content_dir
-
-  private
-
-  def ensure_directory_exists!
-    FileUtils.mkdir_p content_dir
-  end
 end

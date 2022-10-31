@@ -2,12 +2,15 @@
 
 # Utility methods for getting ActiveStorage Blobs
 class Blobs
-  # @param [Array<Hash>] signed_ids for blobs
-  # @return [Array<ActiveStorage::Blob>] corresponding blob objects
+  # @param [Hash] filename, signed_ids for blobs
+  # @return [Hash] filename, ActiveStorage::Blob for corresponding blob objects
   def self.blobs_for(signed_ids)
-    file_ids = signed_ids.map { |signed_id| ActiveStorage.verifier.verified(signed_id, purpose: :blob_id) }
-
-    # This can raise ActiveRecord::RecordNotFound if one or more of the files don't exist
-    ActiveStorage::Blob.find(file_ids)
+    {}.tap do |blob_hash|
+      signed_ids.each do |filename, signed_id|
+        file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
+        # This can raise ActiveRecord::RecordNotFound if file does not exist
+        blob_hash[filename] = ActiveStorage::Blob.find(file_id)
+      end
+    end
   end
 end

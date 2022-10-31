@@ -19,7 +19,7 @@ RSpec.describe 'Create a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(IngestJob).to have_received(:perform_later).with(model_params: JSON.parse(request),
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: [],
+                                                              signed_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')
@@ -95,7 +95,7 @@ RSpec.describe 'Create a resource' do
         expect(JSON.parse(response.body)['jobId']).to be_present
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
-                                                                signed_ids: [signed_id],
+                                                                signed_ids: { 'file2.txt' => signed_id },
                                                                 start_workflow: false,
                                                                 assign_doi: false,
                                                                 priority: 'default')
@@ -124,7 +124,7 @@ RSpec.describe 'Create a resource' do
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
-                                                                signed_ids: [signed_id],
+                                                                signed_ids: { 'file2.txt' => signed_id },
                                                                 start_workflow: true,
                                                                 assign_doi: false,
                                                                 priority: 'low')
@@ -138,7 +138,7 @@ RSpec.describe 'Create a resource' do
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
-                                                                signed_ids: [signed_id],
+                                                                signed_ids: { 'file2.txt' => signed_id },
                                                                 start_workflow: true,
                                                                 assign_doi: false,
                                                                 priority: 'default')
@@ -152,7 +152,7 @@ RSpec.describe 'Create a resource' do
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
-                                                                signed_ids: [signed_id],
+                                                                signed_ids: { 'file2.txt' => signed_id },
                                                                 start_workflow: false,
                                                                 assign_doi: false,
                                                                 priority: 'default')
@@ -166,7 +166,7 @@ RSpec.describe 'Create a resource' do
              headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
         expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                                 background_job_result: instance_of(BackgroundJobResult),
-                                                                signed_ids: [signed_id],
+                                                                signed_ids: { 'file2.txt' => signed_id },
                                                                 start_workflow: false,
                                                                 assign_doi: true,
                                                                 priority: 'default')
