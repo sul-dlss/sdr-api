@@ -356,9 +356,6 @@ GEM
       connection_pool (>= 2.2.5)
       rack (~> 2.0)
       redis (>= 4.5.0, < 5)
-    sidekiq-statistic (1.4.0)
-      sidekiq (>= 5.0)
-      tilt (~> 2.0)
     simplecov (0.21.2)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -373,7 +370,6 @@ GEM
       diff-lcs
       patience_diff
     thor (1.2.1)
-    tilt (2.0.11)
     timeout (0.3.0)
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
@@ -424,10 +420,9 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rspec
   sidekiq (~> 6.0)
-  sidekiq-statistic
   simplecov
   webmock
   whenever
 
 BUNDLED WITH
-   2.3.17
+   2.3.25
