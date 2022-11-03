@@ -29,7 +29,6 @@ gem 'honeybadger'
 gem 'lograge'
 gem 'okcomputer'
 gem 'sidekiq', '~> 6.0'
-gem 'sidekiq-statistic'
 gem 'whenever', require: false
 
 group :development, :test do
