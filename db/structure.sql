@@ -10,6 +10,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
 -- Name: background_job_result_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -185,7 +192,10 @@ CREATE TABLE public.users (
     email character varying,
     password_digest character varying,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    active boolean DEFAULT true,
+    full_access boolean DEFAULT true,
+    collections jsonb DEFAULT '[]'::jsonb
 );
 
 
@@ -356,6 +366,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200514172809'),
 ('20210105175539'),
 ('20210105175540'),
-('20220711202210');
+('20220711202210'),
+('20221116163116');
 
 

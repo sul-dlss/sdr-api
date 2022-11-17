@@ -24,6 +24,28 @@ RSpec.describe 'Retrieve a resource' do
     end
   end
 
+  context 'when user is inactive' do
+    let(:request) { build(:dro, id: 'druid:bc999dg9999').to_json }
+    let(:inactive_user) { create(:user, active: false) }
+
+    # DSA is called before the request is authorized
+    before do
+      stub_request(:get, 'http://localhost:3003/v1/objects/druid:bc999dg9999')
+        .to_return(status: 200, body: request, headers: {
+                     'Last-Modified' => 'Wed, 03 Mar 2021 18:58:00 GMT',
+                     'X-Created-At' => 'Wed, 01 Jan 2021 12:58:00 GMT',
+                     'X-Served-By' => 'Awesome webserver',
+                     'ETag' => 'W/"d41d8cd98f00b204e9800998ecf8427e"'
+                   })
+    end
+
+    it 'returns unauthorized' do
+      get '/v1/resources/druid:bc999dg9999',
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt(inactive_user)}" }
+      expect(response).to be_unauthorized
+    end
+  end
+
   context 'when dor-services-client returns an unexpected response' do
     let(:error_message) { 'Something really went wrong in DSA' }
 

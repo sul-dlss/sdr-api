@@ -157,4 +157,43 @@ RSpec.describe 'Update a resource' do
       expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
     end
   end
+
+  context 'when limited user is authorized for the collection' do
+    let(:limited_user) { create(:user, collections: ['druid:fg123hj4567'], full_access: false) }
+
+    it 'registers the resource and kicks off UpdateJob' do
+      put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}",
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt(limited_user)}" }
+
+      expect(response).to be_accepted
+      expect(UpdateJob).to have_received(:perform_later)
+    end
+  end
+
+  context 'when limited user is not authorized for the collection' do
+    let(:limited_user) { create(:user, collections: ['druid:xg123hj4567'], full_access: false) }
+
+    it 'returns unauthorized' do
+      put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}",
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt(limited_user)}" }
+
+      expect(response).to be_unauthorized
+      expect(UpdateJob).not_to have_received(:perform_later)
+    end
+  end
+
+  context 'when inactive user' do
+    let(:inactive_user) { create(:user, active: false) }
+
+    it 'returns unauthorized' do
+      put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}",
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt(inactive_user)}" }
+
+      expect(response).to be_unauthorized
+      expect(UpdateJob).not_to have_received(:perform_later)
+    end
+  end
 end
