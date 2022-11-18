@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# A user with access to SDR
 class User < ApplicationRecord
   has_secure_password
 

@@ -8,5 +8,8 @@ FactoryBot.define do
   factory :user do
     email { generate(:email) }
     password { 'password' }
+    collections { [] }
+    full_access { true }
+    active { true }
   end
 end

@@ -49,12 +49,6 @@ docker-compose run --rm app bundle exec rake db:migrate
 docker-compose up -d app
 ```
 
-### Create a user
-
-```
-./bin/rails runner -e production 'User.create!(email: "jcoyne@justincoyne.com", password:  "sekret!")'
-```
-
 ### Authorization
 
 Log in to get a token by calling:
@@ -84,6 +78,92 @@ Given that we have a DRO with two Filesets each with a File (image1.png) and (im
 1. Repeat step 1-2 for the second file.
 1. POST /filesets with the `signed_id` from step one.  Repeat for the second file. The API will use `ActiveStorage::Blob.find_signed(params[:signed_id])` to find the files.
 1. POST /dro with the fileset ids from the previous step.
+
+## User management
+### Create a user
+```
+bin/rake "users:create[leland@stanford.edu]"
+Password: 
+#<User:0x00007f8647ae4988> {
+                 :id => 2,
+               :name => nil,
+              :email => "leland@stanford.edu",
+    :password_digest => "[DIGEST]",
+         :created_at => Fri, 18 Nov 2022 15:17:22.836184000 UTC +00:00,
+         :updated_at => Fri, 18 Nov 2022 15:17:22.836184000 UTC +00:00,
+             :active => true,
+        :full_access => true,
+        :collections => []
+}
+```
+
+### Show a user
+```
+bin/rake "users:show[leland@stanford.edu]"       
+#<User:0x0000000113fbb6e8> {
+                 :id => 1,
+               :name => nil,
+              :email => "leland@stanford.edu",
+   "password_digest" => "[DIGEST]",
+         :created_at => Thu, 17 Nov 2022 17:26:28.927725000 UTC +00:00,
+         :updated_at => Thu, 17 Nov 2022 17:26:28.927725000 UTC +00:00,
+             :active => true,
+        :full_access => true,
+        :collections => []
+}
+```
+
+### Change whether active
+```
+bin/rake "users:active[leland@stanford.edu,false]"
+#<User:0x00000001107805a8> {
+             "active" => false,
+                 "id" => 1,
+               "name" => nil,
+              :email => "leland@stanford.edu",
+    "password_digest" => "[DIGEST]",
+         "created_at" => Thu, 17 Nov 2022 17:26:28.927725000 UTC +00:00,
+         "updated_at" => Thu, 17 Nov 2022 19:10:27.385608000 UTC +00:00,
+        "full_access" => true,
+        "collections" => []
+}
+```
+
+### Add authorized collections and remove full-access
+```
+bin/rake "users:collections[leland@stanford.edu,'druid:bb408qn5061 druid:bb573tm8486']"
+#<User:0x0000000107d0d240> {
+        "collections" => [
+        [0] "'druid:bb408qn5061",
+        [1] "druid:bb573tm8486'"
+    ],
+        "full_access" => false,
+                 "id" => 1,
+               "name" => nil,
+              :email => "leland@stanford.edu",
+    "password_digest" => "[DIGEST]",
+         "created_at" => Thu, 17 Nov 2022 17:26:28.927725000 UTC +00:00,
+         "updated_at" => Thu, 17 Nov 2022 19:17:11.197967000 UTC +00:00,
+             "active" => false
+}
+```
+
+### Remove authorized collections and make full-access
+```
+ bin/rake "users:collections[leland@stanford.edu,'']"
+#<User:0x0000000110b8f090> {
+        "collections" => [],
+        "full_access" => true,
+                 "id" => 1,
+               "name" => nil,
+              :email => "leland@stanford.edu",
+    "password_digest" => "[DIGEST]",
+         "created_at" => Thu, 17 Nov 2022 17:26:28.927725000 UTC +00:00,
+         "updated_at" => Thu, 17 Nov 2022 19:20:47.869335000 UTC +00:00,
+             "active" => false
+}
+```
+
 
 ## Docker
 

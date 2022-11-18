@@ -72,6 +72,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     airbrussh (1.4.1)
       sshkit (>= 1.6.1, != 1.7.0)
+    amazing_print (1.4.0)
     ast (2.4.2)
     attr_extras (7.0.0)
     bcrypt (3.1.18)
@@ -383,11 +384,13 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-darwin-20
   x86_64-darwin-21
   x86_64-linux
 
 DEPENDENCIES
   action_policy
+  amazing_print
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.2)
   byebug
