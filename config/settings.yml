@@ -5,7 +5,7 @@ sdr_api:
 
 dor_services:
   url: 'http://localhost:3003'
-  # To generate the token: docker-compose run dor-services-app rake generate_token
+  # To generate the token: docker compose run dor-services-app rake generate_token
   token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGb28ifQ.-BVfLTW9Q1_ZQEsGv4tuzGLs5rESN7LgdtEwUltnKv4
 
 workflow:
