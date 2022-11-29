@@ -27,26 +27,26 @@ Same as deposit, but doesn't begin the accessioning workflow
 #### Database
 
 ```
-docker-compose up -d db
+docker compose up -d db
 ```
 
 ### Build the api container
 
 ```
-docker-compose build app
+docker compose build app
 ```
 
 ### Setup the local database
 
 ```
-docker-compose run --rm app bundle exec rake db:create
-docker-compose run --rm app bundle exec rake db:migrate
+bin/rails db:create
+bin/rails db:migrate
 ```
 
 ### Start the app
 
 ```
-docker-compose up -d app
+docker compose up -d app
 ```
 
 ### Authorization
