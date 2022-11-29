@@ -12,7 +12,7 @@ workflow:
   url: 'http://localhost:3001'
 
 staging_location: '/dor/workspace'
-
+globus_location: 'tmp/globus/'
 
 # This user is allowed to proxy other users, we expect that it'll be argo and it
 # will be responible for only proxying users which it has verififed with Shibboleth.

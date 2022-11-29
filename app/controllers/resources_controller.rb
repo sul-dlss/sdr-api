@@ -5,9 +5,12 @@ require 'base64'
 # rubocop:disable Metrics/ClassLength
 class ResourcesController < ApplicationController
   class BlobError < StandardError; end
+  class GlobusNotFoundError < StandardError; end
 
   before_action :authorize_request
   before_action :validate_version
+
+  GLOBUS_PREFIX = 'globus://'
 
   # POST /resource
   def show
@@ -113,9 +116,6 @@ class ResourcesController < ApplicationController
     file_sets(model_params).each do |fileset|
       fileset[:version] = model_params[:version]
       fileset.dig(:structural, :contains).each do |file|
-        # Only decorate ActiveStorage signed IDs
-        next unless signed_id?(file[:externalIdentifier])
-
         decorate_file(file: file,
                       version: model_params[:version],
                       external_id: file_identifier(model_params[:externalIdentifier],
@@ -142,18 +142,40 @@ class ResourcesController < ApplicationController
     external_id.split("#{ID_NAMESPACE}/fileSet/").second.split('-', 2).second
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def decorate_file(file:, version:, external_id: nil)
-    blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
-    file[:externalIdentifier] = external_id if external_id
-    file[:version] = version
+  def metadata_for_blob(blob, file)
+    file.delete(:externalIdentifier)
     file[:size] = blob.byte_size
     file[:hasMimeType] = blob.content_type || 'application/octet-stream'
     declared_md5 = file[:hasMessageDigests].find { |digest| digest.fetch(:type) == 'md5' }.fetch(:digest)
     calculated_md5 = base64_to_hexdigest(blob.checksum)
     raise BlobError, "MD5 mismatch for #{file[:filename]}" if declared_md5 != calculated_md5
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def metadata_for_file(globus_file, file)
+    raise GlobusNotFoundError, "Globus file [#{globus_file}] not found." unless File.exist?(globus_file)
+
+    file[:size] = File.size(globus_file)
+    file[:hasMessageDigests] = [
+      { type: 'md5', digest: Digest::MD5.file(globus_file).hexdigest },
+      { type: 'sha1', digest: Digest::SHA1.file(globus_file).hexdigest }
+    ]
+    file[:hasMimeType] = Marcel::MimeType.for Pathname.new(globus_file)
+  end
+
+  def decorate_file(file:, version:, external_id: nil)
+    if signed_id?(file[:externalIdentifier])
+      blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
+      metadata_for_blob(blob, file)
+    else
+      external_id = file[:externalIdentifier]
+      globus_file = file_from_globus(file.delete(:externalIdentifier))
+      metadata_for_file(globus_file, file) if globus_id?(external_id)
+    end
+
+    # Set file params post-processing
+    file[:externalIdentifier] = external_id if external_id
+    file[:version] = version
+  end
 
   # Decorates the provided FileSets with the information we have in the ActiveStorage table.
   # externalIdentifier is also removed from the request.
@@ -173,6 +195,10 @@ class ResourcesController < ApplicationController
     raise BlobError, "Unable to find upload for #{filename} (#{signed_id})"
   end
 
+  def file_from_globus(globus_id)
+    globus_id.sub(GLOBUS_PREFIX, Settings.globus_location)
+  end
+
   def file_sets(model_params)
     model_params.fetch(:structural, {}).fetch(:contains, [])
   end
@@ -182,7 +208,7 @@ class ResourcesController < ApplicationController
       file_sets(model_params).flat_map do |fileset|
         fileset.dig(:structural, :contains).filter_map do |file|
           # Only include ActiveStorage signed IDs
-          signed_ids[file[:filename]] = file[:externalIdentifier] if signed_id?(file[:externalIdentifier])
+          signed_ids[file[:filename]] = file[:externalIdentifier] if decoratable_id?(file[:externalIdentifier])
         end
       end
     end
@@ -203,6 +229,14 @@ class ResourcesController < ApplicationController
   # and sdr-api can simply pass through the structure undecorated.
   def signed_id?(file_id)
     ActiveStorage.verifier.valid_message?(file_id)
+  end
+
+  def globus_id?(file_id)
+    file_id.start_with?(GLOBUS_PREFIX)
+  end
+
+  def decoratable_id?(file_id)
+    signed_id?(file_id) || globus_id?(file_id)
   end
 
   def base64_to_hexdigest(base64)

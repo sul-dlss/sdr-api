@@ -6,17 +6,34 @@ class StageFiles
     # Skip side effects if no signed IDs provided
     return yield if signed_ids.empty?
 
+    @dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
+
     blobs = Blobs.blobs_for(signed_ids)
-    copy_files_to_staging(druid, blobs)
+    if blobs.empty?
+      copy_globus(signed_ids)
+    else
+      copy_blobs(blobs)
+    end
     yield
-    delete_from_active_storage(blobs.values)
   end
 
+  def self.copy_blobs(blobs)
+    copy_files_to_staging(blobs)
+    delete_from_active_storage(blobs.values)
+  end
+  private_class_method :copy_blobs
+
+  def self.copy_globus(signed_ids)
+    signed_ids.select { |_key, value| value&.match?(%r{^globus://}) }.each do |filename, globus_path|
+      @dir.copy_file(globus_path.gsub('globus://', Settings.globus_location), filename)
+    end
+  end
+  private_class_method :copy_globus
+
   # Copy files to the staging directory from ActiveStorage for the assembly workflow
-  def self.copy_files_to_staging(druid, blobs)
-    dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
+  def self.copy_files_to_staging(blobs)
     blobs.each do |filename, blob|
-      dir.copy_file(ActiveStorage::Blob.service.path_for(blob.key), filename)
+      @dir.copy_file(ActiveStorage::Blob.service.path_for(blob.key), filename)
     end
   end
   private_class_method :copy_files_to_staging

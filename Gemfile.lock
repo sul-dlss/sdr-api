@@ -412,6 +412,7 @@ DEPENDENCIES
   jbuilder (~> 2.7)
   jwt
   lograge
+  marcel
   okcomputer
   pg
   puma (~> 5.6)
