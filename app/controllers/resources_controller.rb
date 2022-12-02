@@ -182,13 +182,12 @@ class ResourcesController < ApplicationController
   # amend an item's APO. This operation does not require sdr-api to handle files
   # and is merely passing through Cocina to SDR. One way we can tell whether a Cocina
   # structure depends on sdr-api to manage files is by sniffing files' external
-  # identifiers. If the external identifier of a file is a legitimate HTTP(S) URI,
-  # SDR already has a file on hand for the object, and sdr-api can simply pass through
-  # the structure undecorated. If on the other hand the external identifier is not
-  # an HTTP(S) URI, that is a signal that the originating user or system expects
-  # the API to manage files for them.
+  # identifiers. If the external identifier of a file is a legitimate signed id,
+  # the originating user or system expects the API to manage files for them. On the
+  # other hand, it can be assumed that SDR already has a file on hand for the object,
+  # and sdr-api can simply pass through the structure undecorated.
   def signed_id?(file_id)
-    !file_id.match?(%r{^https?://})
+    ActiveStorage.verifier.valid_message?(file_id)
   end
 
   def base64_to_hexdigest(base64)
