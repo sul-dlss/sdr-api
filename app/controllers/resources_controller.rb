@@ -117,14 +117,29 @@ class ResourcesController < ApplicationController
         next unless signed_id?(file[:externalIdentifier])
 
         decorate_file(file: file,
-                      external_id: file_identifier(model_params[:externalIdentifier], fileset[:externalIdentifier]),
-                      version: model_params[:version])
+                      version: model_params[:version],
+                      external_id: file_identifier(model_params[:externalIdentifier],
+                                                   choose_resource_id(fileset[:externalIdentifier])))
       end
     end
   end
 
+  def valid_fileset_id?(external_id)
+    external_id.start_with?("#{ID_NAMESPACE}/fileSet/")
+  end
+
+  def choose_resource_id(external_id)
+    # take the uuid from a valid fileset ID or create a uuid
+    valid_fileset_id?(external_id) ? get_fileset_uuid(external_id) : external_id
+  end
+
   def file_identifier(object_id, resource_id)
     "#{ID_NAMESPACE}/file/#{object_id.delete_prefix('druid:')}-#{resource_id}/#{SecureRandom.uuid}"
+  end
+
+  def get_fileset_uuid(external_id)
+    # get the uuid (012345) from a valid externalIdentifier such as https://cocina.sul.stanford.edu/fileSet/px880kw6696-012345
+    external_id.split("#{ID_NAMESPACE}/fileSet/").second.split('-', 2).second
   end
 
   # rubocop:disable Metrics/AbcSize
