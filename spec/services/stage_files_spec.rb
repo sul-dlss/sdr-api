@@ -5,16 +5,20 @@ require 'rails_helper'
 RSpec.describe StageFiles do
   describe '.stage' do
     let(:druid) { 'druid:bc123df4567' }
+    let(:blob) do
+      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
+                                  filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
+    end
+    let(:signed_ids) do
+      { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
+    end
 
     before do
-      allow(Blobs).to receive(:blobs_for).and_return({})
       allow(described_class).to receive(:copy_files_to_staging)
       allow(described_class).to receive(:delete_from_active_storage)
     end
 
     context 'when signed IDs are supplied' do
-      let(:signed_ids) { %w[iamasignedid andsoami] }
-
       it 'copies files to staging, yields, and cleans up active-storage' do
         expect { |b| described_class.stage(signed_ids, druid, &b) }.to yield_control.once
         expect(described_class).to have_received(:copy_files_to_staging).once

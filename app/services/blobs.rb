@@ -7,6 +7,8 @@ class Blobs
   def self.blobs_for(signed_ids)
     {}.tap do |blob_hash|
       signed_ids.each do |filename, signed_id|
+        next unless ActiveStorage.verifier.valid_message?(signed_id)
+
         file_id = ActiveStorage.verifier.verified(signed_id, purpose: :blob_id)
         # This can raise ActiveRecord::RecordNotFound if file does not exist
         blob_hash[filename] = ActiveStorage::Blob.find(file_id)

@@ -154,7 +154,7 @@ RSpec.describe 'Create a DRO' do
   end
 
   context 'when blob not found for file' do
-    let(:signed_id) { 'abc123' }
+    let(:signed_id) { ActiveStorage.verifier.generate('thisisinvalid', purpose: :blob_id) }
 
     it 'returns 500' do
       post '/v1/resources',
@@ -163,6 +163,43 @@ RSpec.describe 'Create a DRO' do
       expect(response).to have_http_status(:server_error)
       body = JSON.parse(response.body)
       expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+    end
+  end
+
+  context 'when the signed_id indicates a globus file' do
+    let(:signed_id) { 'globus://abc123/file2.txt' }
+    let(:signed_ids) { { 'file2.txt' => signed_id } }
+    let(:expected_model_params) do
+      model_params = dro.to_h
+      file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
+      file_params[:size] = 5
+      file_params[:hasMessageDigests] = [
+        { 'digest' => md5, 'type' => 'md5' },
+        { 'digest' => sha1, 'type' => 'sha1' }
+      ]
+      file_params[:hasMimeType] = 'application/octet-stream'
+      model_params.with_indifferent_access
+    end
+    let(:sha1) { 'c65f99f8c5376adadddc46d5cbcf5762f9e55eb7' }
+    let(:md5) { 'eb61eead90e3b899c6bcbe27ac581660' }
+    let(:file_path) { 'tmp/globus/abc123/file2.txt' }
+
+    before do
+      FileUtils.mkdir_p('tmp/globus/abc123')
+      FileUtils.cp ActiveStorage::Blob.service.path_for(blob.key), file_path
+    end
+
+    it 'kicks off accession workflow' do
+      post '/v1/resources',
+           params: request,
+           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to have_http_status(:created)
+      expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: signed_ids,
+                                                              start_workflow: false,
+                                                              assign_doi: false,
+                                                              priority: 'default')
     end
   end
 
