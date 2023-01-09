@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe StageFiles do
+RSpec.describe StageBlobs do
   describe '.stage' do
     let(:druid) { 'druid:bc123df4567' }
     let(:blob) do

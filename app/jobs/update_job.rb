@@ -48,7 +48,7 @@ class UpdateJob < ApplicationJob
 
     versioning_params = { description: version_description || 'Update via sdr-api', significance: 'major' }
 
-    StageFiles.stage(signed_ids, model.externalIdentifier) do
+    StageBlobs.stage(signed_ids, model.externalIdentifier) do
       if start_workflow
         # this will check openability, open/close a version as needed, and then kick off accessioning after
         # that regardless of whether a version was opened/closed.

@@ -129,8 +129,8 @@ RSpec.describe IngestJob do
     before do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  globus_ids: {},
+                                  signed_ids: {},
+                                  globus_ids: signed_ids,
                                   priority: priority)
     end
 
