@@ -38,6 +38,7 @@ class ResourcesController < ApplicationController
     result = BackgroundJobResult.create(output: {})
     IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
+                            globus_ids: globus_ids(params),
                             background_job_result: result,
                             start_workflow: params.fetch(:accession, false),
                             assign_doi: params.fetch(:assign_doi, false),
@@ -65,6 +66,7 @@ class ResourcesController < ApplicationController
     result = BackgroundJobResult.create(output: {})
     UpdateJob.perform_later(model_params: JSON.parse(cocina_dro.to_json), # Needs to be sidekiq friendly serialization
                             signed_ids: signed_ids(params),
+                            globus_ids: globus_ids(params),
                             version_description: params[:versionDescription],
                             background_job_result: result)
 
@@ -162,14 +164,18 @@ class ResourcesController < ApplicationController
     file[:hasMimeType] = Marcel::MimeType.for Pathname.new(globus_file)
   end
 
+  # TODO: Clean this method up
   def decorate_file(file:, version:, external_id: nil)
     if signed_id?(file[:externalIdentifier])
       blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
       metadata_for_blob(blob, file)
-    else
+    elsif globus_id?(file[:externalIdentifier])
       external_id = file[:externalIdentifier]
       globus_file = file_from_globus(file.delete(:externalIdentifier))
-      metadata_for_file(globus_file, file) if globus_id?(external_id)
+      metadata_for_file(globus_file, file) if globus_id?(external_id)    
+    else
+      external_id = file[:externalIdentifier]
+      file.delete(:externalIdentifier)
     end
 
     # Set file params post-processing
@@ -208,7 +214,18 @@ class ResourcesController < ApplicationController
       file_sets(model_params).flat_map do |fileset|
         fileset.dig(:structural, :contains).filter_map do |file|
           # Only include ActiveStorage signed IDs
-          signed_ids[file[:filename]] = file[:externalIdentifier] if decoratable_id?(file[:externalIdentifier])
+          signed_ids[file[:filename]] = file[:externalIdentifier] if signed_id?(file[:externalIdentifier])
+        end
+      end
+    end
+  end
+
+  def globus_ids(model_params)
+    {}.tap do |globus_ids|
+      file_sets(model_params).flat_map do |fileset|
+        fileset.dig(:structural, :contains).filter_map do |file|
+          # Only include ActiveStorage signed IDs
+          globus_ids[file[:filename]] = file[:externalIdentifier] if globus_id?(file[:externalIdentifier])
         end
       end
     end
@@ -233,10 +250,6 @@ class ResourcesController < ApplicationController
 
   def globus_id?(file_id)
     file_id.start_with?(GLOBUS_PREFIX)
-  end
-
-  def decoratable_id?(file_id)
-    signed_id?(file_id) || globus_id?(file_id)
   end
 
   def base64_to_hexdigest(base64)

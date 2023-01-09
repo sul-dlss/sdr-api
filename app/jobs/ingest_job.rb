@@ -18,7 +18,7 @@ class IngestJob < ApplicationJob
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/ParameterLists
-  def perform(model_params:, signed_ids:, background_job_result:,
+  def perform(model_params:, signed_ids:, globus_ids:, background_job_result:,
               start_workflow: true, assign_doi: false, priority: 'default')
     # Increment the try count
     background_job_result.try_count += 1

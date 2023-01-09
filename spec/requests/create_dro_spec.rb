@@ -76,6 +76,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')
@@ -105,6 +106,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
                                                               start_workflow: true,
                                                               assign_doi: false,
                                                               priority: 'low')
@@ -119,6 +121,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
                                                               start_workflow: true,
                                                               assign_doi: false,
                                                               priority: 'default')
@@ -133,6 +136,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')
@@ -147,6 +151,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: true,
                                                               priority: 'default')
@@ -168,7 +173,7 @@ RSpec.describe 'Create a DRO' do
 
   context 'when the signed_id indicates a globus file' do
     let(:signed_id) { 'globus://abc123/file2.txt' }
-    let(:signed_ids) { { 'file2.txt' => signed_id } }
+    let(:globus_ids) { { 'file2.txt' => signed_id } }
     let(:expected_model_params) do
       model_params = dro.to_h
       file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
@@ -196,7 +201,8 @@ RSpec.describe 'Create a DRO' do
       expect(response).to have_http_status(:created)
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: signed_ids,
+                                                              signed_ids: {},
+                                                              globus_ids: globus_ids,
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')
