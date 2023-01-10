@@ -118,6 +118,8 @@ class ResourcesController < ApplicationController
     file_sets(model_params).each do |fileset|
       fileset[:version] = model_params[:version]
       fileset.dig(:structural, :contains).each do |file|
+        next unless decoratable_file?(file[:externalIdentifier])
+
         decorate_file(file: file,
                       version: model_params[:version],
                       external_id: file_identifier(model_params[:externalIdentifier],
@@ -164,21 +166,25 @@ class ResourcesController < ApplicationController
     file[:hasMimeType] = Marcel::MimeType.for Pathname.new(globus_file)
   end
 
-  # TODO: Clean this method up
+  def decorate_blob(file)
+    blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
+    metadata_for_blob(blob, file)
+  end
+
+  def decorate_globus(file)
+    globus_file = file_from_globus(file.delete(:externalIdentifier))
+    metadata_for_file(globus_file, file)
+  end
+
   def decorate_file(file:, version:, external_id: nil)
     if signed_id?(file[:externalIdentifier])
-      blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
-      metadata_for_blob(blob, file)
+      decorate_blob(file)
     elsif globus_id?(file[:externalIdentifier])
-      external_id = file[:externalIdentifier]
-      globus_file = file_from_globus(file.delete(:externalIdentifier))
-      metadata_for_file(globus_file, file) if globus_id?(external_id)    
-    else
-      external_id = file[:externalIdentifier]
-      file.delete(:externalIdentifier)
+      external_id ||= file[:externalIdentifier]
+      decorate_globus(file)
     end
 
-    # Set file params post-processing
+    # Set file params post-processing for both ActiveStorage and Globus
     file[:externalIdentifier] = external_id if external_id
     file[:version] = version
   end
@@ -224,7 +230,7 @@ class ResourcesController < ApplicationController
     {}.tap do |globus_ids|
       file_sets(model_params).flat_map do |fileset|
         fileset.dig(:structural, :contains).filter_map do |file|
-          # Only include ActiveStorage signed IDs
+          # Only include Globus file IDs
           globus_ids[file[:filename]] = file[:externalIdentifier] if globus_id?(file[:externalIdentifier])
         end
       end
@@ -250,6 +256,10 @@ class ResourcesController < ApplicationController
 
   def globus_id?(file_id)
     file_id.start_with?(GLOBUS_PREFIX)
+  end
+
+  def decoratable_file?(file_id)
+    signed_id?(file_id) || globus_id?(file_id)
   end
 
   def base64_to_hexdigest(base64)

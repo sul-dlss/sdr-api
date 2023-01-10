@@ -171,7 +171,10 @@ RSpec.describe IngestJob do
     end
 
     it 'quits' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids, globus_ids: {})
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -197,7 +200,10 @@ RSpec.describe IngestJob do
     end
 
     it 'retries' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids, globus_ids: {})
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
@@ -219,7 +225,10 @@ RSpec.describe IngestJob do
     end
 
     it 'ingests an object' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids, globus_ids: {})
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF')
@@ -246,7 +255,10 @@ RSpec.describe IngestJob do
     end
 
     it 'reports error and will not retry' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids, globus_ids: {})
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -283,7 +295,10 @@ RSpec.describe IngestJob do
       let(:try_count) { 8 }
 
       it 'quits' do
-        described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids, globus_ids: {})
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids: signed_ids,
+                                    globus_ids: {})
         expect(actual_result).to be_complete
         expect(actual_result.output[:errors]).to be_present
       end

@@ -48,8 +48,8 @@ class IngestJob < ApplicationJob
     # Create workflow destroys existing steps if called again, so need to check if already created.
     Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority: priority)
 
-    stage_files(signed_ids:, globus_ids:, druid:, priority:) if start_workflow
-  
+    stage_files(signed_ids: signed_ids, globus_ids: globus_ids, druid: druid, priority: priority) if start_workflow
+
     background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.
@@ -69,7 +69,7 @@ class IngestJob < ApplicationJob
 
   def stage_blobs(signed_ids:, druid:, priority:)
     StageBlobs.stage(signed_ids, druid) do
-      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority:)
+      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority)
     end
   end
 
@@ -80,7 +80,7 @@ class IngestJob < ApplicationJob
   end
 
   def stage_files(signed_ids:, globus_ids:, druid:, priority:)
-    stage_blobs(signed_ids:, druid:, priority:) unless signed_ids.blank?
-    stage_globus(globus_ids:, druid:, priority:) unless globus_ids.blank?
+    stage_blobs(signed_ids: signed_ids, druid: druid, priority: priority) if signed_ids.present?
+    stage_globus(globus_ids: globus_ids, druid: druid, priority: priority) if globus_ids.present?
   end
 end
