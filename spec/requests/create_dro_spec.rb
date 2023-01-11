@@ -172,7 +172,7 @@ RSpec.describe 'Create a DRO' do
   end
 
   context 'when the signed_id indicates a globus file' do
-    let(:signed_id) { 'globus://abc123/file2.txt' }
+    let(:signed_id) { 'globus://abc123/file2.txt' } # This is actually a globus ID but signed_id is used in the request
     let(:globus_ids) { { 'file2.txt' => signed_id } }
     let(:expected_model_params) do
       model_params = dro.to_h

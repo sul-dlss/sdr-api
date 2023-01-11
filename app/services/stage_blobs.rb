@@ -7,8 +7,6 @@ class StageBlobs
     return yield if signed_ids.empty?
 
     blobs = Blobs.blobs_for(signed_ids)
-    yield if blobs.empty?
-
     copy_files_to_staging(druid, blobs)
     yield
     delete_from_active_storage(blobs.values)

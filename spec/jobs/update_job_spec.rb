@@ -82,7 +82,10 @@ RSpec.describe UpdateJob do
 
   context 'when updating to a new version' do
     it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       cocina_object = Cocina::Models.build(model.with_indifferent_access)
       expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
       expect(actual_result).to be_complete
@@ -91,21 +94,27 @@ RSpec.describe UpdateJob do
     end
 
     it 'accessions an object by default without explicitly opening/closing a version' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids,
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {},
                                   version_description: 'Updated metadata')
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
       expect(accession_client).to have_received(:start)
-        .with(description: 'Updated metadata', significance: 'major', workflow: 'accessionWF')
+        .with(description: 'Updated metadata', significance: 'major', workflow: 'accessionWF').twice
     end
 
     it 'opens and closes the version without kicking off accessioning if start_workflow is false' do
-      described_class.perform_now(model_params: model, background_job_result: result,
-                                  signed_ids: signed_ids, start_workflow: false)
-      expect(version_client).to have_received(:open)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {},
+                                  start_workflow: false)
+      expect(version_client).to have_received(:open).twice
       expect(version_client).to have_received(:close)
-        .with(description: 'Update via sdr-api', significance: 'major', start_accession: false)
+        .with(description: 'Update via sdr-api', significance: 'major', start_accession: false).twice
       expect(accession_client).not_to have_received(:start)
     end
   end
@@ -125,7 +134,10 @@ RSpec.describe UpdateJob do
     end
 
     it 'reports error and will not retry' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
@@ -149,7 +161,10 @@ RSpec.describe UpdateJob do
     end
 
     it 'reports error and will not retry' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 409 (Conflict) from dor-services-app',
@@ -172,7 +187,8 @@ RSpec.describe UpdateJob do
         expect do
           described_class.perform_now(model_params: model,
                                       background_job_result: result,
-                                      signed_ids: signed_ids)
+                                      signed_ids: signed_ids,
+                                      globus_ids: {})
         end
           .to raise_error(StandardError)
         expect(actual_result).to be_pending
@@ -183,7 +199,10 @@ RSpec.describe UpdateJob do
       let(:try_count) { 8 }
 
       it 'quits' do
-        described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids: signed_ids,
+                                    globus_ids: {})
         expect(actual_result).to be_complete
         expect(actual_result.output[:errors]).to be_present
       end
@@ -194,7 +213,10 @@ RSpec.describe UpdateJob do
     let(:existing_version) { 2 }
 
     it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       cocina_object = Cocina::Models.build(model.with_indifferent_access)
       expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
       expect(actual_result).to be_complete
@@ -203,23 +225,26 @@ RSpec.describe UpdateJob do
     end
 
     it 'accessions an object by default without explicitly opening/closing a version' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
       expect(accession_client).to have_received(:start)
-        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF')
+        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF').twice
     end
 
     it 'does not kick off accessioning if start_workflow is false' do
       described_class.perform_now(model_params: model, background_job_result: result,
-                                  signed_ids: signed_ids, start_workflow: false)
+                                  signed_ids: signed_ids, globus_ids: {}, start_workflow: false)
       expect(accession_client).not_to have_received(:start)
     end
 
     it 'does not open/close the version' do
       described_class.perform_now(model_params: model, background_job_result: result,
-                                  signed_ids: signed_ids, start_workflow: false)
+                                  signed_ids: signed_ids, globus_ids: {}, start_workflow: false)
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
     end
@@ -230,7 +255,10 @@ RSpec.describe UpdateJob do
     let(:existing_version) { 3 }
 
     it 'quits with an error' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids)
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: signed_ids,
+                                  globus_ids: {})
 
       err_title = 'Version conflict'
       err_detail = "The repository is on version '3' and " \
