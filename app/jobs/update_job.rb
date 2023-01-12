@@ -17,14 +17,14 @@ class UpdateJob < ApplicationJob
   # @param [String] version_description
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(**kwargs)
-    model_params = kwargs[:model_params]
-    signed_ids = kwargs[:signed_ids]
-    globus_ids = kwargs[:globus_ids]
-    background_job_result = kwargs[:background_job_result]
-    @start_workflow = kwargs[:start_workflow].nil? ? true : kwargs[:start_workflow]
-    version_description = kwargs[:version_description]
-
+  # rubocop:disable  Metrics/ParameterLists
+  def perform(model_params:,
+              background_job_result:,
+              signed_ids: {},
+              globus_ids: {},
+              start_workflow: true,
+              version_description: nil)
+    @start_workflow = start_workflow
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -89,6 +89,7 @@ class UpdateJob < ApplicationJob
                                                                                  message: e.message] })
     background_job_result.complete!
   end
+  # rubocop:enable  Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
