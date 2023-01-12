@@ -4,7 +4,7 @@
 class StageGlobus
   def self.stage(globus_ids, druid)
     # Skip side effects if no signed IDs provided
-    return yield if globus_ids.empty?
+    return yield if globus_ids.blank?
 
     dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
     globus_ids.select { |_key, value| value&.match?(%r{^globus://}) }.each do |filename, globus_path|

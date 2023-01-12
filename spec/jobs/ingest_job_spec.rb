@@ -80,7 +80,6 @@ RSpec.describe IngestJob do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
                                   signed_ids: signed_ids,
-                                  globus_ids: {},
                                   priority: priority)
     end
 
@@ -129,7 +128,6 @@ RSpec.describe IngestJob do
     before do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: {},
                                   globus_ids: globus_ids,
                                   priority: priority)
     end
@@ -152,7 +150,7 @@ RSpec.describe IngestJob do
 
     it 'ingests an object' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids,
-                                  globus_ids: {}, assign_doi: true)
+                                  assign_doi: true)
       expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
                                                               assign_doi: true)
     end
@@ -173,8 +171,7 @@ RSpec.describe IngestJob do
     it 'quits' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  globus_ids: {})
+                                  signed_ids: signed_ids)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -202,8 +199,7 @@ RSpec.describe IngestJob do
     it 'retries' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  globus_ids: {})
+                                  signed_ids: signed_ids)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
@@ -227,8 +223,7 @@ RSpec.describe IngestJob do
     it 'ingests an object' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  globus_ids: {})
+                                  signed_ids: signed_ids)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
@@ -257,8 +252,7 @@ RSpec.describe IngestJob do
     it 'reports error and will not retry' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  globus_ids: {})
+                                  signed_ids: signed_ids)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -283,8 +277,7 @@ RSpec.describe IngestJob do
         expect do
           described_class.perform_now(model_params: model,
                                       background_job_result: result,
-                                      signed_ids: signed_ids,
-                                      globus_ids: {})
+                                      signed_ids: signed_ids)
         end
           .to raise_error(StandardError)
         expect(actual_result).to be_pending
@@ -297,8 +290,7 @@ RSpec.describe IngestJob do
       it 'quits' do
         described_class.perform_now(model_params: model,
                                     background_job_result: result,
-                                    signed_ids: signed_ids,
-                                    globus_ids: {})
+                                    signed_ids: signed_ids)
         expect(actual_result).to be_complete
         expect(actual_result.output[:errors]).to be_present
       end
