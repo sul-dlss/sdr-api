@@ -18,7 +18,7 @@ class IngestJob < ApplicationJob
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/ParameterLists
-  def perform(model_params:, signed_ids:, background_job_result:,
+  def perform(model_params:, background_job_result:, signed_ids: {}, globus_ids: {},
               start_workflow: true, assign_doi: false, priority: 'default')
     # Increment the try count
     background_job_result.try_count += 1
@@ -48,7 +48,11 @@ class IngestJob < ApplicationJob
     # Create workflow destroys existing steps if called again, so need to check if already created.
     Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority: priority)
 
-    StageFiles.stage(signed_ids, druid) do
+    StageBlobs.stage(signed_ids, druid) do
+      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
+    end
+
+    StageGlobus.stage(globus_ids, druid) do
       Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
     end
 

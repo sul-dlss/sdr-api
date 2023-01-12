@@ -37,7 +37,8 @@ class ResourcesController < ApplicationController
 
     result = BackgroundJobResult.create(output: {})
     IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
-                            signed_ids: signed_ids(params),
+                            signed_ids: signed_ids,
+                            globus_ids: globus_ids,
                             background_job_result: result,
                             start_workflow: params.fetch(:accession, false),
                             assign_doi: params.fetch(:assign_doi, false),
@@ -64,7 +65,8 @@ class ResourcesController < ApplicationController
 
     result = BackgroundJobResult.create(output: {})
     UpdateJob.perform_later(model_params: JSON.parse(cocina_dro.to_json), # Needs to be sidekiq friendly serialization
-                            signed_ids: signed_ids(params),
+                            signed_ids: signed_ids,
+                            globus_ids: globus_ids,
                             version_description: params[:versionDescription],
                             background_job_result: result)
 
@@ -116,6 +118,8 @@ class ResourcesController < ApplicationController
     file_sets(model_params).each do |fileset|
       fileset[:version] = model_params[:version]
       fileset.dig(:structural, :contains).each do |file|
+        next unless decoratable_file?(file[:externalIdentifier])
+
         decorate_file(file: file,
                       version: model_params[:version],
                       external_id: file_identifier(model_params[:externalIdentifier],
@@ -162,17 +166,25 @@ class ResourcesController < ApplicationController
     file[:hasMimeType] = Marcel::MimeType.for Pathname.new(globus_file)
   end
 
+  def decorate_blob(file)
+    blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
+    metadata_for_blob(blob, file)
+  end
+
+  def decorate_globus(file)
+    globus_file = file_from_globus(file.delete(:externalIdentifier))
+    metadata_for_file(globus_file, file)
+  end
+
   def decorate_file(file:, version:, external_id: nil)
     if signed_id?(file[:externalIdentifier])
-      blob = blob_for_signed_id(file.delete(:externalIdentifier), file[:filename])
-      metadata_for_blob(blob, file)
-    else
-      external_id = file[:externalIdentifier]
-      globus_file = file_from_globus(file.delete(:externalIdentifier))
-      metadata_for_file(globus_file, file) if globus_id?(external_id)
+      decorate_blob(file)
+    elsif globus_id?(file[:externalIdentifier])
+      external_id ||= file[:externalIdentifier]
+      decorate_globus(file)
     end
 
-    # Set file params post-processing
+    # Set file params post-processing for both ActiveStorage and Globus
     file[:externalIdentifier] = external_id if external_id
     file[:version] = version
   end
@@ -203,12 +215,23 @@ class ResourcesController < ApplicationController
     model_params.fetch(:structural, {}).fetch(:contains, [])
   end
 
-  def signed_ids(model_params)
+  def signed_ids
     {}.tap do |signed_ids|
-      file_sets(model_params).flat_map do |fileset|
+      file_sets(params).flat_map do |fileset|
         fileset.dig(:structural, :contains).filter_map do |file|
           # Only include ActiveStorage signed IDs
-          signed_ids[file[:filename]] = file[:externalIdentifier] if decoratable_id?(file[:externalIdentifier])
+          signed_ids[file[:filename]] = file[:externalIdentifier] if signed_id?(file[:externalIdentifier])
+        end
+      end
+    end
+  end
+
+  def globus_ids
+    {}.tap do |globus_ids|
+      file_sets(params).flat_map do |fileset|
+        fileset.dig(:structural, :contains).filter_map do |file|
+          # Only include Globus file IDs
+          globus_ids[file[:filename]] = file[:externalIdentifier] if globus_id?(file[:externalIdentifier])
         end
       end
     end
@@ -235,7 +258,7 @@ class ResourcesController < ApplicationController
     file_id.start_with?(GLOBUS_PREFIX)
   end
 
-  def decoratable_id?(file_id)
+  def decoratable_file?(file_id)
     signed_id?(file_id) || globus_id?(file_id)
   end
 

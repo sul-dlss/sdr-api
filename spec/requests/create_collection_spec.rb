@@ -20,6 +20,7 @@ RSpec.describe 'Create a collection' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: JSON.parse(request),
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
+                                                              globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')

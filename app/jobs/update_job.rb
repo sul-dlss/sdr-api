@@ -5,6 +5,8 @@
 # Above that, it will exit and provide the error message in the background_job_result.
 class UpdateJob < ApplicationJob
   queue_as :default
+  attr_accessor :start_workflow
+
   # Note that deciding when to stop retrying is handled below. Hence, not providing additional retry configuration
   # for Sidekiq.
 
@@ -15,7 +17,14 @@ class UpdateJob < ApplicationJob
   # @param [String] version_description
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  def perform(model_params:, signed_ids:, background_job_result:, start_workflow: true, version_description: nil)
+  # rubocop:disable  Metrics/ParameterLists
+  def perform(model_params:,
+              background_job_result:,
+              signed_ids: {},
+              globus_ids: {},
+              start_workflow: true,
+              version_description: nil)
+    @start_workflow = start_workflow
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -48,16 +57,12 @@ class UpdateJob < ApplicationJob
 
     versioning_params = { description: version_description || 'Update via sdr-api', significance: 'major' }
 
-    StageFiles.stage(signed_ids, model.externalIdentifier) do
-      if start_workflow
-        # this will check openability, open/close a version as needed, and then kick off accessioning after
-        # that regardless of whether a version was opened/closed.
-        object_client.accession.start(versioning_params.merge(workflow: 'accessionWF'))
-      elsif model.version == existing.version + 1
-        # don't kick off accessioning, just create a new version where only metadata was updated
-        object_client.version.open(versioning_params)
-        object_client.version.close(versioning_params.merge(start_accession: false))
-      end
+    StageBlobs.stage(signed_ids, model.externalIdentifier) do
+      version_or_accession(object_client, model, existing, versioning_params)
+    end
+
+    StageGlobus.stage(globus_ids, model.externalIdentifier) do
+      version_or_accession(object_client, model, existing, versioning_params)
     end
 
     background_job_result.complete!
@@ -84,6 +89,19 @@ class UpdateJob < ApplicationJob
                                                                                  message: e.message] })
     background_job_result.complete!
   end
+  # rubocop:enable  Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+
+  def version_or_accession(object_client, model, existing, versioning_params)
+    if start_workflow
+      # this will check openability, open/close a version as needed, and then kick off accessioning after
+      # that regardless of whether a version was opened/closed.
+      object_client.accession.start(versioning_params.merge(workflow: 'accessionWF'))
+    elsif model.version == existing.version + 1
+      # don't kick off accessioning, just create a new version where only metadata was updated
+      object_client.version.open(versioning_params)
+      object_client.version.close(versioning_params.merge(start_accession: false))
+    end
+  end
 end

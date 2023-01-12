@@ -83,6 +83,7 @@ RSpec.describe 'Update a resource' do
     expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                             background_job_result: instance_of(BackgroundJobResult),
                                                             signed_ids: { 'file2.txt' => file_id },
+                                                            globus_ids: {},
                                                             version_description: version_description)
   end
 
@@ -130,7 +131,9 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: {}, version_description: nil)
+                                                              signed_ids: {},
+                                                              globus_ids: {},
+                                                              version_description: nil)
     end
   end
 
@@ -146,7 +149,9 @@ RSpec.describe 'Update a resource' do
       expect(JSON.parse(response.body)['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
-                                                              signed_ids: {}, version_description: nil)
+                                                              signed_ids: {},
+                                                              globus_ids: {},
+                                                              version_description: nil)
     end
   end
 
@@ -173,6 +178,7 @@ RSpec.describe 'Update a resource' do
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => file_id },
+                                                              globus_ids: {},
                                                               version_description: nil)
     end
   end
