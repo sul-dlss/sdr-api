@@ -210,7 +210,7 @@ GEM
     faraday-net_http (3.0.2)
     faraday-retry (2.0.0)
       faraday (~> 2.0)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     hashdiff (1.0.1)
     honeybadger (5.0.2)
