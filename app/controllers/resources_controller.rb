@@ -12,7 +12,7 @@ class ResourcesController < ApplicationController
 
   GLOBUS_PREFIX = 'globus://'
 
-  # POST /resource
+  # GET /resource/:id
   def show
     cocina_obj = Cocina::Models.without_metadata(Dor::Services::Client.object(params[:id]).find)
     authorize! cocina_obj, with: ResourcePolicy
@@ -23,7 +23,7 @@ class ResourcesController < ApplicationController
     render build_error('500', e, 'Internal server error')
   end
 
-  # PUT /resource/:id
+  # POST /resource
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def create
@@ -51,6 +51,7 @@ class ResourcesController < ApplicationController
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
+  # PUT /resource/:id
   # This just proxies the response from DOR services app
   # rubocop:disable Metrics/MethodLength
   def update
