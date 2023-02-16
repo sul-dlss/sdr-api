@@ -51,7 +51,10 @@ class UpdateJob < ApplicationJob
       return
     end
 
-    # Note that not using a lock here since all model params are being provided rather than updating retrieved params.
+    # globus deposits may not have digests yet and they need to be generated before staging (copy)
+    model = GlobusDigestGenerator.generate(cocina: model, globus_ids: globus_ids)
+
+    # not using a lock here since all model params are being provided rather than updating retrieved params.
     object_client.update(params: model, skip_lock: true)
 
     background_job_result.output = { druid: model.externalIdentifier }
@@ -87,7 +90,7 @@ class UpdateJob < ApplicationJob
                                                                                  message: e.message] })
     background_job_result.complete!
   end
-  # rubocop:enable  Metrics/ParameterLists
+  # rubocop:enable Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 

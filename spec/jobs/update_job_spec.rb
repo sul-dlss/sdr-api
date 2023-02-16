@@ -263,4 +263,49 @@ RSpec.describe UpdateJob do
                                                          })
     end
   end
+
+  context 'when updating Globus deposits that lack digests' do
+    before do
+      FileUtils.rm_rf('tmp/globus/digest-test')
+      FileUtils.mkdir_p('tmp/globus/digest-test')
+      FileUtils.cp('spec/fixtures/00001.jp2', 'tmp/globus/digest-test/00001.jp2')
+    end
+
+    let(:file) do
+      {
+        type: Cocina::Models::ObjectType.file,
+        filename: '00001.jp2',
+        externalIdentifier: "#{druid}/00001.jp2",
+        label: '00001.jp2',
+        hasMimeType: 'image/jp2',
+        administrative: {
+          publish: false,
+          sdrPreserve: true,
+          shelve: false
+        },
+        access: {
+          view: 'dark',
+          download: 'none'
+        },
+        hasMessageDigests: [],
+        version: 1
+      }
+    end
+
+    it 'sha1 and md5 digests are generated' do
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids: {},
+                                  globus_ids: { '00001.jp2' => 'globus://digest-test/00001.jp2' })
+      model_with_digests = model.deep_dup
+      model_with_digests[:structural][:contains][0][:structural][:contains][0][:hasMessageDigests] = [
+        { type: 'sha1', digest: 'da39a3ee5e6b4b0d3255bfef95601890afd80709' },
+        { type: 'md5', digest: 'd41d8cd98f00b204e9800998ecf8427e' }
+      ]
+      cocina_object = Cocina::Models.build(model_with_digests.with_indifferent_access)
+      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+      expect(actual_result).to be_complete
+      expect(actual_result.output).to match({ druid: druid })
+    end
+  end
 end

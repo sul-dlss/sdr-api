@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Moves files from the ActiveStorage to the staging mount
+# Moves files from the Globus storage to the staging mount
 # @param [Hash] globus_ids a mapping of filenames to their location on disk
 # @param [String] druid
 # @return [Integer] the number of files staged

@@ -178,10 +178,6 @@ RSpec.describe 'Create a DRO' do
       model_params = dro.to_h
       file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
       file_params[:size] = 5
-      file_params[:hasMessageDigests] = [
-        { 'digest' => md5, 'type' => 'md5' },
-        { 'digest' => sha1, 'type' => 'sha1' }
-      ]
       file_params[:hasMimeType] = 'application/octet-stream'
       model_params.with_indifferent_access
     end
