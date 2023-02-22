@@ -22,8 +22,8 @@ RSpec.describe StageGlobus do
     end
 
     context 'when globus IDs are supplied' do
-      it 'copies files to staging, yields, and cleans up active-storage' do
-        expect { |b| described_class.stage(globus_ids, druid, &b) }.to yield_control.once
+      it 'copies files to staging and cleans up active-storage and returns 1' do
+        expect(described_class.stage(globus_ids, druid)).to be 1
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       end
     end
@@ -31,8 +31,8 @@ RSpec.describe StageGlobus do
     context 'when signed IDs are not supplied' do
       let(:globus_ids) { [] }
 
-      it 'yields and does nothing else' do
-        expect { |b| described_class.stage(globus_ids, druid, &b) }.to yield_control.once
+      it 'does nothing and returns 0' do
+        expect(described_class.stage(globus_ids, druid)).to be 0
       end
     end
   end

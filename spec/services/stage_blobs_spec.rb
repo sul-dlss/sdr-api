@@ -19,8 +19,8 @@ RSpec.describe StageBlobs do
     end
 
     context 'when signed IDs are supplied' do
-      it 'copies files to staging, yields, and cleans up active-storage' do
-        expect { |b| described_class.stage(signed_ids, druid, &b) }.to yield_control.once
+      it 'copies files to staging, and cleans up active-storage and returns 1' do
+        expect(described_class.stage(signed_ids, druid)).to be 1
         expect(described_class).to have_received(:copy_files_to_staging).once
         expect(described_class).to have_received(:delete_from_active_storage).once
       end
@@ -29,8 +29,8 @@ RSpec.describe StageBlobs do
     context 'when signed IDs are not supplied' do
       let(:signed_ids) { [] }
 
-      it 'yields and does nothing else' do
-        expect { |b| described_class.stage(signed_ids, druid, &b) }.to yield_control.once
+      it 'does nothing and returns 0' do
+        expect(described_class.stage(signed_ids, druid)).to be 0 
         expect(described_class).not_to have_received(:copy_files_to_staging)
         expect(described_class).not_to have_received(:delete_from_active_storage)
       end
