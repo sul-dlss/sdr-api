@@ -12,6 +12,7 @@ class UpdateJob < ApplicationJob
 
   # @param [Hash] model_params
   # @param [Hash] filename, signed_ids for the blobs
+  # @param [Hash] filename, globus_ids for the staged Globus files
   # @param [BackgroundJobResult] background_job_result
   # @param [Boolean] start_workflow starts accessionWF if true; if false, opens/closes new version without accessioning
   # @param [String] version_description
@@ -57,13 +58,10 @@ class UpdateJob < ApplicationJob
 
     versioning_params = { description: version_description || 'Update via sdr-api', significance: 'major' }
 
-    StageBlobs.stage(signed_ids, model.externalIdentifier) do
-      version_or_accession(object_client, model, existing, versioning_params)
-    end
+    StageBlobs.stage(signed_ids, model.externalIdentifier)
+    StageGlobus.stage(globus_ids, model.externalIdentifier)
 
-    StageGlobus.stage(globus_ids, model.externalIdentifier) do
-      version_or_accession(object_client, model, existing, versioning_params)
-    end
+    version_or_accession(object_client, model, existing, versioning_params)
 
     background_job_result.complete!
   rescue Dor::Services::Client::BadRequestError => e

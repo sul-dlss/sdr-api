@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
 # Moves files from the ActiveStorage to the staging mount
+# @param [Hash] signed_ids a mapping of filenames to ActiveStorage signed id
+# @param [String] druid
+# @return [Integer] the number of files staged
 class StageBlobs
   def self.stage(signed_ids, druid)
     # Skip side effects if no signed IDs provided
-    return yield if signed_ids.empty?
+    return 0 if signed_ids.empty?
 
     blobs = Blobs.blobs_for(signed_ids)
     copy_files_to_staging(druid, blobs)
-    yield
     delete_from_active_storage(blobs.values)
+
+    blobs.size
   end
 
   # Copy files to the staging directory from ActiveStorage for the assembly workflow

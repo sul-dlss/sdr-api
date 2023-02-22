@@ -48,13 +48,10 @@ class IngestJob < ApplicationJob
     # Create workflow destroys existing steps if called again, so need to check if already created.
     Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority: priority)
 
-    StageBlobs.stage(signed_ids, druid) do
-      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
-    end
+    StageBlobs.stage(signed_ids, druid)
+    StageGlobus.stage(globus_ids, druid)
 
-    StageGlobus.stage(globus_ids, druid) do
-      Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
-    end
+    Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
 
     background_job_result.complete!
   rescue StandardError => e

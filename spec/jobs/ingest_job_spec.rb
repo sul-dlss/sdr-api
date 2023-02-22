@@ -89,11 +89,11 @@ RSpec.describe IngestJob do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'registrationWF', version: 1, lane_id: 'default')
         expect(workflow_client).to have_received(:create_workflow_by_name)
-          .with(druid, 'accessionWF', version: 1, lane_id: 'default').twice
+          .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: druid })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -106,11 +106,11 @@ RSpec.describe IngestJob do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
+        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'registrationWF', version: 1, lane_id: 'low')
         expect(workflow_client).to have_received(:create_workflow_by_name)
-          .with(druid, 'accessionWF', version: 1, lane_id: 'low').twice
+          .with(druid, 'accessionWF', version: 1, lane_id: 'low').once
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: druid })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -135,11 +135,11 @@ RSpec.describe IngestJob do
     it 'ingests an object' do
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
+      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'default')
       expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'default').twice
+        .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
     end
@@ -202,11 +202,11 @@ RSpec.describe IngestJob do
                                   signed_ids: signed_ids)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
+      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'default')
       expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'default').twice
+        .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: druid })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -226,7 +226,7 @@ RSpec.describe IngestJob do
                                   signed_ids: signed_ids)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').twice
+      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).not_to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'low')
       expect(workflow_client).not_to have_received(:create_workflow_by_name)
