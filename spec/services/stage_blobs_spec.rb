@@ -30,7 +30,7 @@ RSpec.describe StageBlobs do
       let(:signed_ids) { [] }
 
       it 'does nothing and returns 0' do
-        expect(described_class.stage(signed_ids, druid)).to be 0 
+        expect(described_class.stage(signed_ids, druid)).to be 0
         expect(described_class).not_to have_received(:copy_files_to_staging)
         expect(described_class).not_to have_received(:delete_from_active_storage)
       end
