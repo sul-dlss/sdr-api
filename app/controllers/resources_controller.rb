@@ -160,11 +160,11 @@ class ResourcesController < ApplicationController
     raise GlobusNotFoundError, "Globus file [#{globus_file}] not found." unless File.exist?(globus_file)
 
     file[:size] = File.size(globus_file)
-    file[:hasMessageDigests] = [
-      { type: 'md5', digest: Digest::MD5.file(globus_file).hexdigest },
-      { type: 'sha1', digest: Digest::SHA1.file(globus_file).hexdigest }
-    ]
     file[:hasMimeType] = Marcel::MimeType.for Pathname.new(globus_file)
+    # file[:hasMessageDigests] are not calculated here since they could take
+    # some time to generate when processing deposits with large files. Instead
+    # digest generation happens in the asynchronous IngestJob or UpdateJob to
+    # avoid a long HTTP response.
   end
 
   def decorate_blob(file)

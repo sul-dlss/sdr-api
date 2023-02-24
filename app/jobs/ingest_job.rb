@@ -24,6 +24,7 @@ class IngestJob < ApplicationJob
     background_job_result.try_count += 1
     background_job_result.processing!
     model = Cocina::Models.build_request(model_params.with_indifferent_access)
+    model = GlobusDigestGenerator.generate(cocina: model, globus_ids: globus_ids)
     begin
       response_cocina_obj = Dor::Services::Client.objects.register(params: model, assign_doi: assign_doi)
       druid = response_cocina_obj.externalIdentifier
