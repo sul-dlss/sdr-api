@@ -51,7 +51,7 @@ RSpec.describe SelectOutdatedUploadsStrategy do
 
     it 'returns both outdated uploads and none of the current ones' do
       expect(selection.size).to eq(2)
-      expect(selection).to match_array([outdated_upload1, outdated_upload2])
+      expect(selection).to contain_exactly(outdated_upload1, outdated_upload2)
     end
   end
   # rubocop:enable RSpec/LetSetup
