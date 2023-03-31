@@ -30,7 +30,7 @@ gem 'honeybadger'
 gem 'lograge'
 gem 'marcel'
 gem 'okcomputer'
-gem 'sidekiq', '~> 6.0'
+gem 'sidekiq', '~> 7.0'
 gem 'whenever', require: false
 
 group :development, :test do
