@@ -40,8 +40,8 @@ class SidekiqWorkerCountCheck < OkComputer::Check
     actual_local_sidekiq_process_count = actual_local_sidekiq_processes.size
     actual_local_total_concurrency = actual_local_sidekiq_processes.sum { |process| process['concurrency'] }
 
-    error_list = calculate_error_list(actual_local_sidekiq_process_count: actual_local_sidekiq_process_count,
-                                      actual_local_total_concurrency: actual_local_total_concurrency)
+    error_list = calculate_error_list(actual_local_sidekiq_process_count:,
+                                      actual_local_total_concurrency:)
 
     if error_list.empty?
       mark_message "Sidekiq worker counts as expected on this VM: #{actual_local_sidekiq_process_count} worker " \

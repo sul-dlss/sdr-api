@@ -8,9 +8,9 @@ class Workflow
   # @param [String] priority ('default') determines the relative priority used for the workflow.
   #                                      Value may be 'low' or 'default'
   def self.create_unless_exists(druid, workflow_name, version: 1, priority: 'default')
-    return unless workflow_client.workflow(pid: druid, workflow_name: workflow_name).empty?
+    return unless workflow_client.workflow(pid: druid, workflow_name:).empty?
 
-    workflow_client.create_workflow_by_name(druid, workflow_name, version: version, lane_id: priority)
+    workflow_client.create_workflow_by_name(druid, workflow_name, version:, lane_id: priority)
   end
 
   def self.workflow_client

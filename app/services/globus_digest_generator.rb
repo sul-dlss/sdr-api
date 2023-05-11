@@ -9,7 +9,7 @@ class GlobusDigestGenerator
   # @param [Hash] globus_ids a mapping of filenames to their location on disk
   # @return [Cocina::Model] a new Cocina object with (potentially) new digests
   def self.generate(cocina:, globus_ids:)
-    new(cocina: cocina, globus_ids: globus_ids).generate
+    new(cocina:, globus_ids:).generate
   end
 
   def initialize(cocina:, globus_ids:)

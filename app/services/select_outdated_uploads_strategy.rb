@@ -6,7 +6,7 @@ class SelectOutdatedUploadsStrategy
   # @param [Integer] days_ago an integer representing the number of days before which uploads will be selected
   # @return [ActiveRecord::Relation]
   def self.select(days_ago: default_days_ago)
-    new(days_ago: days_ago).select
+    new(days_ago:).select
   end
 
   # @return [Integer]

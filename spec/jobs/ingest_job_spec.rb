@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe IngestJob do
   let(:try_count) { 0 }
-  let(:result) { create(:background_job_result, try_count: try_count) }
+  let(:result) { create(:background_job_result, try_count:) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dh5678' }
-  let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow: workflow) }
+  let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow:) }
   let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
@@ -79,8 +79,8 @@ RSpec.describe IngestJob do
     before do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids,
-                                  priority: priority)
+                                  signed_ids:,
+                                  priority:)
     end
 
     context 'when priority is default' do
@@ -95,7 +95,7 @@ RSpec.describe IngestJob do
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
         expect(actual_result).to be_complete
-        expect(actual_result.output).to match({ druid: druid })
+        expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
       end
     end
@@ -112,7 +112,7 @@ RSpec.describe IngestJob do
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'accessionWF', version: 1, lane_id: 'low').once
         expect(actual_result).to be_complete
-        expect(actual_result.output).to match({ druid: druid })
+        expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
       end
     end
@@ -128,8 +128,8 @@ RSpec.describe IngestJob do
     before do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  globus_ids: globus_ids,
-                                  priority: priority)
+                                  globus_ids:,
+                                  priority:)
     end
 
     it 'ingests an object' do
@@ -141,7 +141,7 @@ RSpec.describe IngestJob do
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
       expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: druid })
+      expect(actual_result.output).to match({ druid: })
     end
   end
 
@@ -149,7 +149,7 @@ RSpec.describe IngestJob do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
 
     it 'ingests an object' do
-      described_class.perform_now(model_params: model, background_job_result: result, signed_ids: signed_ids,
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids:,
                                   assign_doi: true)
       expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
                                                               assign_doi: true)
@@ -171,7 +171,7 @@ RSpec.describe IngestJob do
     it 'quits' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids)
+                                  signed_ids:)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -199,7 +199,7 @@ RSpec.describe IngestJob do
     it 'retries' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids)
+                                  signed_ids:)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
@@ -208,7 +208,7 @@ RSpec.describe IngestJob do
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
       expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: druid })
+      expect(actual_result.output).to match({ druid: })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
   end
@@ -223,7 +223,7 @@ RSpec.describe IngestJob do
     it 'ingests an object' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids)
+                                  signed_ids:)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
@@ -232,7 +232,7 @@ RSpec.describe IngestJob do
       expect(workflow_client).not_to have_received(:create_workflow_by_name)
         .with(druid, 'accessionWF', version: 1, lane_id: 'low')
       expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: druid })
+      expect(actual_result.output).to match({ druid: })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
     end
   end
@@ -252,7 +252,7 @@ RSpec.describe IngestJob do
     it 'reports error and will not retry' do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
-                                  signed_ids: signed_ids)
+                                  signed_ids:)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
       expect(workflow_client).not_to have_received(:workflow)
@@ -277,7 +277,7 @@ RSpec.describe IngestJob do
         expect do
           described_class.perform_now(model_params: model,
                                       background_job_result: result,
-                                      signed_ids: signed_ids)
+                                      signed_ids:)
         end
           .to raise_error(StandardError)
         expect(actual_result).to be_pending
@@ -290,7 +290,7 @@ RSpec.describe IngestJob do
       it 'quits' do
         described_class.perform_now(model_params: model,
                                     background_job_result: result,
-                                    signed_ids: signed_ids)
+                                    signed_ids:)
         expect(actual_result).to be_complete
         expect(actual_result.output[:errors]).to be_present
       end

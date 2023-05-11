@@ -7,7 +7,7 @@ RSpec.describe 'Create a DRO' do
     allow(IngestJob).to receive(:perform_later)
   end
 
-  let(:dro) { build(:request_dro).new(structural: structural) }
+  let(:dro) { build(:request_dro).new(structural:) }
   let(:request) { dro.to_json }
   let(:structural) do
     {
@@ -50,7 +50,7 @@ RSpec.describe 'Create a DRO' do
 
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                filename: 'file2.txt', byte_size: 10, checksum: checksum)
+                                filename: 'file2.txt', byte_size: 10, checksum:)
   end
   let(:signed_id) do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
@@ -198,7 +198,7 @@ RSpec.describe 'Create a DRO' do
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
-                                                              globus_ids: globus_ids,
+                                                              globus_ids:,
                                                               start_workflow: false,
                                                               assign_doi: false,
                                                               priority: 'default')

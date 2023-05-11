@@ -30,6 +30,6 @@ class AuthenticationController < ApplicationController
   def make_token_response(user)
     exp = Time.zone.now + 24.hours.to_i
     token = JsonWebToken.encode({ user_id: user.id }, exp)
-    { token: token, exp: exp.strftime('%m-%d-%Y %H:%M') }
+    { token:, exp: exp.strftime('%m-%d-%Y %H:%M') }
   end
 end

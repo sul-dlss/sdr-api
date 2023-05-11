@@ -12,7 +12,7 @@ RSpec.describe StageGlobus do
     let(:globus_ids) do
       { 'file2.txt' => 'globus://some/file/path/file2.txt' }
     end
-    let(:dir) { StagingDirectory.new(druid: druid, staging_location: Settings.staging_location) }
+    let(:dir) { StagingDirectory.new(druid:, staging_location: Settings.staging_location) }
     let(:assembly_dir) { 'tmp/assembly/bc/123/df/4567/bc123df4567' }
 
     before do

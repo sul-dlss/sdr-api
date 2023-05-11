@@ -8,7 +8,7 @@ class StageGlobus
   def self.stage(globus_ids, druid)
     return 0 if globus_ids.blank?
 
-    dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
+    dir = StagingDirectory.new(druid:, staging_location: Settings.staging_location)
     globus_ids.select { |_key, value| value&.match?(%r{^globus://}) }.each do |filename, globus_path|
       dir.copy_file(globus_path.gsub('globus://', Settings.globus_location), filename)
     end.size

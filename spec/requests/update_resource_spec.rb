@@ -40,12 +40,12 @@ RSpec.describe 'Update a resource' do
       ]
     }
   end
-  let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural: structural) }
+  let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural:) }
   let(:request) { dro.to_json }
   let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
   let(:blob) do
     ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                filename: 'file2.txt', byte_size: 10, checksum: checksum)
+                                filename: 'file2.txt', byte_size: 10, checksum:)
   end
   let(:fileset_id) { '9999' }
   let(:file_id) do
@@ -84,7 +84,7 @@ RSpec.describe 'Update a resource' do
                                                             background_job_result: instance_of(BackgroundJobResult),
                                                             signed_ids: { 'file2.txt' => file_id },
                                                             globus_ids: {},
-                                                            version_description: version_description)
+                                                            version_description:)
   end
 
   context 'when wrong version of cocina models is supplied' do
