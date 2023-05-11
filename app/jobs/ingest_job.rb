@@ -24,9 +24,9 @@ class IngestJob < ApplicationJob
     background_job_result.try_count += 1
     background_job_result.processing!
     model = Cocina::Models.build_request(model_params.with_indifferent_access)
-    model = GlobusDigestGenerator.generate(cocina: model, globus_ids: globus_ids)
+    model = GlobusDigestGenerator.generate(cocina: model, globus_ids:)
     begin
-      response_cocina_obj = Dor::Services::Client.objects.register(params: model, assign_doi: assign_doi)
+      response_cocina_obj = Dor::Services::Client.objects.register(params: model, assign_doi:)
       druid = response_cocina_obj.externalIdentifier
     rescue Dor::Services::Client::ConflictResponse => e
       # Should not expect this on first try so return as error
@@ -44,15 +44,15 @@ class IngestJob < ApplicationJob
       background_job_result.complete!
       return
     end
-    background_job_result.output = { druid: druid }
+    background_job_result.output = { druid: }
 
     # Create workflow destroys existing steps if called again, so need to check if already created.
-    Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority: priority)
+    Workflow.create_unless_exists(druid, 'registrationWF', version: 1, priority:)
 
     StageBlobs.stage(signed_ids, druid)
     StageGlobus.stage(globus_ids, druid)
 
-    Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority: priority) if start_workflow
+    Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority:) if start_workflow
 
     background_job_result.complete!
   rescue StandardError => e

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe AccountPolicy, type: :policy do
   # See https://actionpolicy.evilmartians.io/#/testing?id=rspec-dsl
   let(:user) { build_stubbed(:user) }
-  let(:context) { { user: user } }
+  let(:context) { { user: } }
 
   describe_rule :proxy? do
     succeed 'when the user is argo' do

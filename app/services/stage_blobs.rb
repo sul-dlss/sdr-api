@@ -18,7 +18,7 @@ class StageBlobs
 
   # Copy files to the staging directory from ActiveStorage for the assembly workflow
   def self.copy_files_to_staging(druid, blobs)
-    dir = StagingDirectory.new(druid: druid, staging_location: Settings.staging_location)
+    dir = StagingDirectory.new(druid:, staging_location: Settings.staging_location)
     blobs.each do |filename, blob|
       dir.copy_file(ActiveStorage::Blob.service.path_for(blob.key), filename)
     end

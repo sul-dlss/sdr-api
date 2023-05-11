@@ -37,8 +37,8 @@ class ResourcesController < ApplicationController
 
     result = BackgroundJobResult.create(output: {})
     IngestJob.perform_later(model_params: JSON.parse(request_dro.to_json), # Needs to be sidekiq friendly serialization
-                            signed_ids: signed_ids,
-                            globus_ids: globus_ids,
+                            signed_ids:,
+                            globus_ids:,
                             background_job_result: result,
                             start_workflow: params.fetch(:accession, false),
                             assign_doi: params.fetch(:assign_doi, false),
@@ -66,8 +66,8 @@ class ResourcesController < ApplicationController
 
     result = BackgroundJobResult.create(output: {})
     UpdateJob.perform_later(model_params: JSON.parse(cocina_dro.to_json), # Needs to be sidekiq friendly serialization
-                            signed_ids: signed_ids,
-                            globus_ids: globus_ids,
+                            signed_ids:,
+                            globus_ids:,
                             version_description: params[:versionDescription],
                             background_job_result: result)
 
@@ -121,7 +121,7 @@ class ResourcesController < ApplicationController
       fileset.dig(:structural, :contains).each do |file|
         next unless decoratable_file?(file[:externalIdentifier])
 
-        decorate_file(file: file,
+        decorate_file(file:,
                       version: model_params[:version],
                       external_id: file_identifier(model_params[:externalIdentifier],
                                                    choose_resource_id(fileset[:externalIdentifier])))
@@ -196,7 +196,7 @@ class ResourcesController < ApplicationController
     file_sets(model_params).each do |fileset|
       fileset[:version] = 1
       fileset.dig(:structural, :contains).each do |file|
-        decorate_file(file: file, version: 1)
+        decorate_file(file:, version: 1)
       end
     end
   end

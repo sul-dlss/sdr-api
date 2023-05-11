@@ -52,7 +52,7 @@ class UpdateJob < ApplicationJob
     end
 
     # globus deposits may not have digests yet and they need to be generated before staging (copy)
-    model = GlobusDigestGenerator.generate(cocina: model, globus_ids: globus_ids)
+    model = GlobusDigestGenerator.generate(cocina: model, globus_ids:)
 
     # not using a lock here since all model params are being provided rather than updating retrieved params.
     object_client.update(params: model, skip_lock: true)

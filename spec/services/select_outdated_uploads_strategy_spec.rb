@@ -26,7 +26,7 @@ RSpec.describe SelectOutdatedUploadsStrategy do
     end
 
     context 'when injecting a days_ago attr' do
-      let(:strategy) { described_class.new(days_ago: days_ago) }
+      let(:strategy) { described_class.new(days_ago:) }
       let(:days_ago) { 2 }
 
       it 'sets the days_ago attr to a normalized time object' do

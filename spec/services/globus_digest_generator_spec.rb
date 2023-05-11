@@ -54,10 +54,10 @@ RSpec.describe GlobusDigestGenerator do
     }
   end
 
-  let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural: structural) }
+  let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural:) }
 
   describe '#generate' do
-    let(:new_dro) { described_class.generate(cocina: dro, globus_ids: globus_ids) }
+    let(:new_dro) { described_class.generate(cocina: dro, globus_ids:) }
     let(:files) { new_dro.structural.contains[0].structural.contains }
     let(:globus_ids) do
       {
