@@ -150,7 +150,15 @@ class ResourcesController < ApplicationController
   def metadata_for_blob(blob, file)
     file.delete(:externalIdentifier)
     file[:size] = blob.byte_size
-    file[:hasMimeType] = blob.content_type || 'application/octet-stream'
+    # Invalid JSON files uploaded for deposit with a JSON content type will trigger 400 errors in sdr-api since they are
+    # parsed as JSON and rejected.  The work around is to change the content_type in the request for uploads like this
+    # to something specific that will be changed back to application/json after upload is complete.
+    # There is a corresponding translation in sdr-client.  See https://github.com/sul-dlss/happy-heron/issues/3075
+    file[:hasMimeType] = if blob.content_type == 'application/x-stanford-json'
+                           'application/json'
+                         else
+                           blob.content_type || 'application/octet-stream'
+                         end
     declared_md5 = file[:hasMessageDigests].find { |digest| digest.fetch(:type) == 'md5' }.fetch(:digest)
     calculated_md5 = base64_to_hexdigest(blob.checksum)
     raise BlobError, "MD5 mismatch for #{file[:filename]}" if declared_md5 != calculated_md5

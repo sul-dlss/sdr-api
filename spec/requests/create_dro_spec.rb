@@ -49,18 +49,19 @@ RSpec.describe 'Create a DRO' do
   let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
 
   let(:blob) do
-    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
+    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok', content_type: 'application/text',
                                 filename: 'file2.txt', byte_size: 10, checksum:)
   end
   let(:signed_id) do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
   end
 
+  let(:expected_content_type) { 'application/text' }
   let(:expected_model_params) do
     model_params = dro.to_h
     file_params = model_params.dig(:structural, :contains, 0, :structural, :contains, 0)
     file_params.delete(:externalIdentifier)
-    file_params[:hasMimeType] = 'application/octet-stream'
+    file_params[:hasMimeType] = expected_content_type
     file_params[:size] = 10
     model_params.with_indifferent_access
   end
@@ -215,6 +216,56 @@ RSpec.describe 'Create a DRO' do
       expect(response).to have_http_status(:server_error)
       body = JSON.parse(response.body)
       expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+    end
+  end
+
+  context 'when the file is application/x-stanford-json' do
+    let(:blob) do
+      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
+                                  filename: 'file2.txt', content_type: 'application/x-stanford-json',
+                                  byte_size: 10, checksum:)
+    end
+    let(:expected_content_type) { 'application/json' }
+
+    it 'switches the content type to application/json' do
+      post '/v1/resources',
+           params: request,
+           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to be_created
+      expect(response.location).to be_present
+      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
+                                                              start_workflow: false,
+                                                              assign_doi: false,
+                                                              priority: 'default')
+    end
+  end
+
+  context 'when the file supplies a nil content_type' do
+    let(:blob) do
+      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
+                                  filename: 'file2.txt', content_type: nil,
+                                  byte_size: 10, checksum:)
+    end
+    let(:expected_content_type) { 'application/octet-stream' }
+
+    it 'switches the content type to application/octet-stream' do
+      post '/v1/resources',
+           params: request,
+           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to be_created
+      expect(response.location).to be_present
+      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
+                                                              start_workflow: false,
+                                                              assign_doi: false,
+                                                              priority: 'default')
     end
   end
 
