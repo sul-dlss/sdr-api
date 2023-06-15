@@ -29,7 +29,12 @@ paths:
     post:
       tags:
         - files
-      summary: Creates a new file resource
+      summary: |
+        Creates a new file resource.
+        Note that the 'content_type' of the file posted will be set to 'application/octet-stream' if not supplied.
+        Additional values in 'content_type' after a semicolon will be removed (e.g. ';v15' is removed in 'application/text;v15')
+        You may post JSON files with 'content_type' of 'application/x-stanford-json' to avoid 400 errors if posted JSON file is invalid.
+        The system will automatically change the content type to 'application/json' after upload.
       responses:
         '200':
           description: OK
