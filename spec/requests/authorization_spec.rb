@@ -13,7 +13,7 @@ RSpec.describe 'Authorization' do
            params: { email: 'jcoyne85@stanford.edu', password: 'sekr3t!' }.to_json,
            headers: { 'Content-Type' => 'application/json' }
 
-      expect(JSON.parse(response.body)['token']).to be_present
+      expect(response.parsed_body['token']).to be_present
       expect(response).to be_ok
     end
   end

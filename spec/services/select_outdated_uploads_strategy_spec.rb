@@ -35,24 +35,19 @@ RSpec.describe SelectOutdatedUploadsStrategy do
     end
   end
 
-  # rubocop:disable RSpec/LetSetup
   describe '#select' do
     subject(:selection) { strategy.select }
 
-    let(:old_days_ago1) { 28.days.ago }
-    let(:old_days_ago2) { 14.days.ago }
-    let!(:outdated_upload1) { create(:active_storage_blob, created_at: old_days_ago1) }
-    let!(:outdated_upload2) { create(:active_storage_blob, created_at: old_days_ago2) }
-    let!(:current_upload1) { create(:active_storage_blob) }
-    let!(:current_upload2) { create(:active_storage_blob) }
-    let!(:current_upload3) { create(:active_storage_blob) }
+    let(:old_28days_ago) { 28.days.ago }
+    let(:old_14days_ago) { 14.days.ago }
+    let!(:outdated28_upload) { create(:active_storage_blob, created_at: old_28days_ago) }
+    let!(:outdated14_upload) { create(:active_storage_blob, created_at: old_14days_ago) }
 
     it { is_expected.to be_a(ActiveRecord::Relation) }
 
     it 'returns both outdated uploads and none of the current ones' do
       expect(selection.size).to eq(2)
-      expect(selection).to contain_exactly(outdated_upload1, outdated_upload2)
+      expect(selection).to contain_exactly(outdated28_upload, outdated14_upload)
     end
   end
-  # rubocop:enable RSpec/LetSetup
 end

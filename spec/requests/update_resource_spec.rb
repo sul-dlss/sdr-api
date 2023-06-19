@@ -79,7 +79,7 @@ RSpec.describe 'Update a resource' do
 
     expect(response).to be_accepted
     expect(response.location).to be_present
-    expect(JSON.parse(response.body)['jobId']).to be_present
+    expect(response.parsed_body['jobId']).to be_present
     expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                             background_job_result: instance_of(BackgroundJobResult),
                                                             signed_ids: { 'file2.txt' => file_id },
@@ -97,8 +97,8 @@ RSpec.describe 'Update a resource' do
             'X-Cocina-Models-Version' => '0.33.1'
           }
       expect(response).to have_http_status(:bad_request)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Cocina-models version mismatch'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Cocina-models version mismatch' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 
@@ -114,8 +114,8 @@ RSpec.describe 'Update a resource' do
           params: request,
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to have_http_status(:server_error)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 
@@ -128,7 +128,7 @@ RSpec.describe 'Update a resource' do
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_accepted
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
@@ -146,7 +146,7 @@ RSpec.describe 'Update a resource' do
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_accepted
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_with_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
@@ -174,7 +174,7 @@ RSpec.describe 'Update a resource' do
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_accepted
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => file_id },
@@ -191,8 +191,8 @@ RSpec.describe 'Update a resource' do
           params: request,
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to have_http_status(:server_error)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 

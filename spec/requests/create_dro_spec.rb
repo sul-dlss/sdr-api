@@ -73,7 +73,7 @@ RSpec.describe 'Create a DRO' do
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_created
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
@@ -94,8 +94,8 @@ RSpec.describe 'Create a DRO' do
              'X-Cocina-Models-Version' => '0.33.1'
            }
       expect(response).to have_http_status(:bad_request)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Cocina-models version mismatch'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Cocina-models version mismatch' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 
@@ -167,8 +167,8 @@ RSpec.describe 'Create a DRO' do
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to have_http_status(:server_error)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 
@@ -214,8 +214,8 @@ RSpec.describe 'Create a DRO' do
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to have_http_status(:server_error)
-      body = JSON.parse(response.body)
-      expect(body['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.'
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
   end
 
@@ -233,7 +233,7 @@ RSpec.describe 'Create a DRO' do
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_created
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
@@ -258,7 +258,7 @@ RSpec.describe 'Create a DRO' do
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_created
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
