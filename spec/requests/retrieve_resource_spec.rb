@@ -20,7 +20,7 @@ RSpec.describe 'Retrieve a resource' do
       get '/v1/resources/druid:bc999dg9999',
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_successful
-      expect(JSON.parse(response.body)['externalIdentifier']).to eq 'druid:bc999dg9999'
+      expect(response.parsed_body['externalIdentifier']).to eq 'druid:bc999dg9999'
     end
   end
 
@@ -60,7 +60,8 @@ RSpec.describe 'Retrieve a resource' do
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).not_to be_successful
       expect(response).to have_http_status(:internal_server_error)
-      expect(JSON.parse(response.body)['errors'].first).to include(
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      expect(JSON.parse(response.body)['errors'].first).to include( # rubocop:disable Rails/ResponseParsedBody
         'status' => '500',
         'title' => 'Internal server error',
         'detail' => "#{error_message} ()"
@@ -83,11 +84,14 @@ RSpec.describe 'Retrieve a resource' do
           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).not_to be_successful
       expect(response).to have_http_status(:not_found)
+      # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
+      # rubocop:disable Rails/ResponseParsedBody
       expect(JSON.parse(response.body)['errors'].first).to include(
         'status' => '404',
         'title' => error_message,
         'detail' => error_message
       )
+      # rubocop:enable Rails/ResponseParsedBody
     end
   end
 end

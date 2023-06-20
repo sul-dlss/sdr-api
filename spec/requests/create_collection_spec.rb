@@ -16,7 +16,7 @@ RSpec.describe 'Create a collection' do
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
       expect(response).to be_created
       expect(response.location).to be_present
-      expect(JSON.parse(response.body)['jobId']).to be_present
+      expect(response.parsed_body['jobId']).to be_present
       expect(IngestJob).to have_received(:perform_later).with(model_params: JSON.parse(request),
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},

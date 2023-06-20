@@ -18,7 +18,7 @@ RSpec.describe 'Proxy Authorization' do
     end
 
     it 'grants a token for the proxied user' do
-      expect(JSON.parse(response.body)['token']).to be_present
+      expect(response.parsed_body['token']).to be_present
       expect(response).to be_ok
     end
   end
