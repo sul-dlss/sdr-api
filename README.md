@@ -74,10 +74,14 @@ Given that we have a DRO with two Filesets each with a File (image1.png) and (im
 1. Get base64 encoded md5 checksum of the files: `ruby -rdigest -e 'puts Digest::MD5.file("image1.png").base64digest'`
 1. `curl -X POST -H 'Content-Type: application/json' -d '{"blob":{"byte_size":185464, "checksum":"Yw6eokcdYaqMAYioup0l7g==","content_type":"image/png","filename":"image.png"}}' http://localhost:3000/rails/active_storage/direct_uploads`
   This will return a payload with a `signed_id` and `direct_upload` object has the URL to send the file to.
-1. PUT the content to the URL given in the previous step.
+1. PUT the content to the URL given in the previous step. _See warning below about behavior to watch for when depositing JSON content._
 1. Repeat step 1-2 for the second file.
 1. POST /filesets with the `signed_id` from step one.  Repeat for the second file. The API will use `ActiveStorage::Blob.find_signed(params[:signed_id])` to find the files.
 1. POST /dro with the fileset ids from the previous step.
+
+#### Gotcha to consider when PUTing JSON content for deposit
+
+Despite our intent to accept user deposited content as given without further validation, some Rails and/or Committee magic is parsing content deposited as `application/json` in step 3 of the above sequence of operations. If the uploaded content does not parse as JSON, but does specify a content type of `application/json`, it will be rejected with a 400 error. You can work around this by using the custom `application/x-stanford-json` content type, which will be translated back to `application/json` before the Cocina is saved. See `/v1/disk/{id}` description in [`openapi.yml`](openapi.yml), and/or https://github.com/sul-dlss/happy-heron/issues/3075 for more context.
 
 ## User management
 ### Create a user
