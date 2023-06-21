@@ -33,7 +33,6 @@ module SdrApi
       schema_path: 'openapi.yml',
       strict: true,
       accept_request_filter: accept_proc,
-      parse_response_by_content_type: false, # hush committee deprecation warning
       query_hash_key: 'action_dispatch.request.query_parameters' # hush committee deprecation warning
     )
     config.middleware.use(
