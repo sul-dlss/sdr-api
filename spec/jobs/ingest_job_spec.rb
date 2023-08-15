@@ -245,7 +245,7 @@ RSpec.describe IngestJob do
         .to receive(:register)
         .and_raise(Dor::Services::Client::BadRequestError.new(response: '',
                                                               errors: [
-                                                                { 'title' => 'Catkey not in Symphony blah blah' }
+                                                                { 'title' => 'Record not in catalog blah blah' }
                                                               ]))
     end
 
@@ -260,7 +260,7 @@ RSpec.describe IngestJob do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                             message: 'Catkey not in Symphony blah blah ()'] })
+                             message: 'Record not in catalog blah blah ()'] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
