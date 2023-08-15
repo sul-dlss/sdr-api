@@ -9,18 +9,13 @@ RSpec.describe IngestJob do
   let(:druid) { 'druid:bc123dh5678' }
   let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow:) }
   let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
-  let(:blob) do
-    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
-  end
+  let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_ids) do
     { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
   end
-
   let(:model) do
     build(:request_dro).new(structural: { contains: filesets }).to_h
   end
-
   let(:file) do
     {
       type: Cocina::Models::ObjectType.file,
@@ -43,7 +38,6 @@ RSpec.describe IngestJob do
       version: 1
     }
   end
-
   let(:filesets) do
     [
       {
@@ -54,20 +48,16 @@ RSpec.describe IngestJob do
       }
     ]
   end
-
   let(:response_dro) do
     build(:dro, id: druid)
   end
-
   let(:assembly_dir) { 'tmp/assembly/bc/123/dh/5678/bc123dh5678' }
 
   before do
     FileUtils.rm_rf('tmp/assembly/bc')
     FileUtils.rm_rf('tmp/globus')
-    FileUtils.mkdir_p('tmp/storage/to/zu')
     FileUtils.mkdir_p('tmp/globus/some/file/path')
-    File.write('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'HELLO')
-    FileUtils.cp 'tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'tmp/globus/some/file/path/file2.txt'
+    FileUtils.cp blob.service.path_for(blob.key), 'tmp/globus/some/file/path/file2.txt'
     allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
     allow(Dor::Services::Client).to receive(:objects).and_return(objects_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)

@@ -8,19 +8,14 @@ RSpec.describe UpdateJob do
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dg5678' }
   let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true) }
-  let(:blob) do
-    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
-  end
+  let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_ids) do
     { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
   end
-
   let(:update_version) { 2 }
   let(:model) do
     build(:dro, id: druid, version: update_version).new(structural: { contains: filesets }).to_h
   end
-
   let(:file) do
     {
       type: Cocina::Models::ObjectType.file,
@@ -44,7 +39,6 @@ RSpec.describe UpdateJob do
       version: 1
     }
   end
-
   let(:filesets) do
     [
       {
@@ -56,15 +50,12 @@ RSpec.describe UpdateJob do
       }
     ]
   end
-
   let(:existing_version) { 1 }
   let(:response_dro) do
     build(:dro, id: druid, version: existing_version)
   end
-
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
   let(:version_client) { instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true) }
-
   let(:accession_client) { instance_double(Dor::Services::Client::Accession, start: true) }
   let(:object_client) do
     instance_double(Dor::Services::Client::Object,
@@ -73,8 +64,6 @@ RSpec.describe UpdateJob do
 
   before do
     FileUtils.rm_rf('tmp/assembly/bc')
-    FileUtils.mkdir_p('tmp/storage/to/zu')
-    File.write('tmp/storage/to/zu/tozuehlw6e8du20vn1xfzmiifyok', 'HELLO')
     allow(Dor::Services::Client).to receive(:object).with(druid).and_return(object_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
     allow(Honeybadger).to receive(:notify)

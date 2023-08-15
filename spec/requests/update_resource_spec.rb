@@ -42,11 +42,7 @@ RSpec.describe 'Update a resource' do
   end
   let(:dro) { build(:dro, id: 'druid:bc999dg9999').new(structural:) }
   let(:request) { dro.to_json }
-  let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
-  let(:blob) do
-    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                filename: 'file2.txt', byte_size: 10, checksum:)
-  end
+  let(:blob) { create(:singleton_blob_with_file, content_type: nil) }
   let(:fileset_id) { '9999' }
   let(:file_id) do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
@@ -184,7 +180,7 @@ RSpec.describe 'Update a resource' do
   end
 
   context 'when md5 mismatch' do
-    let(:checksum) { 'g5nXiniiM+u/gexbNkOA/A==' }
+    let(:blob) { create(:singleton_blob_with_file, checksum: 'g5nXiniiM+u/gexbNkOA/A==') }
 
     it 'returns 500' do
       put '/v1/resources/druid:bc123df4567',

@@ -5,10 +5,7 @@ require 'rails_helper'
 RSpec.describe StageGlobus do
   describe '.stage' do
     let(:druid) { 'druid:bc123df4567' }
-    let(:blob) do
-      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                  filename: 'file2.txt', byte_size: 10, checksum: 'f5nXiniiM+u/gexbNkOA/A==')
-    end
+    let(:blob) { create(:singleton_blob_with_file) }
     let(:globus_ids) do
       { 'file2.txt' => 'globus://some/file/path/file2.txt' }
     end
