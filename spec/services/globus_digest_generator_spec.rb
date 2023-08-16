@@ -68,7 +68,8 @@ RSpec.describe GlobusDigestGenerator do
 
     before do
       FileUtils.rm_rf('tmp/globus/test')
-      FileUtils.cp_r('spec/fixtures', 'tmp/globus/test')
+      FileUtils.mkdir_p('tmp/globus/test')
+      FileUtils.cp_r('spec/fixtures/.', 'tmp/globus/test')
     end
 
     it 'populates missing digests' do

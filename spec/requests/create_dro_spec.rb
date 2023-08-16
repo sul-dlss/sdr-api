@@ -45,17 +45,11 @@ RSpec.describe 'Create a DRO' do
       ]
     }
   end
-
   let(:checksum) { 'f5nXiniiM+u/gexbNkOA/A==' }
-
-  let(:blob) do
-    ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok', content_type: 'application/text',
-                                filename: 'file2.txt', byte_size: 10, checksum:)
-  end
+  let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_id) do
     ActiveStorage.verifier.generate(blob.id, purpose: :blob_id)
   end
-
   let(:expected_content_type) { 'application/text' }
   let(:expected_model_params) do
     model_params = dro.to_h
@@ -207,6 +201,9 @@ RSpec.describe 'Create a DRO' do
   end
 
   context 'when md5 mismatch' do
+    let(:blob) do
+      create(:singleton_blob_with_file, checksum:)
+    end
     let(:checksum) { 'g5nXiniiM+u/gexbNkOA/A==' }
 
     it 'returns 500' do
@@ -221,9 +218,7 @@ RSpec.describe 'Create a DRO' do
 
   context 'when the file is application/x-stanford-json' do
     let(:blob) do
-      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                  filename: 'file2.txt', content_type: 'application/x-stanford-json',
-                                  byte_size: 10, checksum:)
+      create(:singleton_blob_with_file, content_type: 'application/x-stanford-json')
     end
     let(:expected_content_type) { 'application/json' }
 
@@ -246,9 +241,7 @@ RSpec.describe 'Create a DRO' do
 
   context 'when the file supplies a nil content_type' do
     let(:blob) do
-      ActiveStorage::Blob.create!(key: 'tozuehlw6e8du20vn1xfzmiifyok',
-                                  filename: 'file2.txt', content_type: nil,
-                                  byte_size: 10, checksum:)
+      create(:singleton_blob_with_file, content_type: nil)
     end
     let(:expected_content_type) { 'application/octet-stream' }
 
