@@ -19,3 +19,8 @@ globus_location: 'tmp/globus/'
 argo_user: argo@dlss.sul.stanford.edu
 
 redis_url: 'redis://localhost:6379/'
+
+# checkin keys for honeybadger (actual keys are in shared_configs per environment as needed)
+# see https://app.honeybadger.io/projects/67994/check_ins
+honeybadger_checkins:
+  direct_uploads_sweeper: xyzzy

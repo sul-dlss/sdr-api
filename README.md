@@ -87,7 +87,7 @@ Despite our intent to accept user deposited content as given without further val
 ### Create a user
 ```
 bin/rake "users:create[leland@stanford.edu]"
-Password: 
+Password:
 #<User:0x00007f8647ae4988> {
                  :id => 2,
                :name => nil,
@@ -103,7 +103,7 @@ Password:
 
 ### Show a user
 ```
-bin/rake "users:show[leland@stanford.edu]"       
+bin/rake "users:show[leland@stanford.edu]"
 #<User:0x0000000113fbb6e8> {
                  :id => 1,
                :name => nil,
@@ -188,3 +188,12 @@ Background processing is performed by [Sidekiq](https://github.com/mperham/sidek
 
 Sidekiq can be monitored from [/queues](http://localhost:3000/queues).
 For more information on configuring and deploying Sidekiq, see this [doc](https://github.com/sul-dlss/DevOpsDocs/blob/master/projects/sul-requests/background_jobs.md).
+
+# Cron check-ins
+Cron jobs (configured via the whenever gem) are integrated with Honeybadger check-ins. These cron jobs will check-in with HB (via a curl request to an HB endpoint) whenever run. If a cron job does not check-in as expected, HB will alert.
+
+Cron check-ins are configured in the following locations:
+1. `config/schedule.rb`: This specifies which cron jobs check-in and what setting keys to use for the checkin key. See this file for more details.
+2. `config/settings.yml`: Stubs out a check-in key for each cron job. Since we may not want to have a check-in for all environments, this stub key will be used and produce a null check-in.
+3. `config/settings/production.yml` in shared_configs: This contains the actual check-in keys.
+4. HB notification page: Check-ins are configured per project in HB. To configure a check-in, the cron schedule will be needed, which can be found with `bundle exec whenever`. After a check-in is created, the check-in key will be available. (If the URL is `https://api.honeybadger.io/v1/check_in/rkIdpB` then the check-in key will be `rkIdp`).
