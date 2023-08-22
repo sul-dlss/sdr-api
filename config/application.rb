@@ -33,13 +33,15 @@ module SdrApi
       schema_path: 'openapi.yml',
       strict: true,
       accept_request_filter: accept_proc,
-      query_hash_key: 'action_dispatch.request.query_parameters' # hush committee deprecation warning
+      query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
+      parameter_overwite_by_rails_rule: false
     )
     config.middleware.use(
       Committee::Middleware::ResponseValidation,
       schema_path: 'openapi.yml',
       parse_response_by_content_type: false, # hush committee deprecation warning
-      query_hash_key: 'action_dispatch.request.query_parameters' # hush committee deprecation warning
+      query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
+      parameter_overwite_by_rails_rule: false
     )
 
     # Settings in config/environments/* take precedence over those specified here.
