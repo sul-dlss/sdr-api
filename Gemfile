@@ -3,23 +3,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.3'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.7'
-
-# Use Active Model has_secure_password
-gem 'bcrypt', '~> 3.1.7'
-
-# JSON web tokens (for authentication)
-gem 'jwt'
-# Postgres database client
-gem 'pg'
-# Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
-
 gem 'action_policy'
 gem 'amazing_print'
+gem 'bcrypt', '~> 3.1.7' # Use Active Model has_secure_password
+gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'cocina-models', '~> 0.90.0'
 gem 'committee'
 gem 'config', '~> 2.0'
@@ -27,11 +14,15 @@ gem 'dor-services-client', '~> 12.0'
 gem 'dor-workflow-client', '~> 5.0'
 gem 'druid-tools'
 gem 'honeybadger'
+gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jwt' # JSON web tokens (for authentication)
 gem 'lograge'
 gem 'marcel'
 gem 'okcomputer'
-gem 'sidekiq', '~> 7.0'
-gem 'whenever', require: false
+gem 'pg' # Postgres database client
+gem 'rails', '~> 7.0.3'
+gem 'sidekiq', '~> 7.0' # background job processing
+gem 'whenever', require: false # schedule crons
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -48,8 +39,7 @@ group :development, :test do
 end
 
 group :development do
-  # Use Puma as the app server
-  gem 'puma', '~> 5.6'
+  gem 'puma', '~> 5.6' # Use Puma as the app server
 end
 
 group :deployment do
