@@ -197,3 +197,13 @@ Cron check-ins are configured in the following locations:
 2. `config/settings.yml`: Stubs out a check-in key for each cron job. Since we may not want to have a check-in for all environments, this stub key will be used and produce a null check-in.
 3. `config/settings/production.yml` in shared_configs: This contains the actual check-in keys.
 4. HB notification page: Check-ins are configured per project in HB. To configure a check-in, the cron schedule will be needed, which can be found with `bundle exec whenever`. After a check-in is created, the check-in key will be available. (If the URL is `https://api.honeybadger.io/v1/check_in/rkIdpB` then the check-in key will be `rkIdp`).
+
+## Reset Process (for QA/Stage)
+
+### Steps
+
+1. Dump the users table: `pg_dump --table public.users --data-only sdr > users.sql`
+2. Reset the database: `bin/rails -e p db:reset`
+3. Restore the users table: `psql -f users.sql sdr`
+4. Delete file storage: `rm -fr storage/*`
+5. To test, run the `sdr_deposit_spec.rb` integration test.
