@@ -239,7 +239,7 @@ paths:
                   exp:
                     type: string
                     description: When the token will expire
-                    format: date-time
+                    example: 09-13-2023 23:00
       requestBody:
         required: true
         content:
@@ -279,7 +279,7 @@ paths:
                   exp:
                     type: string
                     description: When the token will expire
-                    format: date-time
+                    example: 09-13-2023 23:00
       parameters:
         - in: query
           name: to
