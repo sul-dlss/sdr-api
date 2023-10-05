@@ -10,7 +10,7 @@ gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching;
 gem 'cocina-models', '~> 0.91.0'
 gem 'committee'
 gem 'config', '~> 2.0'
-gem 'dor-services-client', '~> 12.0'
+gem 'dor-services-client', '~> 13.0'
 gem 'dor-workflow-client', '~> 5.0'
 gem 'druid-tools'
 gem 'honeybadger'
