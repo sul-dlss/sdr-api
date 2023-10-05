@@ -92,7 +92,7 @@ class ResourcesController < ApplicationController
 
   def validate_version
     request_version = request.headers['X-Cocina-Models-Version']
-    return if !request_version || request_version == Cocina::Models::VERSION
+    return if !request_version || CocinaVersionValidator.valid?(request_version)
 
     error = StandardError.new("The API accepts cocina-models version #{Cocina::Models::VERSION} " \
                               "but you provided #{request_version}.  " \
