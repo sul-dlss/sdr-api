@@ -102,6 +102,7 @@ class ResourcesController < ApplicationController
 
   def cocina_update_model
     new_model_params = cocina_update_params.deep_dup
+    Rails.logger.info("updating cocina: #{JSON.generate(new_model_params)}")
     decorate_file_sets(new_model_params)
     Cocina::Models.build(new_model_params)
   end
