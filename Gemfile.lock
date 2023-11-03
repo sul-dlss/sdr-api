@@ -104,13 +104,14 @@ GEM
       capistrano-bundler (>= 1.1, < 3)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.91.4)
+    cocina-models (0.92.0)
       activesupport
       deprecation
       dry-struct (~> 1.0)
       dry-types (~> 1.1)
       edtf
       equivalent-xml
+      i18n
       jsonpath
       nokogiri
       openapi3_parser
@@ -143,9 +144,9 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (13.1.1)
+    dor-services-client (13.2.0)
       activesupport (>= 4.2, < 8)
-      cocina-models (~> 0.91.0)
+      cocina-models (~> 0.92.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -417,7 +418,7 @@ DEPENDENCIES
   byebug
   capistrano-passenger
   capistrano-rails
-  cocina-models (~> 0.91.0)
+  cocina-models (~> 0.92.0)
   committee
   config (~> 2.0)
   dlss-capistrano
