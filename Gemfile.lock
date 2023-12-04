@@ -144,7 +144,7 @@ GEM
       capistrano-one_time_key
       capistrano-shared_configs
     docile (1.4.0)
-    dor-services-client (13.3.0)
+    dor-services-client (13.4.0)
       activesupport (>= 4.2, < 8)
       cocina-models (~> 0.93.0)
       deprecation
@@ -223,7 +223,7 @@ GEM
     jbuilder (2.11.5)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    json (2.6.3)
+    json (2.7.0)
     json_schema (0.21.0)
     jsonpath (1.1.5)
       multi_json
@@ -248,7 +248,7 @@ GEM
     minitest (5.20.0)
     msgpack (1.7.2)
     multi_json (1.15.0)
-    net-imap (0.4.6)
+    net-imap (0.4.7)
       date
       net-protocol
     net-pop (0.1.2)
@@ -260,7 +260,7 @@ GEM
     net-smtp (0.4.0)
       net-protocol
     net-ssh (7.2.0)
-    nio4r (2.6.1)
+    nio4r (2.7.0)
     nokogiri (1.15.5-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.15.5-x86_64-linux)
@@ -341,7 +341,7 @@ GEM
       rspec-core (>= 2, < 4, != 2.12.0)
     rss (0.3.0)
       rexml
-    rubocop (1.57.2)
+    rubocop (1.58.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -349,7 +349,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.28.1, < 2.0)
+      rubocop-ast (>= 1.30.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.30.0)
