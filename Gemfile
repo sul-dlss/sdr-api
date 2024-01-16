@@ -11,7 +11,7 @@ gem 'cocina-models', '~> 0.93.0'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 13.0'
-gem 'dor-workflow-client', '~> 5.0'
+gem 'dor-workflow-client', '~> 7.0'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
