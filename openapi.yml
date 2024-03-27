@@ -1630,6 +1630,7 @@ components:
       additionalProperties: true
       required:
         - release
+        - what
       properties:
         who:
           description: Who did this release
