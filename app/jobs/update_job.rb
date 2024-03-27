@@ -59,7 +59,7 @@ class UpdateJob < ApplicationJob
 
     background_job_result.output = { druid: model.externalIdentifier }
 
-    versioning_params = { description: version_description || 'Update via sdr-api', significance: 'major' }
+    versioning_params = { description: version_description || 'Update via sdr-api' }
 
     StageBlobs.stage(signed_ids, model.externalIdentifier)
     StageGlobus.stage(globus_ids, model.externalIdentifier)

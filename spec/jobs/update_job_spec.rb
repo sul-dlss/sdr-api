@@ -90,7 +90,7 @@ RSpec.describe UpdateJob do
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
       expect(accession_client).to have_received(:start)
-        .with(description: 'Updated metadata', significance: 'major', workflow: 'accessionWF').once
+        .with(description: 'Updated metadata', workflow: 'accessionWF').once
     end
 
     it 'opens and closes the version without kicking off accessioning if start_workflow is false' do
@@ -100,7 +100,7 @@ RSpec.describe UpdateJob do
                                   start_workflow: false)
       expect(version_client).to have_received(:open).once
       expect(version_client).to have_received(:close)
-        .with(description: 'Update via sdr-api', significance: 'major', start_accession: false).once
+        .with(description: 'Update via sdr-api', start_accession: false).once
       expect(accession_client).not_to have_received(:start)
     end
   end
@@ -213,7 +213,7 @@ RSpec.describe UpdateJob do
       expect(version_client).not_to have_received(:open)
       expect(version_client).not_to have_received(:close)
       expect(accession_client).to have_received(:start)
-        .with(description: 'Update via sdr-api', significance: 'major', workflow: 'accessionWF').once
+        .with(description: 'Update via sdr-api', workflow: 'accessionWF').once
     end
 
     it 'does not kick off accessioning if start_workflow is false' do
