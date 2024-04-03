@@ -5,7 +5,7 @@
 # Above that, it will exit and provide the error message in the background_job_result.
 class UpdateJob < ApplicationJob
   queue_as :default
-  attr_accessor :start_workflow
+  attr_reader :background_job_result
 
   # Note that deciding when to stop retrying is handled below. Hence, not providing additional retry configuration
   # for Sidekiq.
@@ -14,42 +14,23 @@ class UpdateJob < ApplicationJob
   # @param [Hash] filename, signed_ids for the blobs
   # @param [Hash] filename, globus_ids for the staged Globus files
   # @param [BackgroundJobResult] background_job_result
-  # @param [Boolean] start_workflow starts accessionWF if true; if false, opens/closes new version without accessioning
   # @param [String] version_description
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable  Metrics/ParameterLists
   def perform(model_params:,
               background_job_result:,
               signed_ids: {},
               globus_ids: {},
-              start_workflow: true,
               version_description: nil)
-    @start_workflow = start_workflow
-    # Increment the try count
-    background_job_result.try_count += 1
-    background_job_result.processing!
+    @background_job_result = background_job_result
+    background_job_result_processing!
 
     model = Cocina::Models.build(model_params.with_indifferent_access)
 
     object_client = Dor::Services::Client.object(model.externalIdentifier)
-    existing = object_client.find
-    allowed_versions = [existing.version, existing.version + 1]
-    unless allowed_versions.include?(model.version)
-      error_title = 'Version conflict'
-      error_detail = "The repository is on version '#{existing.version}' and you " \
-                     "tried to create/update version '#{model.version}'. " \
-                     "Version is limited to #{allowed_versions.join(' or ')}."
-
-      Honeybadger.notify("#{error_title}: #{error_detail}",
-                         { external_identifier: existing.externalIdentifier,
-                           current_version: existing.version,
-                           provided_version: model.version })
-      background_job_result.output = { errors: [title: error_title, detail: error_detail] }
-      background_job_result.complete!
-
-      return
-    end
+    existing_version_status = object_client.version.status
+    return unless check_versioning(model, existing_version_status.version)
+    return unless open_new_version_if_needed(model, version_description, existing_version_status, object_client)
 
     # globus deposits may not have digests yet and they need to be generated before staging (copy)
     model = GlobusDigestGenerator.generate(cocina: model, globus_ids:)
@@ -59,12 +40,10 @@ class UpdateJob < ApplicationJob
 
     background_job_result.output = { druid: model.externalIdentifier }
 
-    versioning_params = { description: version_description || 'Update via sdr-api' }
-
     StageBlobs.stage(signed_ids, model.externalIdentifier)
     StageGlobus.stage(globus_ids, model.externalIdentifier)
 
-    version_or_accession(object_client, model, existing, versioning_params)
+    object_client.version.close
 
     background_job_result.complete!
   rescue Dor::Services::Client::BadRequestError => e
@@ -90,19 +69,53 @@ class UpdateJob < ApplicationJob
                                                                                  message: e.message] })
     background_job_result.complete!
   end
-  # rubocop:enable Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
-  def version_or_accession(object_client, model, existing, versioning_params)
-    if start_workflow
-      # this will check openability, open/close a version as needed, and then kick off accessioning after
-      # that regardless of whether a version was opened/closed.
-      object_client.accession.start(versioning_params.merge(workflow: 'accessionWF'))
-    elsif model.version == existing.version + 1
-      # don't kick off accessioning, just create a new version where only metadata was updated
-      object_client.version.open(versioning_params)
-      object_client.version.close(versioning_params.merge(start_accession: false))
+  def check_versioning(model, existing_version)
+    allowed_versions = [existing_version, existing_version + 1]
+    return true if allowed_versions.include?(model.version)
+
+    error_title = 'Version conflict'
+    error_detail = "The repository is on version '#{existing_version}' and you " \
+                   "tried to create/update version '#{model.version}'. " \
+                   "Version is limited to #{allowed_versions.join(' or ')}."
+
+    background_job_complete_with_error!(error_title, error_detail, model.externalIdentifier, existing_version,
+                                        model.version)
+
+    false
+  end
+
+  def open_new_version_if_needed(model, version_description, existing_version_status, object_client)
+    return true if model.version == existing_version_status.version && existing_version_status.open?
+
+    unless existing_version_status.openable?
+      error_title = 'Version not openable'
+      error_detail = "Attempted to open version #{model.version} but it cannot be opened."
+
+      background_job_complete_with_error!(error_title, error_detail, model.externalIdentifier,
+                                          existing_version_status.version, model.version)
+
+      return false
     end
+
+    object_client.version.open(description: version_description || 'Update via sdr-api')
+    true
+  end
+
+  def background_job_result_processing!
+    # Increment the try count
+    background_job_result.try_count += 1
+    background_job_result.processing!
+  end
+
+  def background_job_complete_with_error!(error_title, error_detail, druid, existing_version, provided_version)
+    Honeybadger.notify("#{error_title}: #{error_detail}",
+                       { external_identifier: druid,
+                         existing_version:,
+                         provided_version: })
+    background_job_result.output = { errors: [title: error_title, detail: error_detail] }
+    background_job_result.complete!
   end
 end

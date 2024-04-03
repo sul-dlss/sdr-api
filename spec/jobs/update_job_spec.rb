@@ -36,7 +36,7 @@ RSpec.describe UpdateJob do
         { type: 'md5', digest: '7f99d78a78a233ebbf81ec5b364380fc' },
         { type: 'sha1', digest: 'c65f99f8c5376adadddc46d5cbcf5762f9e55eb7' }
       ],
-      version: 1
+      version: 2
     }
   end
   let(:filesets) do
@@ -51,15 +51,15 @@ RSpec.describe UpdateJob do
     ]
   end
   let(:existing_version) { 1 }
-  let(:response_dro) do
-    build(:dro, id: druid, version: existing_version)
-  end
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
-  let(:version_client) { instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true) }
-  let(:accession_client) { instance_double(Dor::Services::Client::Accession, start: true) }
+  let(:version_client) do
+    instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true, status: existing_version_status)
+  end
+  let(:existing_version_status) do
+    instance_double(Dor::Services::Client::ObjectVersion::VersionStatus, version: existing_version, openable?: true)
+  end
   let(:object_client) do
-    instance_double(Dor::Services::Client::Object,
-                    find: response_dro, version: version_client, update: true, accession: accession_client)
+    instance_double(Dor::Services::Client::Object, version: version_client, update: true)
   end
 
   before do
@@ -70,46 +70,40 @@ RSpec.describe UpdateJob do
   end
 
   context 'when updating to a new version' do
-    it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:)
-      cocina_object = Cocina::Models.build(model.with_indifferent_access)
-      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
-      expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: })
-      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+    context 'when openable' do
+      it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids:)
+        cocina_object = Cocina::Models.build(model.with_indifferent_access)
+        expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
+        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(version_client).to have_received(:close)
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
     end
 
-    it 'accessions an object by default without explicitly opening/closing a version' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:,
-                                  version_description: 'Updated metadata')
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(version_client).not_to have_received(:open)
-      expect(version_client).not_to have_received(:close)
-      expect(accession_client).to have_received(:start)
-        .with(description: 'Updated metadata', workflow: 'accessionWF').once
-    end
+    context 'when not openable' do
+      before do
+        allow(existing_version_status).to receive(:openable?).and_return(false)
+      end
 
-    it 'opens and closes the version without kicking off accessioning if start_workflow is false' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:,
-                                  start_workflow: false)
-      expect(version_client).to have_received(:open).once
-      expect(version_client).to have_received(:close)
-        .with(description: 'Update via sdr-api', start_accession: false).once
-      expect(accession_client).not_to have_received(:start)
+      it 'reports error and will not retry' do
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids:)
+        expect(actual_result).to be_complete
+        expect(actual_result.output)
+          .to match({ errors: [{ title: 'Version not openable',
+                                 detail: 'Attempted to open version 2 but it cannot be opened.' }] })
+        expect(version_client).not_to have_received(:open)
+      end
     end
   end
 
   context 'when Dor::Services::Client::BadRequestError error' do
-    let(:object_client) do
-      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
-    end
-
     before do
       allow(object_client)
         .to receive(:update)
@@ -132,10 +126,6 @@ RSpec.describe UpdateJob do
   end
 
   context 'when Dor::Services::Client::ConflictResponse error' do
-    let(:object_client) do
-      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
-    end
-
     before do
       allow(object_client)
         .to receive(:update)
@@ -158,10 +148,6 @@ RSpec.describe UpdateJob do
   end
 
   context 'when StandardError raised' do
-    let(:object_client) do
-      instance_double(Dor::Services::Client::Object, find: response_dro, version: version_client)
-    end
-
     before do
       allow(object_client).to receive(:update).and_raise(StandardError, 'Something went wrong')
     end
@@ -194,39 +180,42 @@ RSpec.describe UpdateJob do
   context 'when updating the current version' do
     let(:existing_version) { 2 }
 
-    it 'updates the metadata, purges the staged files, and marks the job complete for the druid' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:)
-      cocina_object = Cocina::Models.build(model.with_indifferent_access)
-      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
-      expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: })
-      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+    context 'when not already open, but openable' do
+      before do
+        allow(existing_version_status).to receive(:open?).and_return(false)
+      end
+
+      it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids:)
+        cocina_object = Cocina::Models.build(model.with_indifferent_access)
+        expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
+        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(version_client).to have_received(:close)
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
     end
 
-    it 'accessions an object by default without explicitly opening/closing a version' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:)
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(version_client).not_to have_received(:open)
-      expect(version_client).not_to have_received(:close)
-      expect(accession_client).to have_received(:start)
-        .with(description: 'Update via sdr-api', workflow: 'accessionWF').once
-    end
+    context 'when already open' do
+      before do
+        allow(existing_version_status).to receive(:open?).and_return(true)
+      end
 
-    it 'does not kick off accessioning if start_workflow is false' do
-      described_class.perform_now(model_params: model, background_job_result: result,
-                                  signed_ids:, start_workflow: false)
-      expect(accession_client).not_to have_received(:start)
-    end
-
-    it 'does not open/close the version' do
-      described_class.perform_now(model_params: model, background_job_result: result,
-                                  signed_ids:, start_workflow: false)
-      expect(version_client).not_to have_received(:open)
-      expect(version_client).not_to have_received(:close)
+      it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
+        described_class.perform_now(model_params: model,
+                                    background_job_result: result,
+                                    signed_ids:)
+        cocina_object = Cocina::Models.build(model.with_indifferent_access)
+        expect(version_client).not_to have_received(:open)
+        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(version_client).to have_received(:close)
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
     end
   end
 
@@ -246,7 +235,7 @@ RSpec.describe UpdateJob do
       expect(actual_result).to be_complete
       expect(actual_result.output[:errors]).to eq [{ 'title' => err_title, 'detail' => err_detail }]
       expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}", {
-                                                           current_version: 3,
+                                                           existing_version: 3,
                                                            external_identifier: 'druid:bc123dg5678',
                                                            provided_version: 5
                                                          })
