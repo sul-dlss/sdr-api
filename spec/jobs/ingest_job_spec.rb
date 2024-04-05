@@ -9,6 +9,11 @@ RSpec.describe IngestJob do
   let(:druid) { 'druid:bc123dh5678' }
   let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true, workflow:) }
   let(:workflow) { instance_double(Dor::Workflow::Response::Workflow, empty?: true) }
+  let(:object_client) { instance_double(Dor::Services::Client::Object, version: version_client, update: true) }
+  let(:version_client) do
+    instance_double(Dor::Services::Client::ObjectVersion, close: true)
+  end
+  let(:start_workflow) { true }
   let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_ids) do
     { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
@@ -59,7 +64,7 @@ RSpec.describe IngestJob do
     FileUtils.mkdir_p('tmp/globus/some/file/path')
     FileUtils.cp blob.service.path_for(blob.key), 'tmp/globus/some/file/path/file2.txt'
     allow(Dor::Workflow::Client).to receive(:new).and_return(workflow_client)
-    allow(Dor::Services::Client).to receive(:objects).and_return(objects_client)
+    allow(Dor::Services::Client).to receive_messages(objects: objects_client, object: object_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
   end
 
@@ -79,11 +84,9 @@ RSpec.describe IngestJob do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'registrationWF', version: 1, lane_id: 'default')
-        expect(workflow_client).to have_received(:create_workflow_by_name)
-          .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
+        expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -96,11 +99,9 @@ RSpec.describe IngestJob do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-        expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'registrationWF', version: 1, lane_id: 'low')
-        expect(workflow_client).to have_received(:create_workflow_by_name)
-          .with(druid, 'accessionWF', version: 1, lane_id: 'low').once
+        expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -125,11 +126,9 @@ RSpec.describe IngestJob do
     it 'ingests an object' do
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'default')
-      expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
+      expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
     end
@@ -143,6 +142,18 @@ RSpec.describe IngestJob do
                                   assign_doi: true)
       expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
                                                               assign_doi: true)
+    end
+  end
+
+  context 'when registering only' do
+    let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
+
+    it 'ingests an object' do
+      described_class.perform_now(model_params: model, background_job_result: result, signed_ids:,
+                                  start_workflow: false)
+      expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
+                                                              assign_doi: false)
+      expect(version_client).not_to have_received(:close)
     end
   end
 
@@ -164,8 +175,6 @@ RSpec.describe IngestJob do
                                   signed_ids:)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).not_to have_received(:workflow)
-        .with(pid: druid, workflow_name: 'accessionWF')
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'Object with source_id already exists.',
@@ -192,11 +201,9 @@ RSpec.describe IngestJob do
                                   signed_ids:)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'default')
-      expect(workflow_client).to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'default').once
+      expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -216,11 +223,9 @@ RSpec.describe IngestJob do
                                   signed_ids:)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'accessionWF').once
       expect(workflow_client).not_to have_received(:create_workflow_by_name)
         .with(druid, 'registrationWF', version: 1, lane_id: 'low')
-      expect(workflow_client).not_to have_received(:create_workflow_by_name)
-        .with(druid, 'accessionWF', version: 1, lane_id: 'low')
+      expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -245,8 +250,6 @@ RSpec.describe IngestJob do
                                   signed_ids:)
       expect(workflow_client).not_to have_received(:workflow)
         .with(pid: druid, workflow_name: 'registrationWF')
-      expect(workflow_client).not_to have_received(:workflow)
-        .with(pid: druid, workflow_name: 'accessionWF')
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
@@ -284,6 +287,38 @@ RSpec.describe IngestJob do
         expect(actual_result).to be_complete
         expect(actual_result.output[:errors]).to be_present
       end
+    end
+  end
+
+  context 'when closing the version raises an error and does not succeed on retry' do
+    let(:try_count) { 8 }
+    let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
+    let(:version_client) do
+      instance_double(Dor::Services::Client::ObjectVersion)
+    end
+
+    before do
+      allow(Honeybadger).to receive(:notify)
+      allow(version_client)
+        .to receive(:close)
+        .and_raise(Dor::Services::Client::BadRequestError.new(response: '',
+                                                              errors: [
+                                                                { title: 'Unable to close version' }
+                                                              ]))
+      described_class.perform_now(model_params: model,
+                                  background_job_result: result,
+                                  signed_ids:)
+    end
+
+    it 'reports an error' do
+      expect(actual_result).to be_complete
+      expect(actual_result.output)
+        .to match({ druid: 'druid:bc123dh5678',
+                    errors: [title: 'All retries failed',
+                             message: ' ()'] }.with_indifferent_access)
+      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      expect(Honeybadger).to have_received(:notify).with('All retries failed',
+                                                         { external_identifier: 'druid:bc123dh5678' })
     end
   end
 end

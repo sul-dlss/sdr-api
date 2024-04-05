@@ -52,8 +52,9 @@ class IngestJob < ApplicationJob
     StageBlobs.stage(signed_ids, druid)
     StageGlobus.stage(globus_ids, druid)
 
-    Workflow.create_unless_exists(druid, 'accessionWF', version: 1, priority:) if start_workflow
-
+    # Close the version, which will also start accessioning
+    # start_workflow will be false in the case of reserving a druid
+    Dor::Services::Client.object(druid).version.close if start_workflow
     background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.
@@ -63,6 +64,8 @@ class IngestJob < ApplicationJob
     end
 
     # Otherwise return an error on background_job_result but exit cleanly.
+    Honeybadger.notify('All retries failed',
+                       { external_identifier: druid })
     background_job_result.output = background_job_result.output.merge({ errors: [title: 'All retries failed',
                                                                                  message: e.message] })
     background_job_result.complete!
