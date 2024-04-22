@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.6.8)
+    action_policy (0.6.9)
       ruby-next-core (>= 1.0)
     actioncable (7.0.8.1)
       actionpack (= 7.0.8.1)
@@ -77,6 +77,7 @@ GEM
     attr_extras (7.1.0)
     base64 (0.2.0)
     bcrypt (3.1.20)
+    bcrypt_pbkdf (1.1.0)
     bigdecimal (3.1.7)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
@@ -140,11 +141,13 @@ GEM
     deprecation (1.1.0)
       activesupport
     diff-lcs (1.5.1)
-    dlss-capistrano (4.4.0)
+    dlss-capistrano (4.4.1)
+      bcrypt_pbkdf
       capistrano (~> 3.0)
       capistrano-bundle_audit (>= 0.3.0)
       capistrano-one_time_key
       capistrano-shared_configs
+      ed25519
     docile (1.4.0)
     dor-services-client (14.6.1)
       activesupport (>= 4.2, < 8)
@@ -199,6 +202,7 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (>= 1.12, < 2)
       zeitwerk (~> 2.6)
+    ed25519 (1.3.0)
     edtf (3.1.1)
       activesupport (>= 3.0, < 8.0)
     equivalent-xml (0.6.0)
@@ -246,7 +250,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    method_source (1.0.0)
+    method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (5.22.3)
     msgpack (1.7.2)
@@ -322,7 +326,7 @@ GEM
       zeitwerk (~> 2.5)
     rainbow (3.1.1)
     rake (13.2.1)
-    redis-client (0.22.0)
+    redis-client (0.22.1)
       connection_pool
     regexp_parser (2.9.0)
     request_store (1.6.0)
@@ -349,7 +353,7 @@ GEM
       rspec-core (>= 2, < 4, != 2.12.0)
     rss (0.3.0)
       rexml
-    rubocop (1.63.1)
+    rubocop (1.63.2)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -378,7 +382,7 @@ GEM
       rubocop-rspec_rails (~> 2.28)
     rubocop-rspec_rails (2.28.3)
       rubocop (~> 1.40)
-    ruby-next-core (1.0.2)
+    ruby-next-core (1.0.3)
     ruby-progressbar (1.13.0)
     sidekiq (7.2.2)
       concurrent-ruby (< 2)
