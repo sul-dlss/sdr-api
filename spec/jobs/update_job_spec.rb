@@ -14,7 +14,10 @@ RSpec.describe UpdateJob do
   end
   let(:update_version) { 2 }
   let(:model) do
-    build(:dro, id: druid, version: update_version).new(structural: { contains: filesets }).to_h
+    build(:dro, id: druid, version: update_version).new(structural: { contains: filesets })
+  end
+  let(:model_with_metadata) do
+    Cocina::Models.with_metadata(model, 'abc123', created: Time.current, modified: Time.current)
   end
   let(:file) do
     {
@@ -53,7 +56,8 @@ RSpec.describe UpdateJob do
   let(:existing_version) { 1 }
   let(:assembly_dir) { 'tmp/assembly/bc/123/dg/5678/bc123dg5678' }
   let(:version_client) do
-    instance_double(Dor::Services::Client::ObjectVersion, open: true, close: true, status: existing_version_status)
+    instance_double(Dor::Services::Client::ObjectVersion, open: model_with_metadata, close: true,
+                                                          status: existing_version_status)
   end
   let(:existing_version_status) do
     instance_double(Dor::Services::Client::ObjectVersion::VersionStatus, version: existing_version, openable?: true)
@@ -72,12 +76,11 @@ RSpec.describe UpdateJob do
   context 'when updating to a new version' do
     context 'when openable' do
       it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
-        described_class.perform_now(model_params: model,
+        described_class.perform_now(model_params: model.to_h,
                                     background_job_result: result,
                                     signed_ids:)
-        cocina_object = Cocina::Models.build(model.with_indifferent_access)
         expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
-        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
         expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
@@ -91,7 +94,7 @@ RSpec.describe UpdateJob do
       end
 
       it 'reports error and will not retry' do
-        described_class.perform_now(model_params: model,
+        described_class.perform_now(model_params: model.to_h,
                                     background_job_result: result,
                                     signed_ids:)
         expect(actual_result).to be_complete
@@ -114,7 +117,7 @@ RSpec.describe UpdateJob do
     end
 
     it 'reports error and will not retry' do
-      described_class.perform_now(model_params: model,
+      described_class.perform_now(model_params: model.to_h,
                                   background_job_result: result,
                                   signed_ids:)
       expect(actual_result).to be_complete
@@ -136,7 +139,7 @@ RSpec.describe UpdateJob do
     end
 
     it 'reports error and will not retry' do
-      described_class.perform_now(model_params: model,
+      described_class.perform_now(model_params: model.to_h,
                                   background_job_result: result,
                                   signed_ids:)
       expect(actual_result).to be_complete
@@ -155,7 +158,7 @@ RSpec.describe UpdateJob do
     context 'with retries' do
       it 'retries' do
         expect do
-          described_class.perform_now(model_params: model,
+          described_class.perform_now(model_params: model.to_h,
                                       background_job_result: result,
                                       signed_ids:)
         end
@@ -168,7 +171,7 @@ RSpec.describe UpdateJob do
       let(:try_count) { 8 }
 
       it 'quits' do
-        described_class.perform_now(model_params: model,
+        described_class.perform_now(model_params: model.to_h,
                                     background_job_result: result,
                                     signed_ids:)
         expect(actual_result).to be_complete
@@ -186,12 +189,11 @@ RSpec.describe UpdateJob do
       end
 
       it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
-        described_class.perform_now(model_params: model,
+        described_class.perform_now(model_params: model.to_h,
                                     background_job_result: result,
                                     signed_ids:)
-        cocina_object = Cocina::Models.build(model.with_indifferent_access)
         expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
-        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
         expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
@@ -205,12 +207,11 @@ RSpec.describe UpdateJob do
       end
 
       it 'opens the version, updates the metadata, purges the staged files, and marks the job complete for the druid' do
-        described_class.perform_now(model_params: model,
+        described_class.perform_now(model_params: model.to_h,
                                     background_job_result: result,
                                     signed_ids:)
-        cocina_object = Cocina::Models.build(model.with_indifferent_access)
         expect(version_client).not_to have_received(:open)
-        expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+        expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
         expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
@@ -224,7 +225,7 @@ RSpec.describe UpdateJob do
     let(:existing_version) { 3 }
 
     it 'quits with an error' do
-      described_class.perform_now(model_params: model,
+      described_class.perform_now(model_params: model.to_h,
                                   background_job_result: result,
                                   signed_ids:)
 
@@ -269,19 +270,36 @@ RSpec.describe UpdateJob do
         version: 1
       }
     end
+    let(:file) do # rubocop:disable RSpec/OverwritingSetup
+      {
+        type: Cocina::Models::ObjectType.file,
+        filename: 'file2.txt',
+        externalIdentifier: "#{druid}/file2.txt",
+        label: 'file2.txt',
+        hasMimeType: 'text/plain',
+        administrative: {
+          publish: false,
+          sdrPreserve: true,
+          shelve: false
+        },
+        access: {
+          view: 'dark',
+          download: 'none'
+        },
+        hasMessageDigests: [
+          { type: 'sha1', digest: 'da39a3ee5e6b4b0d3255bfef95601890afd80709' },
+          { type: 'md5', digest: 'd41d8cd98f00b204e9800998ecf8427e' }
+        ],
+        version: 2
+      }
+    end
 
     it 'sha1 and md5 digests are generated' do
-      described_class.perform_now(model_params: model,
+      described_class.perform_now(model_params: model.to_h,
                                   background_job_result: result,
                                   signed_ids: {},
                                   globus_ids: { '00001.jp2' => 'globus://digest-test/00001.jp2' })
-      model_with_digests = model.deep_dup
-      model_with_digests[:structural][:contains][0][:structural][:contains][0][:hasMessageDigests] = [
-        { type: 'sha1', digest: 'da39a3ee5e6b4b0d3255bfef95601890afd80709' },
-        { type: 'md5', digest: 'd41d8cd98f00b204e9800998ecf8427e' }
-      ]
-      cocina_object = Cocina::Models.build(model_with_digests.with_indifferent_access)
-      expect(object_client).to have_received(:update).with(params: cocina_object, skip_lock: true)
+      expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
     end
