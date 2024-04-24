@@ -30,7 +30,9 @@ class UpdateJob < ApplicationJob
     object_client = Dor::Services::Client.object(model.externalIdentifier)
     existing_version_status = object_client.version.status
     return unless check_versioning(model, existing_version_status.version)
-    return unless open_new_version_if_needed(model, version_description, existing_version_status, object_client)
+
+    model = open_new_version_if_needed(model, version_description, existing_version_status, object_client)
+    return if model.nil?
 
     # globus deposits may not have digests yet and they need to be generated before staging (copy)
     model = GlobusDigestGenerator.generate(cocina: model, globus_ids:)
@@ -88,7 +90,7 @@ class UpdateJob < ApplicationJob
   end
 
   def open_new_version_if_needed(model, version_description, existing_version_status, object_client)
-    return true if model.version == existing_version_status.version && existing_version_status.open?
+    return model if model.version == existing_version_status.version && existing_version_status.open?
 
     unless existing_version_status.openable?
       error_title = 'Version not openable'
@@ -97,11 +99,12 @@ class UpdateJob < ApplicationJob
       background_job_complete_with_error!(error_title, error_detail, model.externalIdentifier,
                                           existing_version_status.version, model.version)
 
-      return false
+      return
     end
 
-    object_client.version.open(description: version_description || 'Update via sdr-api')
-    true
+    new_version_model = object_client.version.open(description: version_description || 'Update via sdr-api')
+
+    Cocina::Models.without_metadata(model.new(version: new_version_model.version))
   end
 
   def background_job_result_processing!
