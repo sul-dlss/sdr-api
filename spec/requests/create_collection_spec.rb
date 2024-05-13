@@ -23,7 +23,8 @@ RSpec.describe 'Create a collection' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 

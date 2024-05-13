@@ -15,11 +15,12 @@ class IngestJob < ApplicationJob
   # @param [Boolean] assign_doi if true, adds DOI to Cocina obj
   # @param [String] priority ('default') determines the relative priority used for the workflow.
   #                                      Value may be 'low' or 'default'
+  # @param [String] user_versions ('none') - create, update, or do nothing with user versions on close.
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/ParameterLists
   def perform(model_params:, background_job_result:, signed_ids: {}, globus_ids: {},
-              start_workflow: true, assign_doi: false, priority: 'default')
+              start_workflow: true, assign_doi: false, priority: 'default', user_versions: 'none')
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -54,7 +55,7 @@ class IngestJob < ApplicationJob
 
     # Close the version, which will also start accessioning
     # start_workflow will be false in the case of reserving a druid
-    Dor::Services::Client.object(druid).version.close if start_workflow
+    Dor::Services::Client.object(druid).version.close(user_versions:) if start_workflow
     background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.

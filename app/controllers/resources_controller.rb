@@ -42,7 +42,8 @@ class ResourcesController < ApplicationController
                             background_job_result: result,
                             start_workflow: params.fetch(:accession, false),
                             assign_doi: params.fetch(:assign_doi, false),
-                            priority: params.fetch(:priority, 'default'))
+                            priority: params.fetch(:priority, 'default'),
+                            user_versions: params.fetch(:user_versions, 'none'))
 
     render json: { jobId: result.id },
            location: result,
@@ -69,6 +70,7 @@ class ResourcesController < ApplicationController
                             signed_ids:,
                             globus_ids:,
                             version_description: params[:versionDescription],
+                            user_versions: params.fetch(:user_versions, 'none'),
                             background_job_result: result)
 
     render json: { jobId: result.id },
@@ -79,7 +81,7 @@ class ResourcesController < ApplicationController
 
   private
 
-  CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi].freeze
+  CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi user_versions].freeze
   ID_NAMESPACE = 'https://cocina.sul.stanford.edu'
 
   def cocina_create_params
@@ -87,7 +89,7 @@ class ResourcesController < ApplicationController
   end
 
   def cocina_update_params
-    params.except(:action, :controller, :resource, :id, :versionDescription).to_unsafe_h
+    params.except(:action, :controller, :resource, :id, :versionDescription, :user_versions).to_unsafe_h
   end
 
   def validate_version

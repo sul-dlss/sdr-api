@@ -15,13 +15,16 @@ class UpdateJob < ApplicationJob
   # @param [Hash] filename, globus_ids for the staged Globus files
   # @param [BackgroundJobResult] background_job_result
   # @param [String] version_description
+  # @param [String] user_versions ('none') - create, update, or do nothing with user versions on close.
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/ParameterLists
   def perform(model_params:,
               background_job_result:,
               signed_ids: {},
               globus_ids: {},
-              version_description: nil)
+              version_description: nil,
+              user_versions: 'none')
     @background_job_result = background_job_result
     background_job_result_processing!
 
@@ -45,7 +48,7 @@ class UpdateJob < ApplicationJob
     StageBlobs.stage(signed_ids, model.externalIdentifier)
     StageGlobus.stage(globus_ids, model.externalIdentifier)
 
-    object_client.version.close
+    object_client.version.close(user_versions:)
 
     background_job_result.complete!
   rescue Dor::Services::Client::BadRequestError => e
@@ -73,6 +76,7 @@ class UpdateJob < ApplicationJob
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/ParameterLists
 
   def check_versioning(model, existing_version)
     allowed_versions = [existing_version, existing_version + 1]

@@ -80,7 +80,26 @@ RSpec.describe 'Update a resource' do
                                                             background_job_result: instance_of(BackgroundJobResult),
                                                             signed_ids: { 'file2.txt' => file_id },
                                                             globus_ids: {},
-                                                            version_description:)
+                                                            version_description:,
+                                                            user_versions: 'none')
+  end
+
+  context 'when user_versions is provided' do
+    it 'registers the resource and kicks off UpdateJob' do
+      put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}&user_versions=new",
+          params: request,
+          headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+
+      expect(response).to be_accepted
+      expect(response.location).to be_present
+      expect(response.parsed_body['jobId']).to be_present
+      expect(UpdateJob).to have_received(:perform_later).with(model_params: expected_model_params_without_file_ids,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: { 'file2.txt' => file_id },
+                                                              globus_ids: {},
+                                                              version_description:,
+                                                              user_versions: 'new')
+    end
   end
 
   context 'when wrong version of cocina models is supplied' do
@@ -129,7 +148,8 @@ RSpec.describe 'Update a resource' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
                                                               globus_ids: {},
-                                                              version_description: nil)
+                                                              version_description: nil,
+                                                              user_versions: 'none')
     end
   end
 
@@ -147,7 +167,8 @@ RSpec.describe 'Update a resource' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
                                                               globus_ids: {},
-                                                              version_description: nil)
+                                                              version_description: nil,
+                                                              user_versions: 'none')
     end
   end
 
@@ -175,7 +196,8 @@ RSpec.describe 'Update a resource' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => file_id },
                                                               globus_ids: {},
-                                                              version_description: nil)
+                                                              version_description: nil,
+                                                              user_versions: 'none')
     end
   end
 
