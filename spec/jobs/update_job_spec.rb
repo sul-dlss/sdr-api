@@ -81,7 +81,7 @@ RSpec.describe UpdateJob do
                                     signed_ids:)
         expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
         expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
-        expect(version_client).to have_received(:close)
+        expect(version_client).to have_received(:close).with(user_versions: 'none')
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -103,6 +103,17 @@ RSpec.describe UpdateJob do
                                  detail: 'Attempted to open version 2 but it cannot be opened.' }] })
         expect(version_client).not_to have_received(:open)
       end
+    end
+  end
+
+  context 'when user_version provided' do
+    it 'calls version close with user_version' do
+      described_class.perform_now(model_params: model.to_h,
+                                  background_job_result: result,
+                                  signed_ids:,
+                                  user_versions: 'new')
+      expect(version_client).to have_received(:close).with(user_versions: 'new')
+      expect(actual_result).to be_complete
     end
   end
 

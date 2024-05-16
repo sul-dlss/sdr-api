@@ -57,6 +57,8 @@ RSpec.describe IngestJob do
     build(:dro, id: druid)
   end
   let(:assembly_dir) { 'tmp/assembly/bc/123/dh/5678/bc123dh5678' }
+  let(:user_versions) { 'none' }
+  let(:priority) { 'default' }
 
   before do
     FileUtils.rm_rf('tmp/assembly/bc')
@@ -75,18 +77,17 @@ RSpec.describe IngestJob do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
                                   signed_ids:,
-                                  priority:)
+                                  priority:,
+                                  user_versions:)
     end
 
     context 'when priority is default' do
-      let(:priority) { 'default' }
-
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(workflow_client).to have_received(:workflow).with(pid: druid, workflow_name: 'registrationWF')
         expect(workflow_client).to have_received(:create_workflow_by_name)
           .with(druid, 'registrationWF', version: 1, lane_id: 'default')
-        expect(version_client).to have_received(:close)
+        expect(version_client).to have_received(:close).with(user_versions: 'none')
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -105,6 +106,15 @@ RSpec.describe IngestJob do
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
+    end
+
+    context 'when user_versions is provided' do
+      let(:user_versions) { 'new' }
+
+      it 'ingests an object' do
+        expect(version_client).to have_received(:close).with(user_versions: 'new')
+        expect(actual_result).to be_complete
       end
     end
   end

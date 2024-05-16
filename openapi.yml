@@ -126,6 +126,15 @@ paths:
           name: assign_doi
           schema:
             type: boolean
+        - in: query
+          name: user_versions
+          description: Create, update, or do nothing with user versions on close
+          schema:
+            type: string
+            enum:
+              - "none"
+              - "new"
+              - "update"
       requestBody:
         description: The metadata for the object
         required: true
@@ -208,6 +217,15 @@ paths:
           in: query
           schema:
             type: string
+        - name: user_versions
+          in: query
+          description: Create, update, or do nothing with user versions on close
+          schema:
+            type: string
+            enum:
+              - "none"
+              - "new"
+              - "update"
       requestBody:
         description: The metadata for the object
         required: true

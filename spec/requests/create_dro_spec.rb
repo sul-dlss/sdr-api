@@ -60,7 +60,7 @@ RSpec.describe 'Create a DRO' do
     model_params.with_indifferent_access
   end
 
-  context 'when priority is not provided' do
+  context 'when priority or user versions is not provided' do
     it 'registers the resource and kicks off IngestJob' do
       post '/v1/resources',
            params: request,
@@ -74,7 +74,27 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
+    end
+  end
+
+  context 'when user versions is provided' do
+    it 'registers the resource and kicks off IngestJob' do
+      post '/v1/resources?user_versions=new',
+           params: request,
+           headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
+      expect(response).to be_created
+      expect(response.location).to be_present
+      expect(response.parsed_body['jobId']).to be_present
+      expect(IngestJob).to have_received(:perform_later).with(model_params: expected_model_params,
+                                                              background_job_result: instance_of(BackgroundJobResult),
+                                                              signed_ids: { 'file2.txt' => signed_id },
+                                                              globus_ids: {},
+                                                              start_workflow: false,
+                                                              assign_doi: false,
+                                                              priority: 'default',
+                                                              user_versions: 'new')
     end
   end
 
@@ -104,7 +124,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: true,
                                                               assign_doi: false,
-                                                              priority: 'low')
+                                                              priority: 'low',
+                                                              user_versions: 'none')
     end
   end
 
@@ -119,7 +140,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: true,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
@@ -134,7 +156,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
@@ -149,7 +172,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: true,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
@@ -196,7 +220,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids:,
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
@@ -235,7 +260,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
@@ -258,7 +284,8 @@ RSpec.describe 'Create a DRO' do
                                                               globus_ids: {},
                                                               start_workflow: false,
                                                               assign_doi: false,
-                                                              priority: 'default')
+                                                              priority: 'default',
+                                                              user_versions: 'none')
     end
   end
 
