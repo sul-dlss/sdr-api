@@ -34,7 +34,7 @@ module SdrApi
       strict: true,
       accept_request_filter: accept_proc,
       query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
-      parameter_overwite_by_rails_rule: false,
+      parameter_overwrite_by_rails_rule: false,
       strict_reference_validation: true
     )
     config.middleware.use(
@@ -42,7 +42,7 @@ module SdrApi
       schema_path: 'openapi.yml',
       parse_response_by_content_type: false, # hush committee deprecation warning
       query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
-      parameter_overwite_by_rails_rule: false,
+      parameter_overwrite_by_rails_rule: false,
       strict_reference_validation: true
     )
 
