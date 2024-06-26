@@ -18,7 +18,7 @@ gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.
 gem 'jwt' # JSON web tokens (for authentication)
 gem 'lograge'
 gem 'marcel'
-gem 'mutex_m'
+gem 'mutex_m' # This can be removed when H2 is upgraded to Rails 7.1
 gem 'okcomputer'
 gem 'pg' # Postgres database client
 gem 'rails', '~> 7.0.3'
