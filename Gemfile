@@ -7,7 +7,7 @@ gem 'action_policy'
 gem 'amazing_print'
 gem 'bcrypt', '~> 3.1.7' # Use Active Model has_secure_password
 gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching; required in config/boot.rb
-gem 'cocina-models', '~> 0.98.0'
+gem 'cocina-models', '~> 0.99.0'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 14.6'
