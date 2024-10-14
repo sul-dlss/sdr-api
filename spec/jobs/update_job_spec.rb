@@ -104,6 +104,20 @@ RSpec.describe UpdateJob do
         expect(version_client).not_to have_received(:open)
       end
     end
+
+    context 'when not accessioning' do
+      it 'does not close the version' do
+        described_class.perform_now(model_params: model.to_h,
+                                    background_job_result: result,
+                                    signed_ids:, accession: false)
+        expect(version_client).to have_received(:open).with(description: 'Update via sdr-api').once
+        expect(object_client).to have_received(:update).with(params: model, skip_lock: true)
+        expect(version_client).not_to have_received(:close)
+        expect(actual_result).to be_complete
+        expect(actual_result.output).to match({ druid: })
+        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
+      end
+    end
   end
 
   context 'when user_version provided' do

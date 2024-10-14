@@ -11,7 +11,7 @@ class IngestJob < ApplicationJob
   # @param [Hash] model_params
   # @param [Hash] filename, signed_ids for the blobs
   # @param [BackgroundJobResult] background_job_result
-  # @param [Boolean] start_workflow if true, start accessionWF
+  # @param [Boolean] accession if true, closes the current version
   # @param [Boolean] assign_doi if true, adds DOI to Cocina obj
   # @param [String] priority ('default') determines the relative priority used for the workflow.
   #                                      Value may be 'low' or 'default'
@@ -20,7 +20,7 @@ class IngestJob < ApplicationJob
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/ParameterLists
   def perform(model_params:, background_job_result:, signed_ids: {}, globus_ids: {},
-              start_workflow: true, assign_doi: false, priority: 'default', user_versions: 'none')
+              accession: true, assign_doi: false, priority: 'default', user_versions: 'none')
     # Increment the try count
     background_job_result.try_count += 1
     background_job_result.processing!
@@ -54,8 +54,8 @@ class IngestJob < ApplicationJob
     StageGlobus.stage(globus_ids, druid)
 
     # Close the version, which will also start accessioning
-    # start_workflow will be false in the case of reserving a druid
-    Dor::Services::Client.object(druid).version.close(user_versions:) if start_workflow
+    # close will be false in the case of reserving a druid
+    Dor::Services::Client.object(druid).version.close(user_versions:) if accession
     background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.

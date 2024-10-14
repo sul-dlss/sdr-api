@@ -158,9 +158,9 @@ RSpec.describe IngestJob do
   context 'when registering only' do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
 
-    it 'ingests an object' do
+    it 'ingests an object without closing' do
       described_class.perform_now(model_params: model, background_job_result: result, signed_ids:,
-                                  start_workflow: false)
+                                  accession: false)
       expect(objects_client).to have_received(:register).with(params: Cocina::Models::RequestDRO.new(model),
                                                               assign_doi: false)
       expect(version_client).not_to have_received(:close)

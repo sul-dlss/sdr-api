@@ -72,7 +72,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -91,7 +91,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'new')
@@ -122,7 +122,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: true,
+                                                              accession: true,
                                                               assign_doi: false,
                                                               priority: 'low',
                                                               user_versions: 'none')
@@ -138,7 +138,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: true,
+                                                              accession: true,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -154,7 +154,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -170,7 +170,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: true,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -218,7 +218,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
                                                               globus_ids:,
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -258,7 +258,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
@@ -282,7 +282,7 @@ RSpec.describe 'Create a DRO' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: { 'file2.txt' => signed_id },
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')
