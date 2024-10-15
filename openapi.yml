@@ -112,7 +112,7 @@ paths:
       parameters:
         - in: query
           name: accession
-          description: If set to true the accessioning workflow will be started
+          description: If set to true the version will be closed
           schema:
             type: boolean
         - in: query
@@ -213,6 +213,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Druid'
+        - name: accession
+          in: query          
+          description: If set to true the version will be closed
+          schema:
+            type: boolean
         - name: versionDescription
           in: query
           schema:

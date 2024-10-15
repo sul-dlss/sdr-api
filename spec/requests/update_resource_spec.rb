@@ -69,7 +69,7 @@ RSpec.describe 'Update a resource' do
   end
 
   it 'registers the resource and kicks off UpdateJob' do
-    put "/v1/resources/druid:bc999dg9999?versionDescription=#{version_description}",
+    put "/v1/resources/druid:bc999dg9999?accession=true&versionDescription=#{version_description}",
         params: request,
         headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
 
@@ -81,7 +81,8 @@ RSpec.describe 'Update a resource' do
                                                             signed_ids: { 'file2.txt' => file_id },
                                                             globus_ids: {},
                                                             version_description:,
-                                                            user_versions: 'none')
+                                                            user_versions: 'none',
+                                                            accession: true)
   end
 
   context 'when user_versions is provided' do
@@ -98,7 +99,8 @@ RSpec.describe 'Update a resource' do
                                                               signed_ids: { 'file2.txt' => file_id },
                                                               globus_ids: {},
                                                               version_description:,
-                                                              user_versions: 'new')
+                                                              user_versions: 'new',
+                                                              accession: false)
     end
   end
 
@@ -149,7 +151,8 @@ RSpec.describe 'Update a resource' do
                                                               signed_ids: {},
                                                               globus_ids: {},
                                                               version_description: nil,
-                                                              user_versions: 'none')
+                                                              user_versions: 'none',
+                                                              accession: false)
     end
   end
 
@@ -168,7 +171,8 @@ RSpec.describe 'Update a resource' do
                                                               signed_ids: {},
                                                               globus_ids: {},
                                                               version_description: nil,
-                                                              user_versions: 'none')
+                                                              user_versions: 'none',
+                                                              accession: false)
     end
   end
 
@@ -197,7 +201,8 @@ RSpec.describe 'Update a resource' do
                                                               signed_ids: { 'file2.txt' => file_id },
                                                               globus_ids: {},
                                                               version_description: nil,
-                                                              user_versions: 'none')
+                                                              user_versions: 'none',
+                                                              accession: false)
     end
   end
 

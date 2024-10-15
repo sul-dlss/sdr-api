@@ -21,7 +21,7 @@ RSpec.describe 'Create a collection' do
                                                               background_job_result: instance_of(BackgroundJobResult),
                                                               signed_ids: {},
                                                               globus_ids: {},
-                                                              start_workflow: false,
+                                                              accession: false,
                                                               assign_doi: false,
                                                               priority: 'default',
                                                               user_versions: 'none')

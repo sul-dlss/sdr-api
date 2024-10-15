@@ -40,7 +40,7 @@ class ResourcesController < ApplicationController
                             signed_ids:,
                             globus_ids:,
                             background_job_result: result,
-                            start_workflow: params.fetch(:accession, false),
+                            accession: params.fetch(:accession, false),
                             assign_doi: params.fetch(:assign_doi, false),
                             priority: params.fetch(:priority, 'default'),
                             user_versions: params.fetch(:user_versions, 'none'))
@@ -55,6 +55,7 @@ class ResourcesController < ApplicationController
   # PUT /resource/:id
   # This just proxies the response from DOR services app
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def update
     begin
       cocina_dro = cocina_update_model
@@ -71,13 +72,15 @@ class ResourcesController < ApplicationController
                             globus_ids:,
                             version_description: params[:versionDescription],
                             user_versions: params.fetch(:user_versions, 'none'),
-                            background_job_result: result)
+                            background_job_result: result,
+                            accession: params.fetch(:accession, false))
 
     render json: { jobId: result.id },
            location: result,
            status: :accepted
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   private
 
@@ -89,7 +92,7 @@ class ResourcesController < ApplicationController
   end
 
   def cocina_update_params
-    params.except(:action, :controller, :resource, :id, :versionDescription, :user_versions).to_unsafe_h
+    params.except(:action, :controller, :resource, :id, :versionDescription, :user_versions, :accession).to_unsafe_h
   end
 
   def validate_version
