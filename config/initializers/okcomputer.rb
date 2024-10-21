@@ -47,9 +47,8 @@ end
 # make sure we can hit dor-services-app service
 class DorServicesCheck < OkComputer::Check
   def check
-    tags =  Dor::Services::Client.administrative_tags.search(q:'Registered By')
+    Dor::Services::Client.administrative_tags.search(q: 'Registered By')
     mark_message "#{Settings.dor_services.url} has some admin tags"
-
   rescue StandardError => e
     mark_message e.message
     mark_failure
