@@ -44,6 +44,18 @@ class WorkflowServerCheck < OkComputer::Check
   end
 end
 
+# make sure we can hit dor-services-app service
+class DorServicesCheck < OkComputer::Check
+  def check
+    tags =  Dor::Services::Client.administrative_tags.search(q:'Registered By')
+    mark_message "#{Settings.dor_services.url} has some admin tags"
+
+  rescue StandardError => e
+    mark_message e.message
+    mark_failure
+  end
+end
+
 # confirm that the expected number of sidekiq worker processes and threads are running
 class SidekiqWorkerCountCheck < OkComputer::Check
   class ExpectedEnvVarMissing < StandardError; end
@@ -146,3 +158,4 @@ OkComputer::Registry.register 'background_jobs', OkComputer::SidekiqLatencyCheck
 OkComputer::Registry.register 'feature-tables-have-data', TablesHaveDataCheck.new
 OkComputer::Registry.register 'sidekiq_worker_count', SidekiqWorkerCountCheck.new
 OkComputer::Registry.register 'workflow_server', WorkflowServerCheck.new
+OkComputer::Registry.register 'dor-services-app', DorServicesCheck.new
