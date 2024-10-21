@@ -31,6 +31,18 @@ class TablesHaveDataCheck < OkComputer::Check
   end
 end
 
+# make sure we can hit the workflow service
+class WorkflowServerCheck < OkComputer::Check
+  def check
+    num_templates = Workflow.workflow_client.workflow_templates.size
+    mark_message "Workflow service has #{num_templates} templates."
+
+    mark_failure if num_templates.zero?
+  rescue StandardError => e
+    mark_failure
+  end
+end
+
 # confirm that the expected number of sidekiq worker processes and threads are running
 class SidekiqWorkerCountCheck < OkComputer::Check
   class ExpectedEnvVarMissing < StandardError; end
@@ -132,3 +144,4 @@ OkComputer::Registry.register 'ruby_version', OkComputer::RubyVersionCheck.new
 OkComputer::Registry.register 'background_jobs', OkComputer::SidekiqLatencyCheck.new('default', 25)
 OkComputer::Registry.register 'feature-tables-have-data', TablesHaveDataCheck.new
 OkComputer::Registry.register 'sidekiq_worker_count', SidekiqWorkerCountCheck.new
+OkComputer::Registry.register 'workflow_server', WorkflowServerCheck.new
