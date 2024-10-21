@@ -35,10 +35,11 @@ end
 class WorkflowServerCheck < OkComputer::Check
   def check
     num_templates = Workflow.workflow_client.workflow_templates.size
-    mark_message "Workflow service has #{num_templates} templates."
+    mark_message "#{Settings.workflow.url} has #{num_templates} templates."
 
     mark_failure if num_templates.zero?
   rescue StandardError => e
+    mark_message e.message
     mark_failure
   end
 end
