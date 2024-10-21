@@ -69,9 +69,7 @@ class SidekiqWorkerCountCheck < OkComputer::Check
   #   process currently running on _all_ worker VMs
   def fetch_global_sidekiq_process_list
     # Sidekiq::ProcessSet#each doesn't return an Enumerator, it just loops and calls the block it's passed
-    [].tap do |pset_list|
-      Sidekiq::ProcessSet.new.each { |process| pset_list << process }
-    end
+    Sidekiq::ProcessSet.new.map { |process| process }
   end
 
   # the number of concurrent Sidekiq worker threads per process is set in config/sidekiq.yml
