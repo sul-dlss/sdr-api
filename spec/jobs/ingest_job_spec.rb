@@ -13,7 +13,6 @@ RSpec.describe IngestJob do
   let(:version_client) do
     instance_double(Dor::Services::Client::ObjectVersion, close: true)
   end
-  let(:start_workflow) { true }
   let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_ids) do
     { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
