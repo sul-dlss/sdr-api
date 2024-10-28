@@ -21,7 +21,7 @@ gem 'marcel'
 gem 'mutex_m' # This can be removed when H2 is upgraded to Rails 7.1
 gem 'okcomputer'
 gem 'pg' # Postgres database client
-gem 'rails', '~> 7.1.0'
+gem 'rails', '~> 7.2.0'
 gem 'sidekiq', '~> 7.1' # background job processing
 gem 'whenever', require: false # schedule crons
 

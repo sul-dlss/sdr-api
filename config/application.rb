@@ -23,7 +23,7 @@ Bundler.require(*Rails.groups)
 module SdrApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 7.2
 
     # accept_request_filter omits OKComputer and Sidekiq
     accept_proc = proc { |request| request.path.start_with?('/v1') }
