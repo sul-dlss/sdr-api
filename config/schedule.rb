@@ -13,7 +13,7 @@
 require_relative 'environment'
 
 job_type :runner_hb,
-         "cd :path && bin/rails runner -e :environment ':task' " \
+         "cd :path && RAILS_LOG_LEVEL=warn bin/rails runner -e :environment ':task' " \
          "&& curl 'https://api.honeybadger.io/v1/check_in/:check_in' :output"
 
 every :day do
