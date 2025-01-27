@@ -1,7 +1,7 @@
-FROM ruby:3.3.1-bookworm
+FROM ruby:3.4.1-bookworm
 
 RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash -
-    
+
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
       postgresql-client postgresql-contrib libpq-dev \
