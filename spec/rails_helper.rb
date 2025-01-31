@@ -5,7 +5,13 @@ require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 
 require 'simplecov'
-SimpleCov.start 'rails'
+SimpleCov.start 'rails' do
+  if ENV['CI']
+    require 'simplecov_json_formatter'
+
+    formatter SimpleCov::Formatter::JSONFormatter
+  end
+end
 
 require File.expand_path('../config/environment', __dir__)
 
