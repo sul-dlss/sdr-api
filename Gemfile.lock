@@ -115,7 +115,7 @@ GEM
       capistrano-bundler (>= 1.1, < 3)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.99.4)
+    cocina-models (0.100.0)
       activesupport
       deprecation
       dry-struct (~> 1.0)
@@ -155,9 +155,9 @@ GEM
       capistrano-shared_configs
       ed25519
     docile (1.4.1)
-    dor-services-client (15.4.0)
+    dor-services-client (15.5.0)
       activesupport (>= 7.0.0)
-      cocina-models (~> 0.99.0)
+      cocina-models (~> 0.100.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -233,7 +233,7 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashdiff (1.1.2)
-    honeybadger (5.26.3)
+    honeybadger (5.26.4)
       logger
       ostruct
     i18n (1.14.7)
@@ -291,11 +291,11 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.4)
-    nokogiri (1.18.2-arm64-darwin)
+    nokogiri (1.18.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.2-x86_64-darwin)
+    nokogiri (1.18.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.18.2-x86_64-linux-gnu)
+    nokogiri (1.18.3-x86_64-linux-gnu)
       racc (~> 1.4)
     okcomputer (1.19.0)
     openapi_parser (1.0.0)
@@ -386,7 +386,7 @@ GEM
     rspec-support (3.13.2)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (1.72.1)
+    rubocop (1.72.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -403,7 +403,7 @@ GEM
       rubocop (~> 1.41)
     rubocop-factory_bot (2.26.1)
       rubocop (~> 1.61)
-    rubocop-rails (2.30.1)
+    rubocop-rails (2.30.2)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -437,7 +437,7 @@ GEM
       net-sftp (>= 2.1.2)
       net-ssh (>= 2.8.0)
       ostruct
-    stringio (3.1.3)
+    stringio (3.1.5)
     super_diff (0.15.0)
       attr_extras (>= 6.2.4)
       diff-lcs
@@ -461,7 +461,7 @@ GEM
     websocket-extensions (0.1.5)
     whenever (1.0.0)
       chronic (>= 0.6.3)
-    zeitwerk (2.7.1)
+    zeitwerk (2.7.2)
 
 PLATFORMS
   arm64-darwin-23
@@ -480,11 +480,11 @@ DEPENDENCIES
   byebug
   capistrano-passenger
   capistrano-rails
-  cocina-models (~> 0.99.0)
+  cocina-models (~> 0.100.0)
   committee
   config (~> 2.0)
   dlss-capistrano
-  dor-services-client (~> 15.1)
+  dor-services-client (~> 15.2)
   dor-workflow-client (~> 7.0)
   druid-tools
   equivalent-xml
