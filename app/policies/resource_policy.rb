@@ -13,7 +13,7 @@ class ResourcePolicy < ApplicationPolicy
     return false unless record.dro?
 
     # But those DROs must be member of one of the user's collections
-    user.collections.intersection(record.structural.isMemberOf).any?
+    user.collections.intersect?(record.structural.isMemberOf)
   end
 
   # Any user with an account can read the resources
