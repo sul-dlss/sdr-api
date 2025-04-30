@@ -35,12 +35,12 @@ RSpec.describe GlobusDigestGenerator do
                 'label' => '00002.jp2',
                 'hasMessageDigests' => [
                   {
-                    'type' => 'sha1',
-                    'digest' => 'not-a-real-sha1'
-                  },
-                  {
                     'type' => 'md5',
                     'digest' => 'not-a-real-md5'
+                  },
+                  {
+                    'type' => 'sha1',
+                    'digest' => 'not-a-real-sha1'
                   }
                 ],
                 'externalIdentifier' => 'abc123',
@@ -73,22 +73,22 @@ RSpec.describe GlobusDigestGenerator do
     end
 
     it 'populates missing digests' do
-      expect(files[0].hasMessageDigests[0].type).to eq 'sha1'
-      expect(files[0].hasMessageDigests[0].digest).to eq 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
-      expect(files[0].hasMessageDigests[1].type).to eq 'md5'
-      expect(files[0].hasMessageDigests[1].digest).to eq 'd41d8cd98f00b204e9800998ecf8427e'
+      expect(files[0].hasMessageDigests[0].type).to eq 'md5'
+      expect(files[0].hasMessageDigests[0].digest).to eq 'd41d8cd98f00b204e9800998ecf8427e'
+      expect(files[0].hasMessageDigests[1].type).to eq 'sha1'
+      expect(files[0].hasMessageDigests[1].digest).to eq 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
 
-      expect(files[1].hasMessageDigests[0].type).to eq 'sha1'
-      expect(files[1].hasMessageDigests[0].digest).to eq 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
-      expect(files[1].hasMessageDigests[1].type).to eq 'md5'
-      expect(files[1].hasMessageDigests[1].digest).to eq 'd41d8cd98f00b204e9800998ecf8427e'
+      expect(files[1].hasMessageDigests[0].type).to eq 'md5'
+      expect(files[1].hasMessageDigests[0].digest).to eq 'd41d8cd98f00b204e9800998ecf8427e'
+      expect(files[1].hasMessageDigests[1].type).to eq 'sha1'
+      expect(files[1].hasMessageDigests[1].digest).to eq 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
     end
 
     it 'leaves pre-existing digests alone' do
-      expect(files[2].hasMessageDigests[0].type).to eq 'sha1'
-      expect(files[2].hasMessageDigests[0].digest).to eq 'not-a-real-sha1'
-      expect(files[2].hasMessageDigests[1].type).to eq 'md5'
-      expect(files[2].hasMessageDigests[1].digest).to eq 'not-a-real-md5'
+      expect(files[2].hasMessageDigests[0].type).to eq 'md5'
+      expect(files[2].hasMessageDigests[0].digest).to eq 'not-a-real-md5'
+      expect(files[2].hasMessageDigests[1].type).to eq 'sha1'
+      expect(files[2].hasMessageDigests[1].digest).to eq 'not-a-real-sha1'
     end
   end
 end

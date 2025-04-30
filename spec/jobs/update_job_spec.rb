@@ -312,8 +312,8 @@ RSpec.describe UpdateJob do
           download: 'none'
         },
         hasMessageDigests: [
-          { type: 'sha1', digest: 'da39a3ee5e6b4b0d3255bfef95601890afd80709' },
-          { type: 'md5', digest: 'd41d8cd98f00b204e9800998ecf8427e' }
+          { type: 'md5', digest: 'd41d8cd98f00b204e9800998ecf8427e' },
+          { type: 'sha1', digest: 'da39a3ee5e6b4b0d3255bfef95601890afd80709' }
         ],
         version: 2
       }
