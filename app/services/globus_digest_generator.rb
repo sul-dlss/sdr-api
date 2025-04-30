@@ -55,8 +55,8 @@ class GlobusDigestGenerator
     if file[:hasMessageDigests].blank? && globus_ids.key?(file[:filename])
       file_path = globus_ids[file[:filename]].sub(%r{^globus://}, Settings.globus_location)
       file[:hasMessageDigests] = [
-        { type: 'sha1', digest: Digest::SHA1.file(file_path).hexdigest },
-        { type: 'md5', digest: Digest::MD5.file(file_path).hexdigest }
+        { type: 'md5', digest: Digest::MD5.file(file_path).hexdigest },
+        { type: 'sha1', digest: Digest::SHA1.file(file_path).hexdigest }
       ]
     end
 
