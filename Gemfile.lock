@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.7.4)
+    action_policy (0.7.5)
       ruby-next-core (>= 1.0)
     actioncable (7.2.2.1)
       actionpack (= 7.2.2.1)
@@ -78,7 +78,7 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     airbrussh (1.5.3)
       sshkit (>= 1.6.1, != 1.7.0)
-    amazing_print (1.7.2)
+    amazing_print (1.8.0)
     ast (2.4.3)
     attr_extras (7.1.0)
     base64 (0.2.0)
@@ -146,7 +146,7 @@ GEM
     deep_merge (1.2.2)
     deprecation (1.1.0)
       activesupport
-    diff-lcs (1.6.1)
+    diff-lcs (1.6.2)
     dlss-capistrano (5.3.0)
       bcrypt_pbkdf
       capistrano (~> 3.0)
@@ -312,15 +312,15 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.4.0)
-    psych (5.2.4)
+    psych (5.2.5)
       date
       stringio
     public_suffix (6.0.2)
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.1.13)
-    rack-session (2.1.0)
+    rack (3.1.14)
+    rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
     rack-test (2.2.0)
@@ -373,7 +373,7 @@ GEM
     rspec-expectations (3.13.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.3)
+    rspec-mocks (3.13.4)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-rails (8.0.0)
