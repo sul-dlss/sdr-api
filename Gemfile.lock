@@ -370,12 +370,12 @@ GEM
     request_store (1.7.0)
       rack (>= 1.4)
     rexml (3.4.1)
-    rspec-core (3.13.3)
+    rspec-core (3.13.4)
       rspec-support (~> 3.13.0)
-    rspec-expectations (3.13.4)
+    rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.4)
+    rspec-mocks (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-rails (8.0.0)
@@ -386,10 +386,10 @@ GEM
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
-    rspec-support (3.13.3)
+    rspec-support (3.13.4)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (1.75.7)
+    rubocop (1.75.8)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -504,7 +504,7 @@ DEPENDENCIES
   okcomputer
   pg
   puma
-  rails (~> 8.0)
+  rails (~> 8.0.0)
   rspec-rails
   rspec_junit_formatter
   rubocop
