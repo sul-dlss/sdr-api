@@ -11,6 +11,8 @@ class ResourcesController < ApplicationController
   before_action :validate_version
 
   GLOBUS_PREFIX = 'globus://'
+  CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi user_versions].freeze
+  ID_NAMESPACE = 'https://cocina.sul.stanford.edu'
 
   # GET /resource/:id
   def show
@@ -83,9 +85,6 @@ class ResourcesController < ApplicationController
   # rubocop:enable Metrics/AbcSize
 
   private
-
-  CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi user_versions].freeze
-  ID_NAMESPACE = 'https://cocina.sul.stanford.edu'
 
   def cocina_create_params
     params.except(*CREATE_PARAMS_EXCLUDE_FROM_COCINA).to_unsafe_h
