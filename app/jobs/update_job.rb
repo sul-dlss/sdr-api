@@ -121,9 +121,9 @@ class UpdateJob < ApplicationJob
 
   def background_job_complete_with_error!(error_title, error_detail, druid, existing_version, provided_version)
     Honeybadger.notify("#{error_title}: #{error_detail}",
-                       { external_identifier: druid,
-                         existing_version:,
-                         provided_version: })
+                       context: { external_identifier: druid,
+                                  existing_version:,
+                                  provided_version: })
     background_job_result.output = { errors: [title: error_title, detail: error_detail] }
     background_job_result.complete!
   end

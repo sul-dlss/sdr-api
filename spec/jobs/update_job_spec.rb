@@ -260,7 +260,7 @@ RSpec.describe UpdateJob do
 
       expect(actual_result).to be_complete
       expect(actual_result.output[:errors]).to eq [{ 'title' => err_title, 'detail' => err_detail }]
-      expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}", {
+      expect(Honeybadger).to have_received(:notify).with("#{err_title}: #{err_detail}", context: {
                                                            existing_version: 3,
                                                            external_identifier: 'druid:bc123dg5678',
                                                            provided_version: 5

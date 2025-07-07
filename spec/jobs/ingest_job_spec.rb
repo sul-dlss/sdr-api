@@ -327,7 +327,7 @@ RSpec.describe IngestJob do
                              message: ' ()'] }.with_indifferent_access)
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
       expect(Honeybadger).to have_received(:notify).with('All retries failed',
-                                                         { external_identifier: 'druid:bc123dh5678' })
+                                                         context: { external_identifier: 'druid:bc123dh5678' })
     end
   end
 end
