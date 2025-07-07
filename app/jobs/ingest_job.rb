@@ -66,7 +66,7 @@ class IngestJob < ApplicationJob
 
     # Otherwise return an error on background_job_result but exit cleanly.
     Honeybadger.notify('All retries failed',
-                       { external_identifier: druid })
+                       context: { external_identifier: druid })
     background_job_result.output = background_job_result.output.merge({ errors: [title: 'All retries failed',
                                                                                  message: e.message] })
     background_job_result.complete!
