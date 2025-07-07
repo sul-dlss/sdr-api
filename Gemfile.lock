@@ -155,7 +155,7 @@ GEM
       capistrano-shared_configs
       ed25519
     docile (1.4.1)
-    dor-services-client (15.15.0)
+    dor-services-client (15.15.1)
       activesupport (>= 7.0.0)
       cocina-models (~> 0.104.1)
       deprecation
@@ -224,7 +224,7 @@ GEM
     factory_bot_rails (6.5.0)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
-    faraday (2.13.1)
+    faraday (2.13.2)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -235,7 +235,7 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashdiff (1.2.0)
-    honeybadger (5.28.0)
+    honeybadger (5.29.1)
       logger
       ostruct
     i18n (1.14.7)
@@ -360,7 +360,7 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.0)
-    rdoc (6.14.1)
+    rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
     redis-client (0.25.0)
