@@ -31,19 +31,6 @@ class TablesHaveDataCheck < OkComputer::Check
   end
 end
 
-# make sure we can hit the workflow service
-class WorkflowServerCheck < OkComputer::Check
-  def check
-    num_templates = Workflow.workflow_client.workflow_templates.size
-    mark_message "#{Settings.workflow.url} has #{num_templates} templates."
-
-    mark_failure if num_templates.zero?
-  rescue StandardError => e
-    mark_message e.message
-    mark_failure
-  end
-end
-
 # make sure we can hit dor-services-app service
 class DorServicesCheck < OkComputer::Check
   def check
@@ -156,5 +143,4 @@ OkComputer::Registry.register 'ruby_version', OkComputer::RubyVersionCheck.new
 OkComputer::Registry.register 'background_jobs', OkComputer::SidekiqLatencyCheck.new('default', 25)
 OkComputer::Registry.register 'feature-tables-have-data', TablesHaveDataCheck.new
 OkComputer::Registry.register 'sidekiq_worker_count', SidekiqWorkerCountCheck.new
-OkComputer::Registry.register 'workflow_server', WorkflowServerCheck.new
 OkComputer::Registry.register 'dor-services-app', DorServicesCheck.new
