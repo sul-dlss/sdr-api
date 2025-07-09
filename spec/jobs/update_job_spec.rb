@@ -7,7 +7,6 @@ RSpec.describe UpdateJob do
   let(:result) { create(:background_job_result, try_count:) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dg5678' }
-  let(:workflow_client) { instance_double(Dor::Workflow::Client, create_workflow_by_name: true) }
   let(:blob) { create(:singleton_blob_with_file) }
   let(:signed_ids) do
     { 'file2.txt' => ActiveStorage.verifier.generate(blob.id, purpose: :blob_id) }
