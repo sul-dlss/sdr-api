@@ -7,9 +7,7 @@ RSpec.describe IngestJob do
   let(:result) { create(:background_job_result, try_count:) }
   let(:actual_result) { BackgroundJobResult.find(result.id) }
   let(:druid) { 'druid:bc123dh5678' }
-  let(:workflow_client) { instance_double(Dor::Services::Client::ObjectWorkflow, find: workflow, create: true) }
-  let(:workflow) { instance_double(Dor::Services::Response::Workflow, empty?: true) }
-  let(:object_client) { instance_double(Dor::Services::Client::Object, version: version_client, update: true, workflow: workflow_client) }
+  let(:object_client) { instance_double(Dor::Services::Client::Object, version: version_client, update: true) }
   let(:version_client) do
     instance_double(Dor::Services::Client::ObjectVersion, close: true)
   end
@@ -66,6 +64,7 @@ RSpec.describe IngestJob do
     FileUtils.cp blob.service.path_for(blob.key), 'tmp/globus/some/file/path/file2.txt'
     allow(Dor::Services::Client).to receive_messages(objects: objects_client, object: object_client)
     allow(ActiveStorage::PurgeJob).to receive(:perform_later)
+    allow(Workflow).to receive(:create_unless_exists)
   end
 
   context 'when API calls are successful' do
@@ -82,25 +81,8 @@ RSpec.describe IngestJob do
     context 'when priority is default' do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-        expect(object_client).to have_received(:workflow).with('registrationWF')
-        expect(workflow_client).to have_received(:find)
-        expect(workflow_client).to have_received(:create).with(version: 1, context: { priority: 'default' })
+        expect(Workflow).to have_received(:create_unless_exists).with(druid, 'registrationWF', version: 1, priority:)
         expect(version_client).to have_received(:close).with(user_versions: 'none')
-        expect(actual_result).to be_complete
-        expect(actual_result.output).to match({ druid: })
-        expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
-      end
-    end
-
-    context 'when priority is low' do
-      let(:priority) { 'low' }
-
-      it 'ingests an object' do
-        expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-        expect(object_client).to have_received(:workflow).with('registrationWF')
-        expect(workflow_client).to have_received(:find)
-        expect(workflow_client).to have_received(:create).with(version: 1, context: { priority: })
-        expect(version_client).to have_received(:close)
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -133,9 +115,7 @@ RSpec.describe IngestJob do
 
     it 'ingests an object' do
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(object_client).to have_received(:workflow).with('registrationWF')
-      expect(workflow_client).to have_received(:find)
-      expect(workflow_client).to have_received(:create).with(version: 1, context: { priority: })
+      expect(Workflow).to have_received(:create_unless_exists).with(druid, 'registrationWF', version: 1, priority:)
       expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
@@ -181,7 +161,7 @@ RSpec.describe IngestJob do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
                                   signed_ids:)
-      expect(object_client).not_to have_received(:workflow)
+      expect(Workflow).not_to have_received(:create_unless_exists)
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'Object with source_id already exists.',
@@ -207,31 +187,7 @@ RSpec.describe IngestJob do
                                   background_job_result: result,
                                   signed_ids:)
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(object_client).to have_received(:workflow).with('registrationWF')
-      expect(workflow_client).to have_received(:find)
-      expect(workflow_client).to have_received(:create).with(version: 1, context: { priority: })
-      expect(version_client).to have_received(:close)
-      expect(actual_result).to be_complete
-      expect(actual_result.output).to match({ druid: })
-      expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
-    end
-  end
-
-  context 'when workflow already exists' do
-    let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
-
-    before do
-      allow(workflow).to receive(:empty?).and_return(false)
-    end
-
-    it 'ingests an object' do
-      described_class.perform_now(model_params: model,
-                                  background_job_result: result,
-                                  signed_ids:)
-      expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
-      expect(object_client).to have_received(:workflow).with('registrationWF')
-      expect(workflow_client).to have_received(:find)
-      expect(workflow_client).not_to have_received(:create)
+      expect(Workflow).to have_received(:create_unless_exists).with(druid, 'registrationWF', version: 1, priority:)
       expect(version_client).to have_received(:close)
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
@@ -255,7 +211,7 @@ RSpec.describe IngestJob do
       described_class.perform_now(model_params: model,
                                   background_job_result: result,
                                   signed_ids:)
-      expect(object_client).not_to have_received(:workflow)
+      expect(Workflow).not_to have_received(:create_unless_exists)
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
