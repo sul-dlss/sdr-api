@@ -15,10 +15,7 @@ class Workflow
   end
 
   def self.exists?(druid, workflow_name)
-    Dor::Services::Client.object(druid).workflow(workflow_name).find
-    true
-  rescue Dor::Services::Client::NotFoundResponse
-    false
+    Dor::Services::Client.object(druid).workflow(workflow_name).find.present?
   end
   private_class_method :exists?
 end
