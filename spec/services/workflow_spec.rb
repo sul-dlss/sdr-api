@@ -4,7 +4,9 @@ require 'rails_helper'
 
 RSpec.describe Workflow do
   let(:object_client) { instance_double(Dor::Services::Client::Object, workflow: workflow_client) }
-  let(:workflow_client) { instance_double(Dor::Services::Client::ObjectWorkflow, create: true, find: instance_double(Dor::Services::Response::Workflow)) }
+  let(:workflow_client) { instance_double(Dor::Services::Client::ObjectWorkflow, create: true, find: workflow_response) }
+  let(:workflow_response) { instance_double(Dor::Services::Response::Workflow, present?: workflow_present) }
+  let(:workflow_present) { true }
 
   let(:druid) { 'druid:bc123df4567' }
 
@@ -25,9 +27,7 @@ RSpec.describe Workflow do
     end
 
     context 'when the workflow does not exist' do
-      before do
-        allow(workflow_client).to receive(:find).and_raise(Dor::Services::Client::NotFoundResponse)
-      end
+      let(:workflow_present) { false }
 
       it 'creates a new workflow' do
         described_class.create_unless_exists(druid, 'accessionWF', version: 2, priority: 'low')
