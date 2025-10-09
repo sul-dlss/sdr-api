@@ -7,7 +7,7 @@ gem 'action_policy'
 gem 'amazing_print'
 gem 'bcrypt', '~> 3.1.7' # Use Active Model has_secure_password
 gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching; required in config/boot.rb
-gem 'cocina-models', '~> 0.106.0'
+gem 'cocina-models', '~> 0.107.0'
 gem 'committee'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 15.7'
@@ -24,8 +24,8 @@ gem 'sidekiq', '~> 7.1' # background job processing
 gem 'whenever', require: false # schedule crons
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  # Call 'debugger' anywhere in the code to stop execution and get a debug console
+  gem 'debug'
   gem 'equivalent-xml'
   gem 'factory_bot_rails'
   gem 'rspec_junit_formatter'
