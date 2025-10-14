@@ -99,7 +99,7 @@ RSpec.describe 'Create a DRO' do
   end
 
   context 'when wrong version of cocina models is supplied' do
-    xit 'returns 400' do # rubocop:disable RSpec/PendingWithoutReason
+    it 'returns 400' do
       post '/v1/resources?accession=true',
            params: request,
            headers: {
