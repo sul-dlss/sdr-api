@@ -80,7 +80,7 @@ class UpdateJob < ApplicationJob
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/ParameterLists
 
-  def check_versioning(model, existing_version)
+  def check_versioning(model, existing_version) # rubocop:disable Naming/PredicateMethod
     allowed_versions = [existing_version, existing_version + 1]
     return true if allowed_versions.include?(model.version)
 

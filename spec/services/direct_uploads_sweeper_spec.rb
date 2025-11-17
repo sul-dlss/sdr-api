@@ -34,7 +34,7 @@ RSpec.describe DirectUploadsSweeper do
 
   describe '#sweep' do
     let(:mock_relation) { instance_double(ActiveRecord::Relation, find_each: nil) }
-    let(:mock_strategy) { double(select: mock_relation) } # rubocop:disable RSpec/VerifiedDoubles
+    let(:mock_strategy) { double(select: mock_relation) }
 
     before do
       # Use mock strategy to test #sweep behavior because it is easier to mock,
