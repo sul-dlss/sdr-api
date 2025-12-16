@@ -20,7 +20,7 @@ gem 'marcel'
 gem 'okcomputer'
 gem 'pg' # Postgres database client
 gem 'rails', '~> 8.0.0'
-gem 'sidekiq', '~> 7.1' # background job processing
+gem 'sidekiq', '~> 8.0' # background job processing
 gem 'whenever', require: false # schedule crons
 
 group :development, :test do
