@@ -22,8 +22,8 @@ class DirectUploadsSweeper
     strategy
       .select
       .find_each(batch_size: Settings.sdr_api.blob_batch_size) do |upload|
-        upload.purge_later
-        count += 1
+      upload.purge_later
+      count += 1
     end
     Rails.logger.info("Queued #{count} uploads for purging.")
   end
