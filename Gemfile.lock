@@ -290,6 +290,8 @@ GEM
       net-protocol
     net-ssh (7.3.0)
     nio4r (2.7.5)
+    nokogiri (1.19.0-aarch64-linux-gnu)
+      racc (~> 1.4)
     nokogiri (1.19.0-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.0-x86_64-darwin)
@@ -307,6 +309,7 @@ GEM
       racc
     patience_diff (1.2.0)
       optimist (~> 3.0)
+    pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
@@ -476,6 +479,7 @@ GEM
     zeitwerk (2.7.4)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-23
   arm64-darwin-24
   x86_64-darwin-19
@@ -496,7 +500,7 @@ DEPENDENCIES
   config (~> 2.0)
   debug
   dlss-capistrano
-  dor-services-client (~> 15.7)
+  dor-services-client (~> 15.27)
   druid-tools
   equivalent-xml
   factory_bot_rails

@@ -10,7 +10,7 @@ gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching;
 gem 'cocina-models', '~> 0.110.0'
 gem 'committee'
 gem 'config', '~> 2.0'
-gem 'dor-services-client', '~> 15.7'
+gem 'dor-services-client', '~> 15.27'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
