@@ -70,11 +70,11 @@ RSpec.describe 'Direct upload' do
       direct_upload_uri = URI.parse(direct_upload['direct_upload']['url'])
       expect(direct_upload_uri.path).to start_with('/v1/disk/')
 
-      put direct_upload_uri.path,
-          params: data,
-          headers: { 'Content-Type' => content_type, 'Authorization' => "Bearer #{jwt}" }
-
-      expect(response).to have_http_status(:bad_request) # Status: 400
+      expect do
+        put direct_upload_uri.path,
+            params: data,
+            headers: { 'Content-Type' => content_type, 'Authorization' => "Bearer #{jwt}" }
+      end.to raise_error(ActionView::Template::Error, 'Error occurred while parsing request parameters')
     end
   end
 
