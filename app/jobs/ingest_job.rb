@@ -32,7 +32,8 @@ class IngestJob < ApplicationJob
     rescue Dor::Services::Client::ConflictResponse => e
       # Should not expect this on first try so return as error
       if background_job_result.try_count == 1
-        background_job_result.output = { errors: [title: 'Object with source_id already exists.', message: e.message] }
+        background_job_result.output = { errors: [{ title: 'Object with source_id already exists.',
+                                                    message: e.message }] }
         background_job_result.complete!
         return
       end
@@ -40,8 +41,8 @@ class IngestJob < ApplicationJob
       druid = /\((druid:.{11})\)/.match(e.message)[1]
     rescue Dor::Services::Client::BadRequestError => e
       # report as error and do not retry
-      background_job_result.output = { errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                                                message: e.message] }
+      background_job_result.output = { errors: [{ title: 'HTTP 400 (Bad Request) from dor-services-app',
+                                                  message: e.message }] }
       background_job_result.complete!
       return
     end
@@ -67,8 +68,8 @@ class IngestJob < ApplicationJob
     # Otherwise return an error on background_job_result but exit cleanly.
     Honeybadger.notify('All retries failed',
                        context: { external_identifier: druid })
-    background_job_result.output = background_job_result.output.merge({ errors: [title: 'All retries failed',
-                                                                                 message: e.message] })
+    background_job_result.output = background_job_result.output.merge({ errors: [{ title: 'All retries failed',
+                                                                                   message: e.message }] })
     background_job_result.complete!
   end
   # rubocop:enable Metrics/ParameterLists

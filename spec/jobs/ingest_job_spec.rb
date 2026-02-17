@@ -164,8 +164,8 @@ RSpec.describe IngestJob do
       expect(Workflow).not_to have_received(:create_unless_exists)
       expect(actual_result).to be_complete
       expect(actual_result.output)
-        .to match({ errors: [title: 'Object with source_id already exists.',
-                             message: "Obj (#{druid}) already exists ()"] })
+        .to match({ errors: [{ title: 'Object with source_id already exists.',
+                               message: "Obj (#{druid}) already exists ()" }] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
@@ -214,8 +214,8 @@ RSpec.describe IngestJob do
       expect(Workflow).not_to have_received(:create_unless_exists)
       expect(actual_result).to be_complete
       expect(actual_result.output)
-        .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                             message: 'Record not in catalog blah blah ()'] })
+        .to match({ errors: [{ title: 'HTTP 400 (Bad Request) from dor-services-app',
+                               message: 'Record not in catalog blah blah ()' }] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
@@ -276,8 +276,8 @@ RSpec.describe IngestJob do
       expect(actual_result).to be_complete
       expect(actual_result.output)
         .to match({ druid: 'druid:bc123dh5678',
-                    errors: [title: 'All retries failed',
-                             message: ' ()'] }.with_indifferent_access)
+                    errors: [{ title: 'All retries failed',
+                               message: ' ()' }] }.with_indifferent_access)
       expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
       expect(Honeybadger).to have_received(:notify).with('All retries failed',
                                                          context: { external_identifier: 'druid:bc123dh5678' })

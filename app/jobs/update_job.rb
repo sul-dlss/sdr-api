@@ -55,13 +55,13 @@ class UpdateJob < ApplicationJob
     background_job_result.complete!
   rescue Dor::Services::Client::BadRequestError => e
     # report as error and do not retry
-    error = { errors: [title: 'HTTP 400 (Bad Request) from dor-services-app', message: e.message] }
+    error = { errors: [{ title: 'HTTP 400 (Bad Request) from dor-services-app', message: e.message }] }
     background_job_result.output = background_job_result.output.merge(error)
     background_job_result.complete!
   rescue Dor::Services::Client::ConflictResponse => e
     # RoundtripValidationError for cocina uses HTTP 409 as status
     # report as error and do not retry
-    error = { errors: [title: 'HTTP 409 (Conflict) from dor-services-app', message: e.message] }
+    error = { errors: [{ title: 'HTTP 409 (Conflict) from dor-services-app', message: e.message }] }
     background_job_result.output = background_job_result.output.merge(error)
     background_job_result.complete!
   rescue StandardError => e
@@ -72,8 +72,8 @@ class UpdateJob < ApplicationJob
     end
 
     # Otherwise return an error on background_job_result but exit cleanly.
-    background_job_result.output = background_job_result.output.merge({ errors: [title: 'All retries failed',
-                                                                                 message: e.message] })
+    background_job_result.output = background_job_result.output.merge({ errors: [{ title: 'All retries failed',
+                                                                                   message: e.message }] })
     background_job_result.complete!
   end
   # rubocop:enable Metrics/AbcSize
@@ -124,7 +124,7 @@ class UpdateJob < ApplicationJob
                        context: { external_identifier: druid,
                                   existing_version:,
                                   provided_version: })
-    background_job_result.output = { errors: [title: error_title, detail: error_detail] }
+    background_job_result.output = { errors: [{ title: error_title, detail: error_detail }] }
     background_job_result.complete!
   end
 end
