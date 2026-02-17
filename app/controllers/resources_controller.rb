@@ -9,6 +9,7 @@ class ResourcesController < ApplicationController
 
   before_action :authorize_request
   before_action :validate_version
+  before_action :validate_from_openapi
 
   GLOBUS_PREFIX = 'globus://'
   CREATE_PARAMS_EXCLUDE_FROM_COCINA = %i[action controller resource accession priority assign_doi user_versions].freeze

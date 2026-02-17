@@ -16,8 +16,8 @@ Rails.application.routes.draw do
     resources :background_job_results, only: [:show], defaults: { format: :json }
 
     # We don't need all of the activestorage routes, just these few:
-    get  '/disk/:encoded_key/*filename' => 'active_storage/disk#show', as: :rails_disk_service
-    put  '/disk/:encoded_token' => 'active_storage/disk#update', as: :update_rails_disk_service
+    get  '/disk/:encoded_key/*filename' => 'disk#show', as: :rails_disk_service
+    put  '/disk/:encoded_token' => 'disk#update', as: :update_rails_disk_service
     post '/direct_uploads' => 'direct_uploads#create', as: :rails_direct_uploads
   end
   mount Sidekiq::Web => '/queues'

@@ -25,26 +25,6 @@ module SdrApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
-    # accept_request_filter omits OKComputer and Sidekiq
-    accept_proc = proc { |request| request.path.start_with?('/v1') }
-    config.middleware.use(
-      Committee::Middleware::RequestValidation,
-      schema_path: 'openapi.yml',
-      strict: true,
-      accept_request_filter: accept_proc,
-      query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
-      parameter_overwrite_by_rails_rule: false,
-      strict_reference_validation: true
-    )
-    config.middleware.use(
-      Committee::Middleware::ResponseValidation,
-      schema_path: 'openapi.yml',
-      parse_response_by_content_type: false, # hush committee deprecation warning
-      query_hash_key: 'action_dispatch.request.query_parameters', # hush committee deprecation warning
-      parameter_overwrite_by_rails_rule: false,
-      strict_reference_validation: true
-    )
-
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

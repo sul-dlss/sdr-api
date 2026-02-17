@@ -7,13 +7,13 @@ gem 'action_policy'
 gem 'amazing_print'
 gem 'bcrypt', '~> 3.1.7' # Use Active Model has_secure_password
 gem 'bootsnap', '>= 1.4.2', require: false # Reduces boot times through caching; required in config/boot.rb
-gem 'cocina-models', '~> 0.111.0'
-gem 'committee'
+gem 'cocina-models', '~> 0.112.1'
 gem 'config', '~> 2.0'
 gem 'dor-services-client', '~> 15.7'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'json_schemer-rails', '~> 0.3.0'
 gem 'jwt' # JSON web tokens (for authentication)
 gem 'lograge'
 gem 'marcel'

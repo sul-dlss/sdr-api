@@ -105,7 +105,7 @@ GEM
       capistrano-bundler (>= 1.1, < 3)
     capistrano-shared_configs (0.2.2)
     chronic (0.10.2)
-    cocina-models (0.111.0)
+    cocina-models (0.112.1)
       activesupport
       deprecation
       dry-struct (~> 1.0)
@@ -119,10 +119,6 @@ GEM
       super_diff
       thor
       zeitwerk (~> 2.1)
-    committee (5.6.1)
-      json_schema (~> 0.14, >= 0.14.3)
-      openapi_parser (~> 2.0)
-      rack (>= 1.5)
     concurrent-ruby (1.3.6)
     config (2.2.3)
       deep_merge (~> 1.2, >= 1.2.1)
@@ -147,9 +143,9 @@ GEM
       capistrano-shared_configs
       ed25519
     docile (1.4.1)
-    dor-services-client (15.28.0)
+    dor-services-client (15.30.0)
       activesupport (>= 7.0.0)
-      cocina-models (~> 0.111.0)
+      cocina-models (~> 0.112.0)
       deprecation
       faraday (~> 2.0)
       faraday-retry
@@ -202,7 +198,7 @@ GEM
       activesupport (>= 3.0, < 9.0)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
-    erb (6.0.1)
+    erb (6.0.2)
     erubi (1.13.1)
     factory_bot (6.5.6)
       activesupport (>= 6.1.0)
@@ -237,12 +233,14 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     json (2.18.1)
-    json_schema (0.21.0)
     json_schemer (2.5.0)
       bigdecimal
       hana (~> 1.3)
       regexp_parser (~> 2.0)
       simpleidn (~> 0.2)
+    json_schemer-rails (0.3.1)
+      json_schemer (~> 2.5)
+      railties (~> 8.0)
     jsonpath (1.1.5)
       multi_json
     jwt (3.1.2)
@@ -266,7 +264,8 @@ GEM
       net-smtp
     marcel (1.1.0)
     mini_mime (1.1.5)
-    minitest (6.0.1)
+    minitest (6.0.2)
+      drb (~> 2.0)
       prism (~> 1.5)
     msgpack (1.8.0)
     multi_json (1.19.1)
@@ -295,7 +294,6 @@ GEM
       racc (~> 1.4)
     okcomputer (1.19.1)
       benchmark
-    openapi_parser (2.3.1)
     optimist (3.2.1)
     ostruct (0.6.3)
     parallel (1.27.0)
@@ -344,8 +342,8 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.6.2)
-      loofah (~> 2.21)
+    rails-html-sanitizer (1.7.0)
+      loofah (~> 2.25)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     railties (8.0.4)
       actionpack (= 8.0.4)
@@ -475,6 +473,7 @@ GEM
 PLATFORMS
   arm64-darwin-23
   arm64-darwin-24
+  arm64-darwin-25
   x86_64-darwin-19
   x86_64-darwin-20
   x86_64-darwin-21
@@ -488,8 +487,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   capistrano-passenger
   capistrano-rails
-  cocina-models (~> 0.111.0)
-  committee
+  cocina-models (~> 0.112.1)
   config (~> 2.0)
   debug
   dlss-capistrano
@@ -499,6 +497,7 @@ DEPENDENCIES
   factory_bot_rails
   honeybadger
   jbuilder (~> 2.7)
+  json_schemer-rails (~> 0.3.0)
   jwt
   lograge
   marcel

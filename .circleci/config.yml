@@ -4,20 +4,21 @@ orbs:
 workflows:
   build:
     jobs:
-      - ruby-rails/validate-api:
-          name: validate
       - ruby-rails/lint:
           name: lint
       - ruby-rails/test-rails:
           name: test
           api-only: true
           context: dlss
+          before-test:
+            - run:
+                name: validate openapi
+                command: bin/rails r "exit(1) unless JSONSchemer.valid_schema?(YAML.load_file('openapi.yml'))"
       - ruby-rails/docker-publish:
           context: dlss
           name: publish-latest
           image: suldlss/sdr-api
           requires:
-            - validate
             - lint
             - test
           filters:
