@@ -146,8 +146,8 @@ RSpec.describe UpdateJob do
                                   signed_ids:)
       expect(actual_result).to be_complete
       expect(actual_result.output)
-        .to match({ errors: [title: 'HTTP 400 (Bad Request) from dor-services-app',
-                             message: 'cocina validation error blah blah ()'] })
+        .to match({ errors: [{ title: 'HTTP 400 (Bad Request) from dor-services-app',
+                               message: 'cocina validation error blah blah ()' }] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
@@ -168,8 +168,8 @@ RSpec.describe UpdateJob do
                                   signed_ids:)
       expect(actual_result).to be_complete
       expect(actual_result.output)
-        .to match({ errors: [title: 'HTTP 409 (Conflict) from dor-services-app',
-                             message: 'cocina roundtrip validation error ... ()'] })
+        .to match({ errors: [{ title: 'HTTP 409 (Conflict) from dor-services-app',
+                               message: 'cocina roundtrip validation error ... ()' }] })
       expect(ActiveStorage::PurgeJob).not_to have_received(:perform_later).with(blob)
     end
   end
