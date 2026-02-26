@@ -13,7 +13,7 @@ gem 'dor-services-client', '~> 15.7'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'json_schemer-rails', '~> 0.3.0'
+gem 'json_schemer-rails', '~> 0.4.0'
 gem 'jwt' # JSON web tokens (for authentication)
 gem 'lograge'
 gem 'marcel'
