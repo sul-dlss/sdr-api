@@ -2,7 +2,7 @@
 
 # This exists to add authorization to active_storage
 class DiskController < ActiveStorage::DiskController
-  include JsonSchemer::Rails::Controller
+  include JSONSchemer::Rails::Controller
 
   before_action :params_from_openapi
 

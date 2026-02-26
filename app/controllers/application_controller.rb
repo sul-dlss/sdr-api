@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::API
   include RequestAuthorization
   include ActionPolicy::Controller
-  include JsonSchemer::Rails::Controller
+  include JSONSchemer::Rails::Controller
 
   authorize :user, through: :current_user
 
@@ -13,9 +13,9 @@ class ApplicationController < ActionController::API
 
   private
 
-  # This overrides JsonSchemer::Rails::Controller to provide our ref_resolver
+  # This overrides JSONSchemer::Rails::Controller to provide our ref_resolver
   def openapi_validator
-    @openapi_validator ||= JsonSchemer::Rails::OpenApiValidator.new(request, ref_resolver:)
+    @openapi_validator ||= JSONSchemer::Rails::OpenApiValidator.new(request, ref_resolver:)
   end
 
   # Resolves the cocina-models copy of openapi.yml
