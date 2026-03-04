@@ -159,8 +159,8 @@ paths:
             schema:
               oneOf:
                 # Need to set additionalProperties to true for RequestDRO to allow accession parameter.
-                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/RequestDRO"
-                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/RequestCollection"
+                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/RequestDRO"
+                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/RequestCollection"
   /v1/resources/{id}:
     get:
       tags:
@@ -175,9 +175,9 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/DRO"
-                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/Collection"
-                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/AdminPolicy"
+                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/DRO"
+                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/Collection"
+                  - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/AdminPolicy"
         "404":
           description: Not Found
           content:
@@ -202,7 +202,7 @@ paths:
           description: ID of object
           required: true
           schema:
-            $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/Druid"
+            $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/Druid"
     put:
       tags:
         - objects
@@ -228,7 +228,7 @@ paths:
           description: ID of object
           required: true
           schema:
-            $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/Druid"
+            $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/Druid"
         - name: accession
           in: query
           description: If set to true the version will be closed
@@ -254,9 +254,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/DRO"
-                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/Collection"
-                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/AdminPolicy"
+                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/DRO"
+                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/Collection"
+                - $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/AdminPolicy"
   /v1/auth/login:
     post:
       tags:
@@ -336,7 +336,7 @@ components:
           description: output from the job
           properties:
             druid:
-              $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.112.1/schema.json#/$defs/Druid"
+              $ref: "https://raw.githubusercontent.com/sul-dlss/cocina-models/refs/tags/v0.113.0/schema.json#/$defs/Druid"
             errors:
               type: array
               items:
