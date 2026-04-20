@@ -85,7 +85,7 @@ GEM
     bcrypt (3.1.22)
     bcrypt_pbkdf (1.1.2)
     benchmark (0.5.0)
-    bigdecimal (4.1.1)
+    bigdecimal (4.1.2)
     bootsnap (1.23.0)
       msgpack (~> 1.2)
     builder (3.3.0)
@@ -119,7 +119,7 @@ GEM
       super_diff
       thor
       zeitwerk (~> 2.1)
-    committee (5.6.2)
+    committee (5.6.3)
       json_schema (~> 0.14, >= 0.14.3)
       openapi_parser (~> 2.0)
       rack (>= 1.5)
@@ -147,7 +147,7 @@ GEM
       capistrano-shared_configs
       ed25519
     docile (1.4.1)
-    dor-services-client (15.38.0)
+    dor-services-client (15.40.0)
       activesupport (>= 7.0.0)
       cocina-models (~> 0.116.0)
       deprecation
@@ -203,7 +203,7 @@ GEM
       activesupport (>= 3.0, < 9.0)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
-    erb (6.0.2)
+    erb (6.0.3)
     erubi (1.13.1)
     factory_bot (6.5.6)
       activesupport (>= 6.1.0)
@@ -239,7 +239,7 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (2.19.3)
+    json (2.19.4)
     json_schema (0.21.0)
     json_schemer (2.5.0)
       bigdecimal
@@ -273,7 +273,7 @@ GEM
       net-smtp
     marcel (1.1.0)
     mini_mime (1.1.5)
-    minitest (6.0.3)
+    minitest (6.0.4)
       drb (~> 2.0)
       prism (~> 1.5)
     msgpack (1.8.0)
@@ -365,7 +365,7 @@ GEM
       tsort (>= 0.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.3.1)
+    rake (13.4.2)
     rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
@@ -433,7 +433,7 @@ GEM
     ruby-next-core (1.2.0)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    sidekiq (8.1.2)
+    sidekiq (8.1.3)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
       logger (>= 1.7.0)
