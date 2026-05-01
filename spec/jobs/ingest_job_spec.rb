@@ -82,7 +82,7 @@ RSpec.describe IngestJob do
       it 'ingests an object' do
         expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
         expect(Workflow).to have_received(:create_unless_exists).with(druid, 'registrationWF', version: 1, priority:)
-        expect(version_client).to have_received(:close).with(user_versions: 'none')
+        expect(version_client).to have_received(:close).with(user_versions: 'none', lane_id: 'default')
         expect(actual_result).to be_complete
         expect(actual_result.output).to match({ druid: })
         expect(ActiveStorage::PurgeJob).to have_received(:perform_later).with(blob)
@@ -93,7 +93,7 @@ RSpec.describe IngestJob do
       let(:user_versions) { 'new' }
 
       it 'ingests an object' do
-        expect(version_client).to have_received(:close).with(user_versions: 'new')
+        expect(version_client).to have_received(:close).with(user_versions: 'new', lane_id: 'default')
         expect(actual_result).to be_complete
       end
     end
@@ -101,7 +101,7 @@ RSpec.describe IngestJob do
 
   context 'when files are on globus' do
     let(:objects_client) { instance_double(Dor::Services::Client::Objects, register: response_dro) }
-    let(:priority) { 'default' }
+    let(:priority) { 'high' }
     let(:globus_ids) do
       { 'file2.txt' => 'globus://some/file/path/file2.txt' }
     end
@@ -116,7 +116,7 @@ RSpec.describe IngestJob do
     it 'ingests an object' do
       expect(File.read("#{assembly_dir}/content/file2.txt")).to eq 'HELLO'
       expect(Workflow).to have_received(:create_unless_exists).with(druid, 'registrationWF', version: 1, priority:)
-      expect(version_client).to have_received(:close)
+      expect(version_client).to have_received(:close).with(user_versions: 'none', lane_id: 'high')
       expect(actual_result).to be_complete
       expect(actual_result.output).to match({ druid: })
     end

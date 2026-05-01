@@ -138,6 +138,7 @@ paths:
             enum:
               - "default"
               - "low"
+              - "high"
         - in: query
           name: assign_doi
           schema:
