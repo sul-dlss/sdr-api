@@ -14,7 +14,7 @@ class IngestJob < ApplicationJob
   # @param [Boolean] accession if true, closes the current version
   # @param [Boolean] assign_doi if true, adds DOI to Cocina obj
   # @param [String] priority ('default') determines the relative priority used for the workflow.
-  #                                      Value may be 'low' or 'default'
+  #                                      Value may be 'low', 'high', or 'default'
   # @param [String] user_versions ('none') - create, update, or do nothing with user versions on close.
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
@@ -56,7 +56,7 @@ class IngestJob < ApplicationJob
 
     # Close the version, which will also start accessioning
     # close will be false in the case of reserving a druid
-    Dor::Services::Client.object(druid).version.close(user_versions:) if accession
+    Dor::Services::Client.object(druid).version.close(user_versions:, lane_id: priority) if accession
     background_job_result.complete!
   rescue StandardError => e
     # This causes Sidekiq to retry.
