@@ -13,7 +13,7 @@ class BackgroundJobResultsController < ApplicationController
   end
 
   def show
-    @result = BackgroundJobResult.find(params[:id])
+    @result = BackgroundJobResult.find(params.expect(:id))
     render status: @result.complete? ? :ok : :accepted
   end
 end
