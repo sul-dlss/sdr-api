@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 class JsonWebToken
-  SECRET_KEY = Rails.application.credentials.secret_key_base.to_s
-
   def self.encode(payload, exp = 24.hours.from_now)
     payload[:exp] = exp.to_i
-    JWT.encode(payload, SECRET_KEY)
+    JWT.encode(payload, Settings.sdr_api.hmac_secret)
   end
 
   def self.decode(token)
-    decoded = JWT.decode(token, SECRET_KEY)[0]
+    decoded = JWT.decode(token, Settings.sdr_api.hmac_secret)[0]
     ActiveSupport::HashWithIndifferentAccess.new decoded
   end
 end
