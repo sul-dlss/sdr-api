@@ -497,7 +497,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   capistrano-passenger
   capistrano-rails
-  cocina-models (~> 0.117.0)
+  cocina-models
   committee
   config (~> 2.0)
   debug
