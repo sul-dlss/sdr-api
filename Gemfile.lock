@@ -88,6 +88,8 @@ GEM
     bigdecimal (4.1.2)
     bootsnap (1.24.6)
       msgpack (~> 1.2)
+    brakeman (8.0.5)
+      racc
     builder (3.3.0)
     capistrano (3.20.1)
       airbrussh (>= 1.0.0)
@@ -498,6 +500,7 @@ DEPENDENCIES
   amazing_print
   bcrypt (~> 3.1.7)
   bootsnap (>= 1.4.2)
+  brakeman
   capistrano-passenger
   capistrano-rails
   cocina-models

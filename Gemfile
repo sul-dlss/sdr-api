@@ -25,6 +25,8 @@ gem 'sidekiq', '~> 8.0' # background job processing
 gem 'whenever', require: false # schedule crons
 
 group :development, :test do
+  # Security audit for known security defects in code (use config/brakeman.ignore to ignore issues)
+  gem 'brakeman', require: false
   # Call 'debugger' anywhere in the code to stop execution and get a debug console
   gem 'debug'
   gem 'equivalent-xml'
