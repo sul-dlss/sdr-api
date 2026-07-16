@@ -156,7 +156,7 @@ GEM
       capistrano-one_time_key (>= 0.2.0)
       capistrano-shared_configs
       ed25519
-    dor-services-client (15.64.0)
+    dor-services-client (15.64.1)
       activesupport (>= 7.0.0)
       cocina-models (~> 0.129.0)
       deprecation
