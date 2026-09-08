@@ -14,6 +14,7 @@ gem 'dor-services-client', '~> 15.7'
 gem 'druid-tools'
 gem 'honeybadger'
 gem 'jbuilder', '~> 2.7' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'json', '~> 2.0' # Pinned until Rails 8.1.4 is released https://github.com/rails/rails/issues/58685
 gem 'json_schemer-rails', '~> 0.4.0'
 gem 'jwt' # JSON web tokens (for authentication)
 gem 'lograge'

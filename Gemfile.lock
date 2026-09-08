@@ -254,7 +254,7 @@ GEM
     jbuilder (2.15.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (3.0.0)
+    json (2.21.2)
     json_schema (0.21.0)
     json_schemer (2.5.0)
       bigdecimal
@@ -265,6 +265,8 @@ GEM
       json_schemer (~> 2.5)
       railties (~> 8.0)
       zeitwerk
+    jsonschema_rs (0.55.0-aarch64-linux)
+      bigdecimal (>= 3.1, < 5)
     jsonschema_rs (0.55.0-arm64-darwin)
       bigdecimal (>= 3.1, < 5)
     jsonschema_rs (0.55.0-x86_64-darwin)
@@ -313,6 +315,8 @@ GEM
       net-protocol
     net-ssh (7.3.3)
     nio4r (2.7.5)
+    nokogiri (1.19.4-aarch64-linux-gnu)
+      racc (~> 1.4)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-darwin)
@@ -330,6 +334,7 @@ GEM
       racc
     patience_diff (1.2.0)
       optimist (~> 3.0)
+    pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
@@ -496,6 +501,7 @@ GEM
     zeitwerk (2.8.3)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-23
   arm64-darwin-24
   arm64-darwin-25
@@ -524,6 +530,7 @@ DEPENDENCIES
   factory_bot_rails
   honeybadger
   jbuilder (~> 2.7)
+  json (~> 2.0)
   json_schemer-rails (~> 0.4.0)
   jwt
   lograge
