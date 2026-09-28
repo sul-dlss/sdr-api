@@ -530,7 +530,6 @@ DEPENDENCIES
   factory_bot_rails
   honeybadger
   jbuilder (~> 2.7)
-  json (~> 2.0)
   json_schemer-rails (~> 0.4.0)
   jwt
   lograge
