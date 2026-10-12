@@ -21,6 +21,8 @@ Same as deposit, but doesn't begin the accessioning workflow
 
 ## Local Development / Usage
 
+Use Ruby 4.0.7 for development and testing.
+
 ### Start dependencies
 
 #### Database
