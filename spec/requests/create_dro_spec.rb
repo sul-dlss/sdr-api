@@ -184,7 +184,7 @@ RSpec.describe 'Create a DRO' do
       post '/v1/resources',
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-      expect(response).to have_http_status(:server_error)
+      expect(response).to have_http_status(:error)
       # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
       expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
@@ -235,7 +235,7 @@ RSpec.describe 'Create a DRO' do
       post '/v1/resources',
            params: request,
            headers: { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{jwt}" }
-      expect(response).to have_http_status(:server_error)
+      expect(response).to have_http_status(:error)
       # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
       expect(JSON.parse(response.body)['errors'][0]['title']).to eq 'Error matching uploading files to file parameters.' # rubocop:disable Rails/ResponseParsedBody
     end
