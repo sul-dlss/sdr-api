@@ -18,7 +18,7 @@ class IngestJob < ApplicationJob
   # @param [String] user_versions ('none') - create, update, or do nothing with user versions on close.
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/ParameterLists
+  # rubocop:disable-next Metrics/ParameterLists
   def perform(model_params:, background_job_result:, signed_ids: {}, globus_ids: {},
               accession: true, assign_doi: false, priority: 'default', user_versions: 'none')
     # Increment the try count
@@ -72,7 +72,6 @@ class IngestJob < ApplicationJob
                                                                                    message: e.message }] })
     background_job_result.complete!
   end
-  # rubocop:enable Metrics/ParameterLists
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 end
