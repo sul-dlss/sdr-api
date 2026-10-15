@@ -85,13 +85,12 @@ RSpec.describe 'Retrieve a resource' do
       expect(response).not_to be_successful
       expect(response).to have_http_status(:not_found)
       # response.parsed_body gives a string due to "Content-Type"=>"application/vnd.api+json; charset=utf-8"
-      # rubocop:disable Rails/ResponseParsedBody
+      # rubocop:disable-next Rails/ResponseParsedBody
       expect(JSON.parse(response.body)['errors'].first).to include(
         'status' => '404',
         'title' => error_message,
         'detail' => error_message
       )
-      # rubocop:enable Rails/ResponseParsedBody
     end
   end
 end

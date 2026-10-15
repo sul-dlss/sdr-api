@@ -32,7 +32,7 @@ class TablesHaveDataCheck < OkComputer::Check
 end
 
 # make sure we can hit dor-services-app service
-class DorServicesCheck < OkComputer::Check
+class DorServicesCheck < OkComputer::Check # rubocop:disable Style/OneClassPerFile
   def check
     Dor::Services::Client.administrative_tags.search(q: 'Registered By')
     mark_message "#{Settings.dor_services.url} has some admin tags"
@@ -43,7 +43,7 @@ class DorServicesCheck < OkComputer::Check
 end
 
 # confirm that the expected number of sidekiq worker processes and threads are running
-class SidekiqWorkerCountCheck < OkComputer::Check
+class SidekiqWorkerCountCheck < OkComputer::Check # rubocop:disable Style/OneClassPerFile
   class ExpectedEnvVarMissing < StandardError; end
 
   def check # rubocop:disable Metrics/MethodLength

@@ -2,7 +2,7 @@
 
 require 'base64'
 
-# rubocop:disable Metrics/ClassLength
+# rubocop:disable-next Metrics/ClassLength
 class ResourcesController < ApplicationController
   class BlobError < StandardError; end
   class GlobusNotFoundError < StandardError; end
@@ -281,7 +281,7 @@ class ResourcesController < ApplicationController
   end
 
   # JSON-API error response. See https://jsonapi.org/.
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength
   def build_error(error_code, err, msg)
     {
       json: {
@@ -297,6 +297,4 @@ class ResourcesController < ApplicationController
       status: error_code
     }
   end
-  # rubocop:enable Metrics/MethodLength
 end
-# rubocop:enable Metrics/ClassLength
